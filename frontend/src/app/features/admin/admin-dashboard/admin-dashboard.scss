@@ -1,0 +1,213 @@
+@use '../../../../styles/typography' as type;
+
+.dash-testa {
+  margin-bottom: var(--apl-space-20);
+
+  h1 {
+    @include type.h2;
+    margin: 0;
+  }
+}
+
+.dash-sezione {
+  margin-bottom: var(--apl-space-40);
+}
+
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--apl-space-16);
+  margin-bottom: var(--apl-space-20);
+}
+
+// I due export stanno sulla stessa riga finche' ci stanno: `wrap` li manda a
+// capo sugli schermi stretti invece di spingere la pagina in orizzontale, che
+// e' il difetto che il progetto non ammette fino a 375px.
+.dash-esportazioni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apl-space-9);
+  min-width: 0;
+}
+
+.dash-stat,
+.dash-riga {
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+}
+
+.dash-stat {
+  padding: var(--apl-space-16);
+}
+
+.dash-stat-numero {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--apl-ink);
+}
+
+.dash-stat-etichetta,
+.dash-riga-meta {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted);
+  margin: var(--apl-space-3) 0 0;
+}
+
+.dash-sottotitolo {
+  @include type.h3;
+  margin: 0 0 var(--apl-space-16);
+}
+
+.dash-sezione-testa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apl-space-16);
+
+  .dash-sottotitolo {
+    margin: 0;
+  }
+}
+
+.dash-elenco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-9);
+  margin-bottom: var(--apl-space-40);
+}
+
+.dash-riga {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apl-space-16);
+  padding: var(--apl-space-14);
+}
+
+.dash-riga-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-riga-titolo {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: var(--apl-fs-ui-l);
+  color: var(--apl-ink);
+  margin: 0;
+}
+
+.dash-riga-motivo {
+  font-family: var(--apl-font-body);
+  font-size: var(--apl-fs-body);
+  color: var(--apl-ink-soft);
+  margin: var(--apl-space-7) 0 0;
+}
+
+.dash-riga-azioni {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-5);
+  flex: none;
+}
+
+.dash-riga-coda {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--apl-space-7);
+  flex: none;
+}
+
+@media (max-width: 639px) {
+  .dash-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-riga {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+// Griglia dei grafici: due colonne su desktop, una su schermi stretti. I
+// grafici a linea e quelli a barre condividono la stessa cornice cosi' la
+// sezione si legge come un unico pannello e non come quattro riquadri
+// scollegati.
+.dash-grafici {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--apl-space-16);
+}
+
+.dash-grafico {
+  margin: 0;
+  padding: var(--apl-space-16);
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+
+  figcaption {
+    @include type.ui-l;
+    font-size: 15px;
+    color: var(--apl-ink);
+    margin-bottom: var(--apl-space-14);
+  }
+}
+
+@media (max-width: 899px) {
+  .dash-grafici {
+    grid-template-columns: 1fr;
+  }
+}
+
+// --- Vocabolario delle categorie --------------------------------------------
+
+.dash-nota {
+  @include type.ui-s;
+  color: var(--apl-muted);
+  line-height: 1.55;
+  margin: 0 0 var(--apl-space-16);
+  max-width: 62ch;
+}
+
+// Campo e bottone sulla stessa riga di base: il campo si allunga, il bottone
+// resta della sua larghezza naturale e allineato al fondo dell'input, non al
+// centro del blocco (che includerebbe anche l'etichetta).
+.dash-nuova-categoria {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--apl-space-12);
+  margin-bottom: var(--apl-space-20);
+
+  .apl-field {
+    flex: 1;
+    max-width: 320px;
+  }
+}
+
+.dash-rinomina input {
+  width: 100%;
+  max-width: 320px;
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui);
+  padding: 9px 12px;
+  border: 1px solid var(--apl-border-input);
+  border-radius: var(--apl-radius-md);
+  background: var(--apl-paper);
+  color: var(--apl-ink);
+}
+
+@media (max-width: 599px) {
+  .dash-nuova-categoria {
+    flex-direction: column;
+    align-items: stretch;
+
+    .apl-field {
+      max-width: none;
+    }
+  }
+}

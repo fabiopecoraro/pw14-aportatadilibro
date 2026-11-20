@@ -1,0 +1,196 @@
+// =============================================================================
+// Design tokens — "a portata di libro"
+// -----------------------------------------------------------------------------
+// Traduzione 1:1 dei token del design ricevuto a inizio progetto, che
+// essendo materiale di terzi non e' versionato qui: questi valori sono percio'
+// l'unica copia dei token nel repository, e si modificano solo per una ragione
+// esplicita — l'unica finora e' il contrasto, annotata piu' sotto.
+//
+// PERCHE' CUSTOM PROPERTIES E NON VARIABILI SASS:
+// il progetto usa Angular Material, che espone il proprio sistema di temi come
+// custom properties (--mat-sys-*). Tenendo anche i token del design in custom
+// properties possiamo (a) sovrascrivere i token Material con i nostri valori
+// esatti in un unico punto, (b) leggerli a runtime da TypeScript (es. colori dei
+// pin Leaflet, generati via DOM fuori dal ciclo di compilazione Sass), e
+// (c) restare a un solo livello di indirezione fra design system e componenti.
+// Le variabili Sass non avrebbero permesso nessuna delle tre cose.
+//
+// Convenzione: prefisso --apl- (A Portata di Libro) per non collidere mai con
+// --mat-sys-*, cosi' e' sempre esplicito se un valore viene dal design o da
+// Material.
+// =============================================================================
+
+:root {
+  // ---------------------------------------------------------------------------
+  // Colore
+  // ---------------------------------------------------------------------------
+  --apl-ink: #16201a; // testo primario, bottone primario, superfici scure
+  --apl-ink-hover: #2c3a31; // hover del bottone primario
+  --apl-ink-soft: #3d453f; // paragrafi su fondo chiaro
+  --apl-muted: #4c564f; // metadati e label secondarie (il colore piu' frequente)
+  --apl-muted-2: #5f665e; // footer, note legali — vedi nota contrasto sotto
+  --apl-muted-3: #8a938c; // SOLO placeholder e controlli disabilitati
+
+  --apl-green: #3a7055; // accento principale: link, stato attivo, pin
+
+  // NOTA CONTRASTO (divergenza dai design token)
+  // Tre valori si discostano da design-tokens.json perche' il rapporto di
+  // contrasto originale non raggiungeva il minimo WCAG 2.1 AA di 4.5:1 per il
+  // testo normale sul fondo dell'app (--apl-paper-2):
+  //   --apl-muted-2  #6a7269 -> #5f665e   (4,39:1 -> 5,23:1)
+  //   --apl-green    #3f7a5c -> #3a7055   (4,47:1 -> 5,11:1, e 5,79:1 in bianco
+  //                                        su verde invece di 5,06:1)
+  //   --apl-danger   #a8544a -> #9d4d43   (4,21:1 -> 4,75:1 sul fondo del pill
+  //                                        di errore)
+  // Sono scostamenti di pochi punti di luminosita', impercettibili accanto
+  // all'originale ma sufficienti a passare la soglia.
+  //
+  // --apl-terracotta-text e' invece un token nuovo, non una correzione: il
+  // terracotta d'accento (#c9764a) rende 2,79:1 come testo sul proprio fondo
+  // tenue, ma serve chiaro dov'e' fondo pieno con testo bianco. Un solo valore
+  // non puo' fare entrambe le cose, quindi il ruolo "testo" ha il suo token.
+  //
+  // --apl-muted-3 resta invariato (2,80:1) perche' il suo ruolo dichiarato e'
+  // placeholder e stato disabilitato, che le linee guida escludono
+  // esplicitamente dal requisito di contrasto. Non va quindi mai usato per
+  // testo che l'utente deve poter leggere: per note, suggerimenti e metadati
+  // secondari si usa --apl-muted-2.
+  --apl-green-dark: #2c5a43; // hover del verde
+  --apl-green-soft: #8fc0a6; // accento su fondo scuro
+
+  --apl-terracotta: #c9764a; // avvisi non bloccanti: scadenze, "in prestito"
+  --apl-terracotta-soft: #f3e6e2; // fondo del badge "in prestito"
+  --apl-terracotta-text: #8f5433; // testo terracotta su terracotta-soft (vedi nota)
+  --apl-danger: #9d4d43; // errori, azioni distruttive
+  --apl-info: #4a6ec9; // link di sistema, focus ring
+
+  --apl-paper: #fbfbf7; // superficie card / pannelli
+  --apl-paper-2: #f2f1ea; // sfondo app
+  --apl-paper-3: #ecebe2; // riquadri annidati, footer email
+  --apl-canvas: #e9e5dc; // sfondo pagina email / desk
+
+  --apl-sage-100: #e0e8df;
+  --apl-sage-200: #d6e0d5;
+  --apl-sage-300: #cdd9cc;
+  --apl-sage-400: #b9c2bb;
+
+  // Bordi e velature. Tutte derivate dall'ink con alpha: il design non usa mai
+  // grigi neutri, cosi' anche i bordi restano nella stessa famiglia cromatica.
+  --apl-border: rgba(22, 32, 26, 0.22); // bottone secondario
+  --apl-border-input: rgba(22, 32, 26, 0.18); // input e chip inattivi
+  --apl-border-strong: rgba(22, 32, 26, 0.45); // hover del bottone secondario
+  --apl-border-soft: rgba(22, 32, 26, 0.1); // divisori, bordi card
+  --apl-divider: rgba(22, 32, 26, 0.12); // separatori orizzontali
+  --apl-overlay: rgba(22, 32, 26, 0.55); // velo dietro le modali
+
+  // ---------------------------------------------------------------------------
+  // Tipografia
+  // ---------------------------------------------------------------------------
+  // Regola del design: label di interfaccia -> ui (Archivo); contenuto da
+  // leggere -> body (Spectral); titolo -> display (Playfair Display).
+  --apl-font-display: 'Playfair Display', Georgia, serif;
+  --apl-font-body: 'Spectral', Georgia, serif;
+  --apl-font-ui: 'Archivo', system-ui, -apple-system, sans-serif;
+
+  --apl-fs-display-xl: 60px;
+  --apl-fs-display-l: 46px;
+  --apl-fs-display-m: 38px;
+  --apl-fs-h1: 32px;
+  --apl-fs-h2: 28px;
+  --apl-fs-h3: 22px;
+  --apl-fs-h4: 19px;
+  --apl-fs-body-l: 17px;
+  --apl-fs-body: 15px;
+  --apl-fs-ui-l: 15px;
+  --apl-fs-ui: 13.5px;
+  --apl-fs-ui-s: 12.5px;
+  --apl-fs-meta: 11.5px;
+  --apl-fs-overline: 10.5px;
+
+  --apl-lh-tight: 1.02;
+  --apl-lh-display: 1.1;
+  --apl-lh-heading: 1.12;
+  --apl-lh-ui: 1.45;
+  --apl-lh-reading: 1.6;
+
+  --apl-ls-display: -0.02em;
+  --apl-ls-overline: 0.16em;
+
+  // ---------------------------------------------------------------------------
+  // Spaziatura
+  // ---------------------------------------------------------------------------
+  // Scala non lineare presa dal prototipo: 9/10/12/14 dentro i componenti,
+  // 22/26/34 fra blocchi, 40/48 padding di sezione.
+  --apl-space-3: 3px;
+  --apl-space-5: 5px;
+  --apl-space-7: 7px;
+  --apl-space-9: 9px;
+  --apl-space-10: 10px;
+  --apl-space-12: 12px;
+  --apl-space-14: 14px;
+  --apl-space-16: 16px;
+  --apl-space-20: 20px;
+  --apl-space-22: 22px;
+  --apl-space-26: 26px;
+  --apl-space-30: 30px;
+  --apl-space-34: 34px;
+  --apl-space-40: 40px;
+  --apl-space-48: 48px;
+
+  // ---------------------------------------------------------------------------
+  // Raggi
+  // ---------------------------------------------------------------------------
+  --apl-radius-xs: 2px; // copertine
+  --apl-radius-sm: 3px;
+  --apl-radius-md: 6px; // bottoni e card (default)
+  --apl-radius-lg: 8px; // riquadri annidati, card di elenco
+  --apl-radius-xl: 10px; // box di contesto
+  --apl-radius-pill: 100px; // chip, badge, FAB
+  --apl-radius-full: 50%; // avatar, pin
+  --apl-radius-bubble-out: 14px 14px 4px 14px; // bolla chat in uscita
+  --apl-radius-bubble-in: 14px 14px 14px 4px; // bolla chat in entrata
+
+  // ---------------------------------------------------------------------------
+  // Ombre
+  // ---------------------------------------------------------------------------
+  --apl-shadow-pin: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --apl-shadow-raised: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --apl-shadow-card: 0 8px 20px rgba(0, 0, 0, 0.13);
+  --apl-shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.3);
+  --apl-shadow-tabbar: 0 -4px 18px rgba(0, 0, 0, 0.06);
+  --apl-shadow-fab: 0 6px 20px rgba(0, 0, 0, 0.25);
+
+  // ---------------------------------------------------------------------------
+  // Layout
+  // ---------------------------------------------------------------------------
+  --apl-content-max: 1180px; // colonna di contenuto centrata
+  --apl-reading-max: 720px; // pagine editoriali (come funziona, legali)
+  --apl-header-height: 68px; // header autenticato desktop
+  --apl-tabbar-height: 64px; // tab bar mobile
+  --apl-touch-target: 44px; // target touch minimo
+  --apl-map-panel-width: 420px; // pannello elenco accanto alla mappa
+
+  // ---------------------------------------------------------------------------
+  // Movimento
+  // ---------------------------------------------------------------------------
+  // Il design ammette solo transizioni funzionali: nessuna animazione decorativa.
+  --apl-duration-fast: 160ms; // hover
+  --apl-duration: 200ms; // cambio di stato
+  --apl-duration-panel: 240ms; // apertura pannelli
+  --apl-duration-sheet: 280ms; // bottom sheet mobile
+  --apl-ease: ease-out;
+  --apl-ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+
+  // ---------------------------------------------------------------------------
+  // Asset procedurali
+  // ---------------------------------------------------------------------------
+  // Placeholder copertina: il design lo prescrive come fallback quando la copia
+  // non ha immagine caricata (l'integrazione ISBN e' fuori scope MVP).
+  --apl-cover-placeholder: repeating-linear-gradient(
+    135deg,
+    #d6e0d5,
+    #d6e0d5 7px,
+    #e0e8df 7px,
+    #e0e8df 14px
+  );
+}

@@ -1,0 +1,36 @@
+@if (vuoto()) {
+  <p class="chart-vuoto">Nessun dato per il periodo selezionato.</p>
+} @else {
+  <svg
+    class="chart-svg"
+    [attr.viewBox]="'0 0 ' + larghezza + ' ' + altezza"
+    preserveAspectRatio="none"
+    role="img"
+    [attr.aria-label]="titolo() + '. ' + descrizione()"
+  >
+    <title>{{ titolo() }}</title>
+    <desc>{{ descrizione() }}</desc>
+
+    <!-- Linee di riferimento: base e meta' scala. Puramente decorative,
+         il valore massimo e' scritto in chiaro sotto al grafico. -->
+    <line class="chart-guida" x1="0" [attr.y1]="altezza / 2" [attr.x2]="larghezza" [attr.y2]="altezza / 2" />
+    <line class="chart-base" x1="0" [attr.y1]="altezza - 8" [attr.x2]="larghezza" [attr.y2]="altezza - 8" />
+
+    <path class="chart-area" [attr.d]="percorsoArea()" />
+    <path class="chart-linea" [attr.d]="percorsoLinea()" />
+
+    <!-- I pallini compaiono solo su serie corte: su 30 punti diventerebbero
+         una fila indistinta e sporcherebbero la linea. -->
+    @if (coordinate().length <= 14) {
+      @for (c of coordinate(); track c.punto.etichetta) {
+        <circle class="chart-punto" [attr.cx]="c.x" [attr.cy]="c.y" r="3" />
+      }
+    }
+  </svg>
+
+  <div class="chart-assi" aria-hidden="true">
+    <span>{{ etichettaIniziale() }}</span>
+    <span class="chart-picco">max {{ valoreMassimo() }}</span>
+    <span>{{ etichettaFinale() }}</span>
+  </div>
+}

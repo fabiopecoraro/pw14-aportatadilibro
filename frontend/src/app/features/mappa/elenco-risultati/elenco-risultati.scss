@@ -1,0 +1,50 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.elenco-conteggio {
+  color: var(--apl-muted);
+  margin: var(--apl-space-5) 0 var(--apl-space-12);
+  flex: none;
+}
+
+.elenco-card {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  // L'elenco scorre per conto proprio: il design tiene ferma la mappa mentre si
+  // scorrono i risultati, quindi lo scroll non puo' essere quello della pagina.
+  overflow-y: auto;
+  min-height: 0;
+  // Un filo di spazio a destra perche' l'ombra della card in hover non venga
+  // tagliata dal contenitore in scroll.
+  padding-right: 2px;
+}
+
+.elenco-coda {
+  align-items: flex-end;
+}
+
+.elenco-distanza {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  font-weight: 600;
+  color: var(--apl-muted);
+  white-space: nowrap;
+
+  // Il verde marca la distanza del risultato selezionato, come nel prototipo:
+  // sulle altre righe resta muted per non trasformare l'elenco in una scala di
+  // accenti.
+  &.vicina {
+    color: var(--apl-green);
+  }
+}
+
+.elenco-altri {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  color: var(--apl-muted-2);
+  white-space: nowrap;
+}

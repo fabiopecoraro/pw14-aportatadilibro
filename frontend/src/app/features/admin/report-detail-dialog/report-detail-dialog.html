@@ -1,0 +1,80 @@
+<!--
+  Dettaglio di una segnalazione, per l'Admin: chi ha segnalato chi, perché, e la
+  chat del prestito coinvolto. È l'unico punto dell'applicazione in cui una
+  conversazione viene letta da qualcuno che non vi partecipa. Le chat sono
+  private, e l'eccezione vale solo finché la segnalazione è aperta: il vincolo è
+  applicato dal server, che a segnalazione chiusa rifiuta la richiesta. Questo
+  dialog non può quindi diventare una via per sfogliare conversazioni altrui.
+
+  È di sola lettura: la chiusura della segnalazione si fa dall'elenco, non da
+  qui, e in fondo c'è soltanto «Chiudi».
+-->
+<h2 mat-dialog-title>Segnalazione</h2>
+
+<mat-dialog-content>
+  <!--
+    Anche davanti all'Admin le due persone compaiono con il nickname: per
+    valutare una segnalazione non serve l'anagrafica reale.
+  -->
+  <div class="apl-inset report-riepilogo">
+    <div class="report-riga">
+      <span>Segnalato da</span>
+      <strong>{{ report.segnalanteNickname }}</strong>
+    </div>
+    <div class="report-riga">
+      <span>Utente segnalato</span>
+      <strong>{{ report.utenteSegnalatoNickname }}</strong>
+    </div>
+    <div class="report-riga">
+      <span>Data</span>
+      <strong>{{ report.dataCreazione | date: 'dd/MM/yyyy HH:mm' }}</strong>
+    </div>
+    <p class="report-motivo">{{ report.motivo }}</p>
+  </div>
+
+  <!-- h3 e non h2: il titolo del dialog è già un h2 e i livelli non si saltano. -->
+  <h3 class="report-sottotitolo">Cronologia chat</h3>
+
+  <!--
+    Il riepilogo sopra arriva dall'elenco già caricato e si vede subito; la
+    cronologia è una richiesta a parte, con i propri stati di attesa e di
+    errore. Così l'Admin legge il motivo anche se la chat non si carica.
+  -->
+  @if (loading()) {
+    <app-skeleton forma="riga" [ripetizioni]="4" />
+  } @else if (errore()) {
+    <app-empty-state
+      titolo="Non siamo riusciti a caricare la chat"
+      descrizione="Controlla la connessione e riprova."
+      icona="cloud_off"
+      [compatto]="true"
+    >
+      <button mat-stroked-button (click)="carica()">Riprova</button>
+    </app-empty-state>
+  } @else if (dettaglio(); as dettaglio) {
+    @if (dettaglio.messaggi.length === 0) {
+      <app-empty-state titolo="Nessun messaggio scambiato" icona="chat_bubble_outline" [compatto]="true" />
+    } @else {
+      <!--
+        Nella chat degli utenti il lato della bolla distingue «io» da «l'altro».
+        L'Admin non è nessuno dei due: i messaggi stanno tutti dalla stessa
+        parte e ognuno porta scritto il mittente, con data e ora complete.
+      -->
+      <div class="report-messaggi">
+        @for (messaggio of dettaglio.messaggi; track messaggio.id) {
+          <div class="report-messaggio">
+            <div class="report-messaggio-testa">
+              <strong>{{ messaggio.mittenteNickname }}</strong>
+              <span>{{ messaggio.dataInvio | date: 'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <p>{{ messaggio.testo }}</p>
+          </div>
+        }
+      </div>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Chiudi</button>
+</mat-dialog-actions>

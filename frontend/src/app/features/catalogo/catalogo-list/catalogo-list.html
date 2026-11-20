@@ -1,0 +1,151 @@
+<!--
+  Catalogo condiviso: l'elenco di tutte le opere, con quante copie ne esistono e
+  quante sono libere adesso. È una ricerca per titolo e autore su tutto il
+  catalogo e non sa nulla di luoghi: niente filtro di distanza, perché la
+  posizione di chi cerca non viene mai inviata al server e la vicinanza si
+  guarda solo sulla mappa, dove a viaggiare è l'area inquadrata.
+
+  La pagina tiene distinti due livelli di filtro. I campi di testo interrogano
+  il server; le chip sotto restringono, nel browser, i risultati già arrivati.
+  Da qui i due messaggi di «vuoto» diversi più in basso.
+-->
+<div class="cat-testa">
+  <div>
+    <h1>Catalogo</h1>
+    <!--
+      Il conteggio compare solo a dati arrivati: durante il caricamento o dopo
+      un errore direbbe «0 titoli», che è un'informazione falsa.
+    -->
+    @if (stato() === 'ready') {
+      <p class="apl-ui-s apl-text-muted">
+        {{ risultatiFiltrati().length }} {{ risultatiFiltrati().length === 1 ? 'titolo' : 'titoli' }}
+      </p>
+    }
+  </div>
+</div>
+
+<!--
+  Due campi e non uno solo, come vorrebbe il design: il server applica titolo e
+  autore insieme (devono valere entrambi), quindi un campo unico che lasciasse
+  intendere «cerca ovunque» mentirebbe sul risultato. Le etichette ci sono ma
+  sono riservate agli screen reader, perché il segnaposto sparisce appena si
+  scrive e non basta a dare un nome al campo. «Azzera» è type="button":
+  dentro un form, senza, verrebbe trattato come un secondo invio.
+-->
+<form [formGroup]="form" (ngSubmit)="cerca()" class="cat-ricerca">
+  <div class="apl-field cat-campo">
+    <label for="cat-titolo" class="apl-sr-only">Titolo</label>
+    <input id="cat-titolo" type="text" formControlName="titolo" placeholder="Cerca per titolo..." />
+  </div>
+  <div class="apl-field cat-campo">
+    <label for="cat-autore" class="apl-sr-only">Autore</label>
+    <input id="cat-autore" type="text" formControlName="autore" placeholder="Cerca per autore..." />
+  </div>
+  <button mat-flat-button type="submit">Cerca</button>
+  <button mat-button type="button" (click)="reset()">Azzera</button>
+</form>
+
+<!--
+  Le chip non elencano tutto il vocabolario delle categorie ma solo quelle
+  presenti nei risultati: un filtro che non seleziona nulla è peggio di un
+  filtro che non c'è. Restano comunque voci del vocabolario chiuso, mai testo
+  digitato. Sono <button> con aria-pressed, non <div> con un click: così si
+  usano da tastiera e lo screen reader dice quale è attiva. Le categorie si
+  escludono a vicenda; «Solo disponibili ora» è un interruttore indipendente
+  che si somma alla categoria scelta.
+-->
+@if (categorieDisponibili().length > 0) {
+  <div class="apl-chip-group cat-chip-riga" role="group" aria-label="Filtra il catalogo">
+    <button
+      type="button"
+      class="apl-chip-toggle"
+      [class.attiva]="categoriaAttiva() === null" [attr.aria-pressed]="categoriaAttiva() === null"
+      (click)="categoriaAttiva.set(null)"
+    >
+      Tutti
+    </button>
+    @for (categoria of categorieDisponibili(); track categoria) {
+      <button
+        type="button"
+        class="apl-chip-toggle"
+        [class.attiva]="categoriaAttiva() === categoria" [attr.aria-pressed]="categoriaAttiva() === categoria"
+        (click)="categoriaAttiva.set(categoria)"
+      >
+        {{ categoria }}
+      </button>
+    }
+    <button
+      type="button"
+      class="apl-chip-toggle"
+      [class.attiva]="soloDisponibili()" [attr.aria-pressed]="soloDisponibili()"
+      (click)="soloDisponibili.set(!soloDisponibili())"
+    >
+      Solo disponibili ora
+    </button>
+  </div>
+}
+
+@switch (stato()) {
+  @case ('loading') {
+    <app-skeleton forma="card-compatta" [ripetizioni]="4" />
+  }
+
+  @case ('error') {
+    <app-empty-state
+      titolo="Non siamo riusciti a caricare il catalogo"
+      descrizione="Controlla la connessione e riprova."
+      icona="cloud_off"
+    >
+      <button mat-stroked-button (click)="cerca()">Riprova</button>
+    </app-empty-state>
+  }
+
+  @default {
+    <!--
+      Due vuoti con rimedi diversi. Se il server non ha restituito nulla, il
+      consiglio è cambiare ricerca o proporre il libro; se i risultati ci sono
+      ma le chip li escludono tutti, basta togliere il filtro. Un messaggio
+      unico manderebbe a riscrivere la ricerca chi ha solo una chip di troppo.
+    -->
+    @if (risultati().length === 0) {
+      <app-empty-state
+        titolo="Nessun libro trovato"
+        descrizione="Prova con un altro titolo o autore, oppure proponilo dalla tua libreria."
+        icona="menu_book"
+      />
+    } @else if (risultatiFiltrati().length === 0) {
+      <app-empty-state
+        titolo="Nessun libro in questo filtro"
+        descrizione="Prova a scegliere un'altra categoria."
+        icona="filter_alt_off"
+        [compatto]="true"
+      />
+    } @else {
+      <div class="cat-elenco">
+        <!--
+          La card libro non naviga da sola: è il contenitore a decidere che cosa
+          sia. Qui è avvolta in un vero <a>, non in un click sulla card, così la
+          riga riceve il focus da tastiera, si apre in una nuova scheda e viene
+          annunciata come collegamento. Il numero a destra (libere / totali)
+          resta visibile anche a zero: un'opera senza copie libere è comunque
+          nel catalogo, e dalla sua scheda si può chiedere di essere avvisati.
+        -->
+        @for (libro of risultatiFiltrati(); track libro.id) {
+          <a class="cat-link" [routerLink]="['/catalogo', libro.id]">
+            <app-book-card
+              [titolo]="libro.titolo"
+              [autore]="libro.autore"
+              [meta]="metaLibro(libro)"
+              variante="riga"
+              [stato]="libro.copieDisponibili > 0 ? 'disponibile' : null"
+            >
+              <span card-trailing class="cat-conteggio">
+                {{ libro.copieDisponibili }} / {{ libro.copieTotali }}
+              </span>
+            </app-book-card>
+          </a>
+        }
+      </div>
+    }
+  }
+}

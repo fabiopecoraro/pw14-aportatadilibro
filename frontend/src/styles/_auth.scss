@@ -1,0 +1,103 @@
+// =============================================================================
+// Schermate di autenticazione (login, registrazione)
+// -----------------------------------------------------------------------------
+// Condiviso fra i due componenti invece di duplicato: la struttura a due
+// colonne (pannello editoriale + form) e i pattern di campo (password con
+// mostra/nascondi, sottotitolo con link) sono identici, cambia solo l'ordine
+// delle colonne e il contenuto.
+// =============================================================================
+
+.auth-pagina {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  background: var(--apl-paper-2);
+}
+
+.auth-form-colonna {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 56px;
+
+  h1 {
+    font-family: var(--apl-font-display);
+    font-weight: 700;
+    font-size: var(--apl-fs-h1);
+    margin: 0 0 var(--apl-space-9);
+  }
+
+  form {
+    margin-top: var(--apl-space-16);
+  }
+}
+
+.auth-sottotitolo {
+  font-family: var(--apl-font-body);
+  font-weight: 300;
+  font-size: var(--apl-fs-body);
+  color: var(--apl-muted);
+  margin: 0 0 var(--apl-space-9);
+}
+
+.auth-campo-password {
+  position: relative;
+  display: flex;
+
+  input {
+    flex: 1;
+    padding-right: 64px;
+  }
+}
+
+.auth-mostra {
+  position: absolute;
+  right: var(--apl-space-14);
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--apl-green);
+  }
+}
+
+.auth-riga-due {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--apl-space-14);
+}
+
+.auth-submit {
+  width: 100%;
+  margin-top: var(--apl-space-9);
+}
+
+.auth-nota {
+  font-family: var(--apl-font-ui);
+  font-size: 12px;
+  color: var(--apl-muted-2);
+  text-align: center;
+  margin: var(--apl-space-14) 0 0;
+}
+
+// Sotto i 900px il pannello editoriale sparisce: resta solo il form, a
+// colonna singola. Il design non disegna una forma mobile per queste
+// schermate, ma il vincolo di non avere layout intermedi dedicati vale
+// anche qui.
+@media (max-width: 899px) {
+  .auth-pagina {
+    grid-template-columns: 1fr;
+  }
+
+  // Il pannello si nasconde da se' (vedi auth-panel.scss): una regola qui non
+  // basterebbe a vincere sulla specificita' del suo stesso `:host`.
+  .auth-form-colonna {
+    padding: var(--apl-space-30) var(--apl-space-20);
+  }
+}

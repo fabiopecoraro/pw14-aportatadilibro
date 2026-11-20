@@ -1,0 +1,182 @@
+<!--
+  Tutti i prestiti dell'utente, nelle due direzioni: quelli che ha chiesto e
+  quelli che gli sono stati chiesti. Un prestito e' una riga sola che cambia
+  stato (in attesa, in corso, restituito, rifiutato, annullato), percio' non ci
+  sono schermate separate per «da restituire» o «fuori casa»: la stessa scheda
+  resta al suo posto e cambia le azioni che offre.
+
+  Le due schede usano lo stesso componente e differiscono solo per cio' che gli
+  passano: chi e' la controparte e quali comandi proiettare. E' qui, e non nella
+  scheda, che si decide chi puo' fare che cosa.
+
+  Lo scheletro compare solo al primo caricamento. Dopo un'azione gli elenchi si
+  aggiornano senza passare da li': togliere e ricreare le schede riporterebbe
+  chi ha appena accettato una richiesta ricevuta sulla prima scheda.
+-->
+<div class="prestiti-testa">
+  <h1>Richieste e prestiti</h1>
+</div>
+
+@if (loading()) {
+  <app-skeleton forma="card-compatta" [ripetizioni]="3" />
+} @else if (errore()) {
+  <app-empty-state
+    titolo="Non siamo riusciti a caricare i tuoi prestiti"
+    descrizione="Controlla la connessione e riprova."
+    icona="cloud_off"
+  >
+    <button mat-stroked-button (click)="carica()">Riprova</button>
+  </app-empty-state>
+} @else {
+  <mat-tab-group>
+    <mat-tab label="Richieste inviate">
+      <div class="prestiti-contenuto">
+        @if (inviati().length === 0) {
+          <app-empty-state
+            titolo="Non hai richiesto nessun libro"
+            descrizione="Le richieste che invii dalla scheda di un libro compariranno qui."
+            icona="outbox"
+            [compatto]="true"
+          />
+        } @else {
+          <div class="prestiti-elenco">
+            @for (prestito of inviati(); track prestito.id) {
+              <app-richiesta-card
+                [prestito]="prestito"
+                [controparteNickname]="prestito.proprietarioNickname"
+                [controparteId]="prestito.proprietarioId"
+              >
+                <!--
+                  Chi ha chiesto puo' solo ritirare la richiesta, e solo finche'
+                  nessuno ha risposto. Da li' in poi vede lo stato e basta: in
+                  particolare non ha un «Segna come restituito», perche' il
+                  prestito lo chiude il proprietario, l'unico che sa di aver
+                  riavuto il libro.
+                -->
+                @if (prestito.stato === StatoPrestito.Richiesto) {
+                  <button
+                    richiesta-azioni-primarie
+                    mat-stroked-button
+                    (click)="annulla(prestito)"
+                    [disabled]="azioneInCorso() === prestito.id"
+                  >
+                    @if (azioneInCorso() === prestito.id) {
+                      <mat-spinner diameter="16" />
+                    }
+                    Annulla richiesta
+                  </button>
+                } @else {
+                  <span richiesta-azioni-primarie class="apl-pill" [class.apl-pill-verde]="prestito.stato === StatoPrestito.Accettato" [class.apl-pill-neutra]="prestito.stato === StatoPrestito.Completato" [class.apl-pill-danger]="prestito.stato === StatoPrestito.Rifiutato || prestito.stato === StatoPrestito.Annullato">
+                    {{ statoLabel(prestito.stato) }}
+                  </span>
+                }
+
+                <!--
+                  Si recensisce solo un prestito concluso, e una volta sola. Che
+                  la recensione esista gia' lo dice il server in «giaRecensito»:
+                  tenerne memoria nel browser farebbe ricomparire il pulsante al
+                  primo ricaricamento della pagina.
+                -->
+                @if (prestito.stato === StatoPrestito.Completato && !prestito.giaRecensito) {
+                  <button
+                    richiesta-azioni-secondarie
+                    mat-button
+                    (click)="recensisci(prestito, prestito.proprietarioNickname)"
+                  >
+                    <mat-icon>rate_review</mat-icon>
+                    Recensisci
+                  </button>
+                }
+              </app-richiesta-card>
+            }
+          </div>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Richieste ricevute">
+      <div class="prestiti-contenuto">
+        @if (ricevuti().length === 0) {
+          <app-empty-state
+            titolo="Nessuna richiesta ricevuta"
+            descrizione="Quando un vicino chiederà uno dei tuoi libri, la richiesta comparirà qui."
+            icona="inbox"
+            [compatto]="true"
+          />
+        } @else {
+          <div class="prestiti-elenco">
+            @for (prestito of ricevuti(); track prestito.id) {
+              <app-richiesta-card
+                [prestito]="prestito"
+                [controparteNickname]="prestito.richiedenteNickname"
+                [controparteId]="prestito.richiedenteId"
+              >
+                <!--
+                  Due pulsanti nello stesso spazio della scheda: li raggruppa un
+                  ng-container, che porta l'attributo di proiezione senza
+                  aggiungere al DOM un elemento che romperebbe l'allineamento
+                  della riga di azioni. Entrambi si spengono durante l'invio,
+                  cosi' non si puo' accettare e rifiutare la stessa richiesta.
+                -->
+                @if (prestito.stato === StatoPrestito.Richiesto) {
+                  <ng-container richiesta-azioni-primarie>
+                    <button
+                      mat-flat-button
+                      (click)="accetta(prestito)"
+                      [disabled]="azioneInCorso() === prestito.id"
+                    >
+                      @if (azioneInCorso() === prestito.id) {
+                        <mat-spinner diameter="16" />
+                      }
+                      Accetta
+                    </button>
+                    <button
+                      mat-stroked-button
+                      (click)="rifiuta(prestito)"
+                      [disabled]="azioneInCorso() === prestito.id"
+                    >
+                      Rifiuta
+                    </button>
+                  </ng-container>
+                } @else if (prestito.stato === StatoPrestito.Accettato) {
+                  <!--
+                    La chiusura del prestito esiste solo in questa scheda, cioe'
+                    solo per il proprietario. Per lo stesso motivo qui un
+                    prestito in corso mostra un comando e non un'etichetta di
+                    stato, a differenza di quanto vede il richiedente.
+                  -->
+                  <button
+                    richiesta-azioni-primarie
+                    mat-flat-button
+                    (click)="completa(prestito)"
+                    [disabled]="azioneInCorso() === prestito.id"
+                  >
+                    @if (azioneInCorso() === prestito.id) {
+                      <mat-spinner diameter="16" />
+                    }
+                    Segna come restituito
+                  </button>
+                } @else {
+                  <span richiesta-azioni-primarie class="apl-pill" [class.apl-pill-neutra]="prestito.stato === StatoPrestito.Completato" [class.apl-pill-danger]="prestito.stato === StatoPrestito.Rifiutato || prestito.stato === StatoPrestito.Annullato">
+                    {{ statoLabel(prestito.stato) }}
+                  </span>
+                }
+
+                @if (prestito.stato === StatoPrestito.Completato && !prestito.giaRecensito) {
+                  <button
+                    richiesta-azioni-secondarie
+                    mat-button
+                    (click)="recensisci(prestito, prestito.richiedenteNickname)"
+                  >
+                    <mat-icon>rate_review</mat-icon>
+                    Recensisci
+                  </button>
+                }
+              </app-richiesta-card>
+            }
+          </div>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+}

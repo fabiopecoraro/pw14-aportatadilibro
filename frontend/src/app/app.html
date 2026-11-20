@@ -1,0 +1,11 @@
+<!--
+  Primo elemento focalizzabile del documento: resta fuori schermo finche' non
+  riceve il focus da tastiera, poi compare in alto a sinistra. Serve a chi
+  naviga con Tab per scavalcare header e barra di navigazione, che altrimenti
+  andrebbero riattraversati a ogni cambio di pagina.
+-->
+<a class="apl-skip-link" href="#contenuto-principale" (click)="vaiAlContenuto($event)">
+  Salta al contenuto
+</a>
+
+<router-outlet />

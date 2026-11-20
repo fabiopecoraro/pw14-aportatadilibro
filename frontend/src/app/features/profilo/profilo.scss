@@ -1,0 +1,44 @@
+// L'intestazione e le recensioni ricevute vivono nelle classi condivise
+// .persona-* (styles/_persona.scss). Qui restano solo gli elementi propri di
+// questa pagina: il CTA verso Impostazioni e la griglia di statistiche
+// personali, che il profilo pubblico di un altro utente non ha (nessun
+// endpoint le espone per un utente arbitrario).
+
+.profilo-cta {
+  flex: none;
+  align-self: flex-start;
+}
+
+.profilo-statistiche {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--apl-space-16);
+  margin-bottom: var(--apl-space-30);
+}
+
+.profilo-stat {
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+  padding: var(--apl-space-16);
+}
+
+.profilo-stat-numero {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--apl-ink);
+}
+
+.profilo-stat-etichetta {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui);
+  color: var(--apl-muted);
+  margin-top: 2px;
+}
+
+@media (max-width: 639px) {
+  .profilo-statistiche {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

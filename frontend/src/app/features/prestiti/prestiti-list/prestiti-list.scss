@@ -1,0 +1,28 @@
+@use '../../../../styles/typography' as type;
+
+// La schermata ha pochissimo stile proprio, ed e' voluto: bordo, riquadro del
+// libro e riga delle azioni appartengono alla scheda della richiesta, che li
+// definisce una volta per entrambe le direzioni. Qui resta solo cio' che
+// riguarda la pagina: l'intestazione e la spaziatura fra le schede in colonna.
+
+.prestiti-testa {
+  margin-bottom: var(--apl-space-16);
+
+  // Il titolo resta un h1 perche' ogni schermata deve averne uno e uno solo,
+  // ma prende la misura tipografica dell'h2: livello dell'intestazione e
+  // dimensione sono due scelte separate. Declassare l'elemento per ottenere un
+  // titolo piu' piccolo lascerebbe la pagina senza h1 per chi naviga per titoli.
+  h1 {
+    @include type.h2;
+  }
+}
+
+.prestiti-contenuto {
+  padding-top: var(--apl-space-22);
+}
+
+.prestiti-elenco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-14);
+}

@@ -1,0 +1,45 @@
+<!--
+  Il vocabolario è mostrato per intero, come chip: è un elenco chiuso e corto, e
+  vederlo tutto rende evidente che una categoria nuova non si può scrivere.
+  Se è vuoto chi compila non può rimediare da solo, quindi il messaggio dice a
+  chi spetta, invece di lasciare un riquadro senza scelte.
+-->
+@if (vuoto()) {
+  <p class="sc-vuoto">
+    Nessuna categoria disponibile: un amministratore deve prima popolare il vocabolario.
+  </p>
+} @else {
+  <!--
+    Ogni chip è un interruttore (button con aria-pressed) dentro un gruppo con
+    nome. `type="button"` è necessario: il selettore vive dentro form, e un
+    button senza tipo li invierebbe a ogni clic su una categoria.
+    Al limite si disabilitano solo le chip non scelte: quelle scelte devono
+    restare togliibili, altrimenti dal massimo non si tornerebbe più indietro.
+  -->
+  <div class="sc-chip" role="group" aria-label="Categorie">
+    @for (categoria of categorie(); track categoria.id) {
+      <button
+        type="button"
+        class="sc-voce"
+        [class.attiva]="selezionata(categoria.id)"
+        [attr.aria-pressed]="selezionata(categoria.id)"
+        [disabled]="disabilitata(categoria.id)"
+        (click)="commuta(categoria.id)"
+      >
+        {{ categoria.nome }}
+      </button>
+    }
+  </div>
+
+  <!--
+    Il conteggio è una regione di stato: chi usa uno screen reader sente quante
+    voci ha scelto e che ha raggiunto il massimo, cosa che a schermo si capisce
+    solo vedendo le chip spegnersi.
+  -->
+  <p class="sc-conteggio" [class.sc-conteggio-limite]="limiteRaggiunto()" role="status">
+    {{ selezione().length }} di {{ massimo() }} selezionate
+    @if (limiteRaggiunto()) {
+      — hai raggiunto il massimo
+    }
+  </p>
+}

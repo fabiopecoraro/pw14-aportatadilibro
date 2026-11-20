@@ -1,0 +1,63 @@
+<!--
+  Scheda di un prestito, la stessa per chi lo ha chiesto e per chi lo ha
+  ricevuto. Mostra con chi si ha a che fare, quale libro e per quanto, e lascia
+  due spazi vuoti per i comandi: quali siano (annullare, accettare, rifiutare,
+  segnare la restituzione, recensire) dipende dalla direzione e dallo stato, e
+  lo decide la pagina che usa la scheda. Cosi' l'aspetto si mantiene in un punto
+  solo e la scheda non deve sapere chi sta guardando.
+
+  Della controparte compaiono soltanto nickname e avatar ricavato dal nickname:
+  nome, cognome ed email non arrivano mai a questo componente, perche' fra
+  utenti l'identita' visibile e' il nickname e nient'altro.
+-->
+<header class="richiesta-testa">
+  <app-avatar [nome]="controparteNickname()" [dimensione]="44" />
+
+  <!--
+    Il nickname e' un collegamento al profilo pubblico: prima di accettare o di
+    chiedere un libro a uno sconosciuto si vogliono leggere le sue recensioni.
+    Il contenitore puo' restringersi (min-width: 0 nel foglio di stile): un
+    elemento flex di suo non scende sotto la larghezza del proprio contenuto, e
+    un nickname lungo e senza spazi allargherebbe la riga oltre la scheda.
+  -->
+  <div class="richiesta-persona">
+    <a class="richiesta-nome" [routerLink]="['/profilo', controparteId()]">{{ controparteNickname() }}</a>
+  </div>
+
+  <span class="richiesta-tempo">{{ tempoRelativo(prestito().dataRichiesta) }}</span>
+</header>
+
+<div class="richiesta-libro">
+  <mat-icon>menu_book</mat-icon>
+  <div>
+    <p class="richiesta-libro-titolo">{{ prestito().libroTitolo }}</p>
+    <p class="richiesta-libro-meta">
+      {{ prestito().giorniStimati }} {{ prestito().giorniStimati === 1 ? 'giorno' : 'giorni' }} stimati
+      @if (prestito().dataDisponibilitaStimata) {
+        · rientro previsto il {{ prestito().dataDisponibilitaStimata | date: 'd MMMM' }}
+      }
+      @if (prestito().dataRestituzioneEffettiva) {
+        · restituito il {{ prestito().dataRestituzioneEffettiva | date: 'd MMMM' }}
+      }
+    </p>
+  </div>
+</div>
+
+<!--
+  I due punti di proiezione stanno ai lati del collegamento alla chat, che
+  invece appartiene alla scheda perche' non cambia con la direzione del
+  prestito. La chat si apre con un <a> che porta l'identificativo del prestito
+  nell'indirizzo, non con un click gestito via codice: la conversazione ha cosi'
+  un indirizzo proprio, che regge i pulsanti avanti e indietro del browser e si
+  puo' aprire in un'altra scheda.
+-->
+<footer class="richiesta-azioni">
+  <ng-content select="[richiesta-azioni-primarie]" />
+
+  <a mat-button routerLink="/chat" [queryParams]="{ p: prestito().id }">
+    <mat-icon>chat</mat-icon>
+    Chat
+  </a>
+
+  <ng-content select="[richiesta-azioni-secondarie]" />
+</footer>

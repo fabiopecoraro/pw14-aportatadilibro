@@ -1,0 +1,54 @@
+<!--
+  Intestazione per schermi da 640px in su; sotto quella soglia la sostituisce
+  la tab bar. Le due barre restano entrambe nel DOM e le alterna una media
+  query della shell: scegliere quale creare da TypeScript ricreerebbe la
+  schermata corrente a ogni cambio di forma, facendole perdere lo stato.
+-->
+<div class="header-sinistra">
+  <a class="header-wordmark" routerLink="/">a portata di libro</a>
+
+  <!--
+    Stesso nome della navigazione nella tab bar: non sono due landmark doppi,
+    perche' la barra nascosta con display: none esce anche dall'albero di
+    accessibilita' e uno screen reader ne trova sempre una sola.
+  -->
+  <nav class="header-nav" aria-label="Navigazione principale">
+    <a routerLink="/mappa" routerLinkActive="attivo">Mappa</a>
+    <a routerLink="/la-mia-libreria" routerLinkActive="attivo">La mia libreria</a>
+    <a routerLink="/catalogo" routerLinkActive="attivo">Catalogo</a>
+    <a routerLink="/chat" routerLinkActive="attivo">Chat</a>
+    <a routerLink="/desideri" routerLinkActive="attivo">Desideri</a>
+    <a routerLink="/prestiti" routerLinkActive="attivo">Prestiti</a>
+  </nav>
+</div>
+
+<div class="header-azioni">
+  <!--
+    La campanella e' un link con la sola icona: il nome lo da' aria-label, che
+    riporta anche il conteggio, altrimenti ridotto a una cifra nel badge. Porta
+    all'elenco dei prestiti, dove quelle richieste attendono una risposta.
+  -->
+  <a
+    class="header-campanella"
+    routerLink="/prestiti"
+    [attr.aria-label]="
+      richieste() > 0 ? richieste() + ' richieste in attesa' : 'Nessuna richiesta in attesa'
+    "
+  >
+    <mat-icon>notifications_none</mat-icon>
+    @if (richieste() > 0) {
+      <span class="apl-badge-numerico header-badge">{{ richieste() }}</span>
+    }
+  </a>
+
+  <!--
+    Il menu non e' definito qui: arriva dalla shell ed e' lo stesso che apre la
+    tab bar, cosi' le due barre non possono mostrare elenchi diversi.
+    Dell'utente compare il solo nickname, con le sue iniziali nell'avatar:
+    nome, cognome ed email non vengono mai mostrati.
+  -->
+  <button class="header-utente" [matMenuTriggerFor]="menuUtente()" aria-label="Menu del profilo">
+    <span class="header-nickname">{{ nickname() }}</span>
+    <app-avatar [nome]="nickname()" [dimensione]="34" variante="green" />
+  </button>
+</div>

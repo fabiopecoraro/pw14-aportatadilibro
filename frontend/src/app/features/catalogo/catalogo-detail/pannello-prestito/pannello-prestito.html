@@ -1,0 +1,85 @@
+<!--
+  Colonna di destra della scheda libro: l'azione principale sul titolo. Ha due
+  forme, e quale delle due dipende da un solo fatto: se esiste almeno una copia
+  disponibile di un altro utente. Se c'e', si puo' chiedere il prestito; se non
+  c'e', l'unica cosa utile e' farsi avvisare quando una copia torna libera.
+
+  Nel design ogni libro ha un solo proprietario e il pannello descrive lui. Qui
+  lo stesso titolo puo' avere piu' copie di persone diverse: il pannello mette
+  in evidenza la prima disponibile, quella su cui agisce il pulsante, e
+  l'elenco completo resta nella colonna centrale.
+-->
+@if (copiaDisponibile(); as copia) {
+  <p class="pannello-overline apl-overline">Prestato da</p>
+
+  <!-- Del proprietario si vede solo il nickname, mai l'anagrafica reale. -->
+  <div class="pannello-persona">
+    <app-avatar [nome]="copia.proprietarioNickname" [dimensione]="48" />
+    <div>
+      <a class="pannello-nome" [routerLink]="['/profilo', copia.proprietarioId]">
+        {{ copia.proprietarioNickname }}
+      </a>
+      <p class="pannello-meta">
+        {{ copieDisponibili() }}
+        {{ copieDisponibili() === 1 ? 'copia disponibile' : 'copie disponibili' }}
+      </p>
+    </div>
+  </div>
+
+  <!--
+    Il design mette qui la distanza e una piccola mappa. Mancano perche' il
+    dettaglio del libro non espone le coordinate degli Hub del proprietario:
+    resta una riga che dice dove avviene lo scambio, cioe' in un luogo pubblico
+    e non a casa di qualcuno. L'icona e' decorativa, il testo dice gia' tutto.
+  -->
+  <div class="pannello-nota">
+    <mat-icon aria-hidden="true">place</mat-icon>
+    <span>Il ritiro avviene in uno degli Hub pubblici del proprietario.</span>
+  </div>
+
+  <button mat-flat-button class="pannello-cta" [disabled]="azioneInCorso()" (click)="chiediPrestito.emit(copia)">
+    @if (azioneInCorso()) {
+      <mat-spinner diameter="18" />
+    }
+    Chiedi in prestito
+  </button>
+} @else {
+  <p class="pannello-overline apl-overline">Al momento non disponibile</p>
+
+  <p class="pannello-attesa">
+    @if (primoRientro(); as rientro) {
+      Tutte le copie sono in prestito. La prima rientra intorno al
+      {{ rientro | date: 'd MMMM' }}.
+    } @else {
+      Nessuna copia di questo titolo è al momento disponibile nel quartiere.
+    }
+  </p>
+
+  <!--
+    A iscrizione avvenuta il pulsante lascia il posto a una conferma: cosi' non
+    ci si iscrive due volte, e chi torna sulla scheda vede che l'avviso e'
+    gia' attivo.
+  -->
+  @if (avvisoAttivo()) {
+    <p class="pannello-avviso-attivo">
+      <mat-icon aria-hidden="true">check_circle</mat-icon>
+      Ti avviseremo appena una copia torna libera.
+    </p>
+  } @else {
+    <button mat-flat-button class="pannello-cta" [disabled]="azioneInCorso()" (click)="avvisami.emit()">
+      @if (azioneInCorso()) {
+        <mat-spinner diameter="18" />
+      }
+      Avvisami quando disponibile
+    </button>
+  }
+}
+
+<!--
+  Fuori dall'@if perche' non dipende dalla disponibilita': chi possiede questo
+  titolo puo' aggiungere la propria copia in ogni caso, ed e' anzi il modo in
+  cui un libro introvabile torna a esserlo.
+-->
+<button mat-stroked-button class="pannello-cta" (click)="aggiungiCopia.emit()">
+  Aggiungi una mia copia
+</button>

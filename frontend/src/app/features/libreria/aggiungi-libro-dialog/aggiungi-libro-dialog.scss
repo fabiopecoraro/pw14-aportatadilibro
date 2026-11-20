@@ -1,0 +1,119 @@
+@use '../../../../styles/typography' as type;
+
+// Le regole tipografiche vengono dalle utility globali .apl-ui-s/.apl-text-muted;
+// qui resta solo il margine, specifico di questo layout.
+.dialog-descrizione {
+  margin: 0 0 var(--apl-space-16);
+}
+
+.ricerca-riga {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--apl-space-10);
+  margin-bottom: var(--apl-space-12);
+}
+
+.ricerca-campo {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.ricerca-conteggio {
+  color: var(--apl-muted);
+  margin: var(--apl-space-20) 0 var(--apl-space-12);
+}
+
+.risultati-elenco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-10);
+}
+
+.risultato-riga {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-14);
+  padding: var(--apl-space-12);
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+}
+
+.risultato-copertina {
+  flex: none;
+  width: 44px;
+  height: 62px;
+  border-radius: var(--apl-radius-xs);
+  background: var(--apl-cover-placeholder);
+}
+
+.risultato-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.risultato-titolo {
+  font-family: var(--apl-font-body);
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--apl-ink);
+  margin: 0;
+}
+
+.risultato-meta {
+  @include type.ui-s;
+  color: var(--apl-muted);
+  margin: var(--apl-space-3) 0 0;
+}
+
+// Cerchio di conferma: bordo sottile a riposo, verde pieno mentre l'aggiunta
+// e' in corso. Non resta mai "spuntato": alla conferma il dialog si chiude.
+.risultato-azione {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--apl-radius-full);
+  border: 1.5px solid var(--apl-border);
+  background: transparent;
+  color: var(--apl-muted);
+  cursor: pointer;
+  transition: border-color var(--apl-duration-fast) var(--apl-ease);
+
+  &:hover:not(:disabled) {
+    border-color: var(--apl-green);
+    color: var(--apl-green);
+  }
+
+  &:disabled {
+    border-color: var(--apl-green);
+    color: var(--apl-green);
+    cursor: default;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.ricerca-proponi {
+  margin-top: var(--apl-space-16);
+}
+
+.proposta-titolo-sezione {
+  @include type.h4;
+  margin: var(--apl-space-30) 0 var(--apl-space-10);
+}
+
+.proposta-form {
+  display: flex;
+  flex-direction: column;
+
+  .apl-field:last-of-type {
+    margin-bottom: var(--apl-space-16);
+  }
+}

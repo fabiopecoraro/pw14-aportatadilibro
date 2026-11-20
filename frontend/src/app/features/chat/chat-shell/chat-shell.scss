@@ -1,0 +1,167 @@
+@use '../../../../styles/typography' as type;
+
+// Tre colonne: elenco ~320px | thread flessibile | contesto ~300px.
+// Sotto i 1024px si passa a colonna singola: la selezione di una
+// conversazione sostituisce l'elenco invece di affiancarlo, e il pannello di
+// contesto (le azioni di prestito) si nasconde — il design mobile
+// mostra solo intestazione e thread; le azioni restano raggiungibili dalla
+// schermata "Prestiti", che su mobile le espone gia'.
+
+:host {
+  flex: 1;
+  min-height: 0;
+  // Come su mappa.scss: senza `min-width: 0` questo flex item non scende
+  // sotto la larghezza minima del proprio contenuto, e la schermata sfora il
+  // viewport stretto facendo scorrere la pagina in orizzontale.
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 320px 1fr 300px;
+}
+
+// --- Elenco -------------------------------------------------------------------
+
+.chat-elenco {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--apl-paper);
+  border-right: 1px solid var(--apl-border-soft);
+}
+
+.chat-elenco-testa {
+  flex: none;
+  padding: var(--apl-space-16) var(--apl-space-20);
+  border-bottom: 1px solid var(--apl-border-soft);
+
+  .chat-elenco-titolo {
+    @include type.h3;
+    margin: 0;
+  }
+}
+
+.chat-elenco-corpo {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+// --- Thread ---------------------------------------------------------------
+
+.chat-thread-colonna {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+// Intestazione mobile: nascosta su desktop, dove il thread non ha bisogno di
+// un back (l'elenco resta visibile accanto).
+.chat-thread-testa-mobile {
+  display: none;
+}
+
+// --- Stato vuoto (desktop, nessuna conversazione selezionata) --------------
+
+.chat-vuoto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--apl-space-10);
+  grid-column: 2 / span 2;
+  color: var(--apl-muted-2);
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+// --- Responsive --------------------------------------------------------------
+
+@media (max-width: 1023px) {
+  :host {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-elenco {
+    border-right: 0;
+
+    &.nascosto-mobile {
+      display: none;
+    }
+  }
+
+  .chat-contesto {
+    display: none;
+  }
+
+  // Su desktop lo stato vuoto occupa le colonne 2 e 3; qui la griglia ha una
+  // sola colonna, e quel `grid-column` ne creava due implicite fuori dal
+  // viewport, spingendo la pagina a scorrere in orizzontale.
+  .chat-vuoto {
+    grid-column: 1;
+  }
+
+  .chat-thread-testa-mobile {
+    display: flex;
+    align-items: center;
+    gap: var(--apl-space-12);
+    padding: var(--apl-space-14) var(--apl-space-16);
+    background: var(--apl-paper);
+    border-bottom: 1px solid var(--apl-border-soft);
+    flex: none;
+  }
+
+  .chat-indietro {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--apl-touch-target);
+    height: var(--apl-touch-target);
+    margin-left: calc(var(--apl-space-16) * -1);
+    border: 0;
+    background: transparent;
+    color: var(--apl-ink);
+    cursor: pointer;
+  }
+
+  .chat-thread-testa-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .chat-thread-nome {
+    font-family: var(--apl-font-ui);
+    font-weight: 600;
+    font-size: var(--apl-fs-ui-l);
+    color: var(--apl-ink);
+    margin: 0;
+  }
+
+  .chat-thread-libro {
+    font-family: var(--apl-font-ui);
+    font-size: var(--apl-fs-meta);
+    color: var(--apl-muted);
+    margin: 0;
+  }
+
+  .chat-segnala-mobile {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--apl-radius-full);
+    border: 0;
+    background: transparent;
+    color: var(--apl-muted);
+
+    &.inviata {
+      color: var(--apl-danger);
+    }
+  }
+}

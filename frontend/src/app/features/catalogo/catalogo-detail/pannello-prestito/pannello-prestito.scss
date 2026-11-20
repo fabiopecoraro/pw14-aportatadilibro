@@ -1,0 +1,101 @@
+:host {
+  display: block;
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-input);
+  border-radius: var(--apl-radius-xl);
+  padding: var(--apl-space-22);
+  // La colonna di destra resta in vista mentre si scorrono recensioni e copie:
+  // l'azione principale non deve uscire dallo schermo.
+  position: sticky;
+  top: var(--apl-space-26);
+}
+
+.pannello-overline {
+  color: var(--apl-muted);
+  margin: 0 0 var(--apl-space-14);
+}
+
+.pannello-persona {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-12);
+  margin-bottom: var(--apl-space-16);
+}
+
+.pannello-nome {
+  display: block;
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: var(--apl-fs-ui-l);
+  color: var(--apl-ink);
+  margin: 0;
+
+  &:hover {
+    color: var(--apl-ink);
+    text-decoration: underline;
+  }
+}
+
+.pannello-meta {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted);
+  margin: 0;
+}
+
+// Riquadro verde tenue: nel design ospita la distanza a piedi, qui spiega dove
+// avviene concretamente lo scambio, che e' l'informazione equivalente.
+.pannello-nota {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-9);
+  padding: 11px 13px;
+  border-radius: var(--apl-radius-lg);
+  background: #e4efe8;
+  margin-bottom: var(--apl-space-16);
+  font-family: var(--apl-font-ui);
+  font-size: 13.5px;
+  color: var(--apl-ink);
+
+  mat-icon {
+    flex: none;
+    color: var(--apl-green);
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.pannello-attesa {
+  font-family: var(--apl-font-body);
+  font-weight: 300;
+  font-size: var(--apl-fs-body);
+  line-height: 1.55;
+  color: var(--apl-muted);
+  margin: 0 0 var(--apl-space-16);
+}
+
+.pannello-avviso-attivo {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-9);
+  margin: 0 0 var(--apl-space-10);
+  font-family: var(--apl-font-ui);
+  font-size: 13.5px;
+  color: var(--apl-green);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+// I due pulsanti occupano tutta la larghezza del pannello e si impilano.
+.pannello-cta {
+  width: 100%;
+
+  & + .pannello-cta {
+    margin-top: var(--apl-space-10);
+  }
+}

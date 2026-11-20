@@ -1,0 +1,16 @@
+<!--
+  Il ramo che si vede in pratica e' quello delle iniziali: l'applicazione
+  espone solo il nickname, mai l'anagrafica reale, e oggi nessuna schermata
+  passa una foto; il ramo con l'immagine resta per un'evoluzione futura.
+  Le iniziali sono un segno grafico ("SB" verrebbe letto lettera per lettera):
+  sono nascoste agli screen reader, che ricevono il nickname intero da un testo
+  visibile solo a loro.
+-->
+@if (immagineUrl(); as url) {
+  <img [src]="url" [alt]="nome()" class="avatar-immagine" />
+} @else {
+  <span class="avatar-iniziali" [style.font-size.px]="dimensioneTesto()" aria-hidden="true">
+    {{ iniziali() }}
+  </span>
+  <span class="apl-sr-only">{{ nome() }}</span>
+}

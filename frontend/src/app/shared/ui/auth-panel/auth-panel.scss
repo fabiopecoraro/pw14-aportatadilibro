@@ -1,0 +1,75 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 52px 48px;
+  position: relative;
+  overflow: hidden;
+  color: var(--apl-paper-2);
+}
+
+:host(.variante-ink) {
+  background: var(--apl-ink);
+}
+
+:host(.variante-green) {
+  background: var(--apl-green);
+}
+
+// Cerchio decorativo sfumato in alto a destra, come nel prototipo.
+.pannello-cerchio {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 200px;
+  height: 200px;
+  border-radius: var(--apl-radius-full);
+  background: rgba(242, 241, 234, 0.12);
+  pointer-events: none;
+}
+
+.pannello-wordmark {
+  position: relative;
+  z-index: 1;
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.pannello-testo {
+  position: relative;
+  z-index: 1;
+
+  .pannello-titolo {
+    font-family: var(--apl-font-display);
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.08;
+    color: var(--apl-paper-2);
+    margin: 0 0 var(--apl-space-16);
+  }
+
+  p {
+    font-family: var(--apl-font-body);
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--apl-sage-300);
+    max-width: 340px;
+    margin: 0;
+  }
+}
+
+.pannello-decorazione:empty {
+  display: none;
+}
+
+// Sotto i 900px il pannello editoriale sparisce e resta solo il form: e' la
+// stessa soglia usata da _auth.scss per la griglia della pagina. La regola
+// vive qui e non li' perche' un selettore esterno non basterebbe a vincere
+// sulla specificita' di :host.
+@media (max-width: 899px) {
+  :host {
+    display: none;
+  }
+}

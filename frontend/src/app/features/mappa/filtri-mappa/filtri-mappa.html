@@ -1,0 +1,58 @@
+<!--
+  Campo di ricerca e chip di categoria della mappa. Il componente non filtra
+  nulla da se': emette il testo e la categoria scelta e lascia alla schermata il
+  compito di applicarli, perche' la stessa coppia di valori deve valere insieme
+  per l'elenco e per i pin.
+-->
+
+<!--
+  Il design non ha un'etichetta visibile sopra il campo, ma il placeholder non
+  basta a dargli un nome: sparisce appena si scrive. L'etichetta c'e', avvolge il
+  campo (cosi' non serve un id) ed e' nascosta alla vista con `.apl-sr-only`. La
+  lente e' decorativa e resta fuori dalla lettura degli screen reader.
+-->
+<label class="filtri-ricerca">
+  <span class="apl-sr-only">Cerca un titolo o autore</span>
+  <mat-icon class="filtri-lente" aria-hidden="true">search</mat-icon>
+  <input
+    type="search"
+    placeholder="Cerca un titolo o autore"
+    [value]="testo()"
+    (input)="aggiornaTesto($event)"
+  />
+</label>
+
+<!--
+  Le chip elencano solo le categorie presenti fra i risultati dell'area
+  visibile: una categoria che non darebbe nessun libro non viene offerta, e se
+  non ce n'e' nessuna la riga sparisce. Sono nomi presi dal vocabolario chiuso
+  delle categorie, mai testo scritto dall'utente.
+
+  Sono pulsanti nativi riuniti in un gruppo con un nome, e lo stato attivo e'
+  esposto con `aria-pressed`: il colore di fondo da solo non direbbe a uno
+  screen reader quale filtro e' in uso.
+-->
+@if (categorieDisponibili().length > 0) {
+  <div class="filtri-chip" role="group" aria-label="Filtra per categoria">
+    <!-- «Tutti» non e' una categoria: emette `null`, cioe' nessun filtro. -->
+    <button
+      type="button"
+      [class.attiva]="categoriaAttiva() === null"
+      [attr.aria-pressed]="categoriaAttiva() === null"
+      (click)="categoriaChange.emit(null)"
+    >
+      Tutti
+    </button>
+
+    @for (categoria of categorieDisponibili(); track categoria) {
+      <button
+        type="button"
+        [class.attiva]="categoriaAttiva() === categoria"
+        [attr.aria-pressed]="categoriaAttiva() === categoria"
+        (click)="categoriaChange.emit(categoria)"
+      >
+        {{ categoria }}
+      </button>
+    }
+  </div>
+}

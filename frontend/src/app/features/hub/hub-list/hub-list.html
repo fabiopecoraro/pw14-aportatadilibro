@@ -1,0 +1,112 @@
+<div class="hub-testa">
+  <h1>I miei Hub</h1>
+  <p class="apl-ui-s apl-text-muted">
+    Clicca su un punto della mappa per registrare un nuovo Hub in quella posizione, oppure
+    sposta la mappa e usa il suo centro.
+  </p>
+  <!--
+    Il clic sulla mappa richiede un puntatore. La mappa si sposta anche con le
+    frecce della tastiera, e questo pulsante prende il punto al centro: e' la
+    strada per chi non usa il mouse.
+  -->
+  <button mat-stroked-button type="button" class="hub-usa-centro" (click)="usaCentroMappa()">
+    Nuovo Hub al centro della mappa
+  </button>
+</div>
+
+<div class="hub-mappa">
+  <div #mapContainer class="hub-tela"></div>
+</div>
+
+@if (nuovaPosizione(); as posizione) {
+  <div class="apl-surface hub-form-riquadro">
+    <p class="apl-overline hub-form-etichetta">Nuovo Hub</p>
+    <p class="hub-form-coordinate">{{ posizione.lat.toFixed(5) }}, {{ posizione.lng.toFixed(5) }}</p>
+
+    <form [formGroup]="form" (ngSubmit)="salva()" class="hub-form">
+      <div class="apl-field" [class.apl-field-invalid]="form.controls.nome.invalid && form.controls.nome.touched">
+        <label for="hub-nome">Nome</label>
+        <input id="hub-nome" type="text" formControlName="nome" placeholder="Es. Bar Isola" />
+        @if (form.controls.nome.hasError('required') && form.controls.nome.touched) {
+          <span class="apl-field-error">Il nome è obbligatorio.</span>
+        }
+      </div>
+
+      <div
+        class="apl-field"
+        [class.apl-field-invalid]="form.controls.indirizzo.invalid && form.controls.indirizzo.touched"
+      >
+        <label for="hub-indirizzo">Indirizzo</label>
+        <input id="hub-indirizzo" type="text" formControlName="indirizzo" placeholder="Via, numero civico" />
+        @if (form.controls.indirizzo.hasError('required') && form.controls.indirizzo.touched) {
+          <span class="apl-field-error">L'indirizzo è obbligatorio.</span>
+        }
+      </div>
+
+      <div class="hub-form-azioni">
+        <button mat-button type="button" (click)="annulla()">Annulla</button>
+        <button mat-flat-button type="submit" [disabled]="salvataggioInCorso()">
+          @if (salvataggioInCorso()) {
+            <mat-spinner diameter="18" />
+          }
+          Salva Hub
+        </button>
+      </div>
+    </form>
+  </div>
+}
+
+<h2 class="hub-sottotitolo">Hub registrati</h2>
+
+@switch (stato()) {
+  @case ('loading') {
+    <app-skeleton forma="riga" [ripetizioni]="3" />
+  }
+
+  @case ('error') {
+    <app-empty-state
+      titolo="Non siamo riusciti a caricare i tuoi hub"
+      descrizione="Controlla la connessione e riprova."
+      icona="cloud_off"
+      [compatto]="true"
+    >
+      <button mat-stroked-button (click)="carica()">Riprova</button>
+    </app-empty-state>
+  }
+
+  @default {
+    @if (hubs().length === 0) {
+      <app-empty-state
+        titolo="Non hai ancora registrato nessun hub"
+        descrizione="Clicca sulla mappa qui sopra per aggiungere il primo punto di ritrovo: senza un hub le tue copie non compaiono nelle ricerche."
+        icona="place"
+        [compatto]="true"
+      />
+    } @else {
+      <div class="hub-elenco">
+        @for (hub of hubs(); track hub.id) {
+          <div class="hub-riga">
+            <div class="hub-riga-info">
+              <p class="hub-riga-nome">{{ hub.nome }}</p>
+              <p class="hub-riga-indirizzo">{{ hub.indirizzo }}</p>
+            </div>
+
+            <button
+              mat-button
+              type="button"
+              (click)="elimina(hub.id)"
+              [disabled]="eliminazioneInCorso() === hub.id"
+            >
+              @if (eliminazioneInCorso() === hub.id) {
+                <mat-spinner diameter="16" />
+              } @else {
+                <mat-icon>delete_outline</mat-icon>
+              }
+              Elimina
+            </button>
+          </div>
+        }
+      </div>
+    }
+  }
+}

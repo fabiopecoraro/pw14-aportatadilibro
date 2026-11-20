@@ -1,0 +1,34 @@
+<!--
+  Ogni forma ricalca il contenuto che sostituisce (stessa copertina, stesse due
+  righe di testo), cosi' la pagina non scatta quando arrivano i dati. Per questo
+  le forme sono casi enumerati e non un rettangolo configurabile; solo `blocco`
+  prende un'altezza, perche' sostituisce aree senza una misura propria.
+  I blocchi sono elementi vuoti: a uno screen reader lo stato di caricamento lo
+  annuncia una volta sola l'elemento del componente, non ogni sagoma ripetuta.
+-->
+@for (elemento of elementi(); track elemento) {
+  @switch (forma()) {
+    @case ('card-compatta') {
+      <div class="skeleton-card">
+        <span class="shimmer copertina-sm"></span>
+        <div class="skeleton-righe">
+          <span class="shimmer riga riga-lunga"></span>
+          <span class="shimmer riga riga-corta"></span>
+        </div>
+      </div>
+    }
+    @case ('card-griglia') {
+      <div class="skeleton-griglia">
+        <span class="shimmer copertina-auto"></span>
+        <span class="shimmer riga riga-lunga"></span>
+        <span class="shimmer riga riga-corta"></span>
+      </div>
+    }
+    @case ('riga') {
+      <span class="shimmer riga riga-lunga"></span>
+    }
+    @case ('blocco') {
+      <span class="shimmer blocco" [style.height.px]="altezza()"></span>
+    }
+  }
+}

@@ -1,0 +1,299 @@
+// =============================================================================
+// Base: reset minimo, elementi HTML e regole globali imposte dal design
+// =============================================================================
+
+@use './typography' as type;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  // Impedisce l'ingrandimento automatico del testo su iOS in rotazione, che
+  // altrimenti romperebbe la scala tipografica fissa del design.
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  // Il design e' progettato in un solo tema chiaro: dichiararlo esplicitamente
+  // evita che il browser inverta i controlli nativi in dark mode di sistema.
+  color-scheme: light;
+
+  margin: 0;
+  height: 100%;
+  background-color: var(--apl-paper-2);
+  color: var(--apl-ink);
+
+  // Default di corpo: Spectral. Le zone di interfaccia lo sovrascrivono con
+  // Archivo tramite le classi .apl-ui-*, mai il contrario.
+  @include type.body;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// --- Titoli -----------------------------------------------------------------
+// Mappati sulla scala del design cosi' che il markup semantico produca gia' la
+// resa corretta senza classi aggiuntive.
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  color: var(--apl-ink);
+}
+
+h1 { @include type.h1; }
+h2 { @include type.h2; }
+h3 { @include type.h3; }
+h4 { @include type.h4; }
+
+p {
+  margin: 0 0 var(--apl-space-14);
+  color: var(--apl-ink-soft);
+}
+
+// --- Link -------------------------------------------------------------------
+// Il design chiede di definire `a` e `a:hover` globalmente sui valori del
+// bottone testo: verde, Archivo 500, sottolineato solo in hover.
+
+a {
+  color: var(--apl-green);
+  font-family: var(--apl-font-ui);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--apl-duration-fast) var(--apl-ease);
+
+  &:hover {
+    color: var(--apl-green-dark);
+    text-decoration: underline;
+  }
+}
+
+// --- Focus ------------------------------------------------------------------
+// Anello 2px info con offset 2px su tutto cio' che e' interattivo. Il design lo
+// marca come non rimuovibile: e' l'unico indicatore di focus del sistema.
+
+:focus-visible {
+  outline: 2px solid var(--apl-info);
+  outline-offset: 2px;
+  border-radius: var(--apl-radius-xs);
+}
+
+// Material disegna i propri focus ring interni su alcuni componenti: li
+// disattiviamo per lasciare un solo linguaggio di focus in tutta l'app.
+.mat-mdc-button-base:focus-visible,
+.mat-mdc-chip:focus-visible {
+  outline: 2px solid var(--apl-info);
+  outline-offset: 2px;
+}
+
+// --- Liste e regole tipografiche minori -------------------------------------
+
+ul,
+ol {
+  margin: 0;
+  padding-left: var(--apl-space-20);
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: var(--apl-divider);
+  margin: var(--apl-space-26) 0;
+}
+
+::selection {
+  background: var(--apl-sage-200);
+  color: var(--apl-ink);
+}
+
+// --- Barre di scorrimento ---------------------------------------------------
+// I pannelli a scroll indipendente (elenco mappa, thread chat) sono una
+// costante del design: una barra discreta evita che spezzino la superficie.
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--apl-sage-400) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--apl-sage-400);
+  border-radius: var(--apl-radius-pill);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+// --- Movimento ridotto ------------------------------------------------------
+// Richiesta esplicita del design: con prefers-reduced-motion il pulsare dei pin
+// e le transizioni dei pannelli si disattivano.
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// --- Utility di layout ricorrenti -------------------------------------------
+
+// Colonna di contenuto centrata a 1180px: l'impaginazione base di tutte le
+// schermate pubbliche e di gran parte di quelle autenticate.
+.apl-content {
+  width: 100%;
+  max-width: var(--apl-content-max);
+  margin-inline: auto;
+  padding-inline: var(--apl-space-26);
+}
+
+// Colonna di lettura a 720px per le pagine editoriali (come funziona, legali).
+.apl-reading {
+  width: 100%;
+  max-width: var(--apl-reading-max);
+  margin-inline: auto;
+  padding-inline: var(--apl-space-26);
+}
+
+// Superficie card standard del design.
+.apl-surface {
+  background: var(--apl-paper);
+  border-radius: var(--apl-radius-md);
+  box-shadow: var(--apl-shadow-raised);
+}
+
+// Riquadro annidato (contesto prestito nelle modali, box informativi).
+.apl-inset {
+  background: var(--apl-paper-3);
+  border-radius: var(--apl-radius-xl);
+  padding: var(--apl-space-14);
+}
+
+// Badge numerico terracotta usato sulla campanella delle richieste e sulla voce
+// Prestiti della tab bar. Vive qui e non in un componente perche' il design lo
+// definisce come elemento del sistema, riusato da chrome diversi.
+.apl-badge-numerico {
+  position: absolute;
+  min-width: 17px;
+  height: 17px;
+  padding-inline: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  // Fondo nella variante scura del terracotta: su quella chiara il numero
+  // bianco arriva a 3,4:1, sotto la soglia di 4,5:1 richiesta per un testo
+  // di queste dimensioni.
+  background: var(--apl-terracotta-text);
+  color: #ffffff;
+  border-radius: var(--apl-radius-pill);
+  font-family: var(--apl-font-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+// Pillola generica Archivo 500 su bordo sottile: usata per i tag di genere,
+// stato e altre etichette compatte che non giustificano un componente proprio.
+.apl-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: var(--apl-radius-pill);
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  font-weight: 500;
+  color: var(--apl-muted);
+  border: 1px solid var(--apl-border-input);
+}
+
+// Varianti di fondo, applicate insieme a .apl-pill.
+.apl-pill-verde {
+  border-color: transparent;
+  background: #e4efe8;
+  color: var(--apl-green);
+  font-weight: 600;
+}
+
+.apl-pill-neutra {
+  border-color: transparent;
+  background: var(--apl-paper-3);
+  font-weight: 600;
+}
+
+// Gruppo di chip filtro a bottoni nativi (Tutti/Disponibili/...): usato dove
+// il filtro e' un set esclusivo di stringhe e non serve la semantica di
+// selezione multipla di mat-chip-listbox.
+.apl-chip-group {
+  display: flex;
+  gap: var(--apl-space-9);
+  flex-wrap: wrap;
+}
+
+.apl-chip-toggle {
+  padding: 6px 14px;
+  border-radius: var(--apl-radius-pill);
+  border: 1px solid var(--apl-border-input);
+  background: transparent;
+  color: var(--apl-ink);
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--apl-duration-fast) var(--apl-ease), border-color var(--apl-duration-fast) var(--apl-ease);
+
+  &:hover {
+    border-color: var(--apl-border);
+  }
+
+  &.attiva {
+    background: var(--apl-green);
+    border-color: transparent;
+    color: #ffffff;
+  }
+}
+
+.apl-pill-danger {
+  border-color: transparent;
+  background: #f6e3e0;
+  color: var(--apl-danger);
+  font-weight: 600;
+}
+
+.apl-divider {
+  height: 1px;
+  background: var(--apl-divider);
+}
+
+// Accessibile agli screen reader ma invisibile: usata per le label dei controlli
+// che nel design sono rappresentati dalla sola icona.
+.apl-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

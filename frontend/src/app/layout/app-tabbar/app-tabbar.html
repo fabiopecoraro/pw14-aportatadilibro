@@ -1,0 +1,43 @@
+<!--
+  Nessun contenitore attorno alle voci: l'elemento del componente e' gia' la
+  griglia a cinque colonne e porta il ruolo di navigazione. Un <nav> interno
+  diventerebbe l'unico figlio della griglia e le voci finirebbero impilate.
+-->
+<a routerLink="/mappa" routerLinkActive="attivo">
+  <mat-icon>map</mat-icon>
+  <span>Mappa</span>
+</a>
+
+<a routerLink="/la-mia-libreria" routerLinkActive="attivo">
+  <mat-icon>collections_bookmark</mat-icon>
+  <span>Libreria</span>
+</a>
+
+<a routerLink="/chat" routerLinkActive="attivo">
+  <mat-icon>chat</mat-icon>
+  <span>Chat</span>
+</a>
+
+<!--
+  Prestiti e' fra le voci fisse perche' e' la sezione che chiede piu' spesso
+  un'azione: il badge conta le richieste ricevute ancora senza risposta, le
+  stesse che su schermi larghi segnala la campanella dell'intestazione.
+-->
+<a routerLink="/prestiti" routerLinkActive="attivo">
+  <mat-icon>swap_horiz</mat-icon>
+  <span>Prestiti</span>
+  @if (richieste() > 0) {
+    <span class="apl-badge-numerico tabbar-badge">{{ richieste() }}</span>
+  }
+</a>
+
+<!--
+  Le sezioni che non entrano nella barra finiscono in questo menu, lo stesso
+  dell'intestazione. E' un button e non un link perche' non porta a una
+  pagina; "Altro" da solo non dice che cosa apre, quindi il nome accessibile
+  e' piu' esplicito dell'etichetta visibile.
+-->
+<button [matMenuTriggerFor]="menuUtente()" aria-label="Altre sezioni">
+  <mat-icon>more_horiz</mat-icon>
+  <span>Altro</span>
+</button>

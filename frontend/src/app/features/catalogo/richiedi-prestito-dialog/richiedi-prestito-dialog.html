@@ -1,0 +1,43 @@
+<!--
+  La richiesta porta un solo dato, la durata stimata, e il testo dice a chi
+  serve: e' cio' che il proprietario ha in mano per decidere. Luogo e momento
+  dello scambio non si chiedono qui perche' le due persone li concordano in chat.
+-->
+<h2 mat-dialog-title>Chiedi in prestito</h2>
+
+<form [formGroup]="form" (ngSubmit)="conferma()">
+  <mat-dialog-content>
+    <p class="dialog-descrizione">
+      Per quanti giorni pensi di tenere il libro? Il proprietario vedrà questa stima quando
+      riceverà la richiesta.
+    </p>
+
+    <!--
+      Campo .apl-field (label sopra, fondo paper) al posto di mat-form-field:
+      per un solo campo e' piu' semplice riprodurre cosi' il design che
+      riconfigurare l'outline di Material. Senza Material la label va collegata
+      a mano con for/id. L'attributo min guida solo i controlli del browser:
+      a bloccare l'invio e' il validatore del form, che mostra anche il motivo.
+    -->
+    <div class="apl-field" [class.apl-field-invalid]="form.controls.giorniStimati.invalid && form.controls.giorniStimati.touched">
+      <label for="giorni-stimati">Durata stimata (giorni)</label>
+      <input
+        id="giorni-stimati"
+        type="number"
+        formControlName="giorniStimati"
+        min="1"
+      />
+      @if (form.controls.giorniStimati.hasError('required') && form.controls.giorniStimati.touched) {
+        <span class="apl-field-error">La durata è obbligatoria.</span>
+      }
+      @if (form.controls.giorniStimati.hasError('min') && form.controls.giorniStimati.touched) {
+        <span class="apl-field-error">La durata deve essere di almeno un giorno.</span>
+      }
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button type="button" (click)="annulla()">Annulla</button>
+    <button mat-flat-button type="submit">Invia richiesta</button>
+  </mat-dialog-actions>
+</form>

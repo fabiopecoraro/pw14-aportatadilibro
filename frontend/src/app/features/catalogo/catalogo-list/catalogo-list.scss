@@ -1,0 +1,76 @@
+@use '../../../../styles/typography' as type;
+
+// Stili della sola disposizione della pagina del catalogo: barra di ricerca,
+// riga delle chip, colonna dei risultati. L'aspetto delle righe è della card
+// libro e quello di chip e campi viene dalle utility globali; qui non si
+// ridefinisce nessuno dei due. Non c'è nessuna media query: la barra di ricerca
+// si adatta da sola andando a capo, fino ai 375px.
+
+.cat-testa {
+  margin-bottom: var(--apl-space-20);
+
+  // Resta un h1, l'unico della schermata, ma con la misura dell'h2: il livello
+  // dell'intestazione serve a chi naviga per titoli, la dimensione all'occhio.
+  h1 {
+    @include type.h2;
+    margin: 0 0 4px;
+  }
+}
+
+.cat-ricerca {
+  display: flex;
+  gap: var(--apl-space-10);
+  align-items: flex-start;
+  margin-bottom: var(--apl-space-16);
+  flex-wrap: wrap;
+}
+
+// I due campi si dividono lo spazio libero ma non scendono sotto i 180px:
+// raggiunta quella soglia, grazie al flex-wrap del contenitore, vanno a capo
+// invece di restringersi ancora. Su uno schermo da 375px finiscono così uno
+// sotto l'altro a tutta larghezza, senza scorrimento orizzontale e senza un
+// breakpoint da mantenere. Il margine inferiore standard dei campi è azzerato
+// perché qui la distanza fra le righe la dà già il gap del contenitore, e i due
+// spazi si sommerebbero.
+.cat-campo {
+  flex: 1;
+  min-width: 180px;
+  margin-bottom: 0;
+}
+
+.cat-chip-riga {
+  margin-bottom: var(--apl-space-22);
+}
+
+.cat-elenco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-12);
+}
+
+// Ogni riga è un collegamento che avvolge un'intera card. Lo stile globale dei
+// link (verde, sottolineato al passaggio) è pensato per il testo: applicato qui
+// colorerebbe e sottolineerebbe titolo, autore e metadati insieme. Va quindi
+// neutralizzato, e ripetuto su :hover perché la regola globale lo ridefinisce
+// anche lì. display: block serve perché un <a> in linea non conterrebbe
+// correttamente la card, che è un blocco.
+.cat-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+// «2 / 5» deve restare su una riga: spezzato dopo la barra non si leggerebbe
+// più come un rapporto fra copie libere e copie totali.
+.cat-conteggio {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  font-weight: 600;
+  color: var(--apl-muted);
+  white-space: nowrap;
+}

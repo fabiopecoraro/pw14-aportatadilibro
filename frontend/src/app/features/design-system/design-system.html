@@ -1,0 +1,202 @@
+<main id="contenuto-principale" tabindex="-1" class="apl-content ds-pagina">
+  <header class="ds-intestazione">
+    <span class="ds-wordmark">a portata di libro</span>
+    <h1>Design system</h1>
+    <p>
+      Token, scala tipografica e componenti condivisi, come definiti nel design dell'applicazione.
+      Questa pagina non fa parte del prodotto: serve a verificare la fedeltà visiva.
+    </p>
+  </header>
+
+  <!-- ===================== Colore ===================== -->
+  <section class="ds-sezione">
+    <h2>Colore</h2>
+    <div class="ds-colori">
+      @for (colore of colori; track colore.nome) {
+        <div class="ds-colore">
+          <span class="ds-campione" [style.background]="'var(' + colore.variabile + ')'"></span>
+          <span class="apl-ui-s"><strong>{{ colore.nome }}</strong></span>
+          <span class="apl-meta apl-text-muted-2">{{ colore.valore }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ===================== Tipografia ===================== -->
+  <section class="ds-sezione">
+    <h2>Tipografia</h2>
+    <div class="ds-scala">
+      <div class="apl-display-xl">Prestito tra vicini</div>
+      <div class="apl-display-l">Prestito tra vicini</div>
+      <div class="apl-display-m">Prestito tra vicini</div>
+      <div class="apl-h1">Titolo di schermata</div>
+      <div class="apl-h2">Titolo di sezione</div>
+      <div class="apl-h3">Sottotitolo</div>
+      <div class="apl-h4">Titolo minore</div>
+      <p class="apl-body-l">
+        Corpo editoriale in Spectral 300 a 17px: è il testo che si legge, non l'interfaccia.
+        La misura di riga larga e l'interlinea 1.6 reggono il peso leggero.
+      </p>
+      <p class="apl-body">Corpo a 15px, stessa famiglia e stesso peso.</p>
+      <div class="apl-ui-l">Etichetta di interfaccia grande — Archivo 500 15px</div>
+      <div class="apl-ui">Etichetta di interfaccia — Archivo 400 13,5px</div>
+      <div class="apl-ui-s apl-text-muted">Metadato secondario — Archivo 12,5px muted</div>
+      <div class="apl-meta apl-text-muted-2">Meta — Archivo 11,5px muted-2</div>
+      <div class="apl-overline apl-text-green">Overline verde</div>
+    </div>
+  </section>
+
+  <!-- ===================== Bottoni ===================== -->
+  <section class="ds-sezione">
+    <h2>Bottoni</h2>
+    <div class="ds-riga">
+      <button mat-flat-button>Chiedi in prestito</button>
+      <button mat-stroked-button>Aggiungi ai desideri</button>
+      <button mat-button>Password dimenticata?</button>
+      <button mat-flat-button disabled>Non disponibile</button>
+      <button mat-icon-button aria-label="Segnala"><mat-icon>flag</mat-icon></button>
+    </div>
+  </section>
+
+  <!-- ===================== Campi ===================== -->
+  <section class="ds-sezione">
+    <h2>Campi</h2>
+    <div class="ds-griglia-due">
+      <div class="apl-field">
+        <label for="ds-email">Email</label>
+        <input id="ds-email" type="email" placeholder="nome@email.it" />
+      </div>
+
+      <div class="apl-field apl-field-invalid">
+        <label for="ds-password">Password</label>
+        <input id="ds-password" type="password" value="123" />
+        <span class="apl-field-error">La password deve avere almeno 8 caratteri.</span>
+      </div>
+
+      <div class="apl-field">
+        <label for="ds-note">Note sulla copia</label>
+        <textarea id="ds-note" placeholder="Condizioni, dediche, sottolineature..."></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Chip ===================== -->
+  <section class="ds-sezione">
+    <h2>Chip filtro</h2>
+    <mat-chip-listbox class="apl-chips" [value]="filtroAttivo()">
+      @for (filtro of filtri; track filtro) {
+        <mat-chip-option [value]="filtro" (selectionChange)="filtroAttivo.set(filtro)">
+          {{ filtro }}
+        </mat-chip-option>
+      }
+    </mat-chip-listbox>
+  </section>
+
+  <!-- ===================== Avatar e badge ===================== -->
+  <section class="ds-sezione">
+    <h2>Avatar e badge di stato</h2>
+    <div class="ds-riga">
+      <app-avatar nome="Sofia Bianchi" [dimensione]="32" />
+      <app-avatar nome="Marco Rossi" [dimensione]="40" />
+      <app-avatar nome="Anna Poli" [dimensione]="56" />
+      <app-avatar nome="Sofia Bianchi" [dimensione]="34" variante="green" />
+    </div>
+    <div class="ds-riga">
+      <app-status-badge stato="disponibile" />
+      <app-status-badge stato="in-prestito" />
+      <app-status-badge stato="richiesto" />
+    </div>
+  </section>
+
+  <!-- ===================== Card libro ===================== -->
+  <section class="ds-sezione">
+    <h2>Card libro</h2>
+
+    <h3 class="ds-etichetta">Compatta — pannello elenco della mappa</h3>
+    <div class="ds-colonna-stretta">
+      <app-book-card
+        titolo="Il nome della rosa"
+        autore="Umberto Eco · Marco R. · ★4,9"
+        variante="compatta"
+        [selezionata]="true"
+      >
+        <span card-trailing class="ds-distanza">350 m</span>
+      </app-book-card>
+
+      <app-book-card titolo="Le città invisibili" autore="Italo Calvino · Sofia B. · ★4,8" variante="compatta">
+        <span card-trailing class="ds-distanza apl-text-muted">600 m</span>
+      </app-book-card>
+    </div>
+
+    <h3 class="ds-etichetta">Riga — risultati di ricerca</h3>
+    <div class="ds-colonna">
+      <app-book-card
+        titolo="Le città invisibili"
+        autore="Italo Calvino · Narrativa"
+        meta="Sofia B. · ★4,9"
+        variante="riga"
+      >
+        <div card-trailing class="ds-coda">
+          <span class="ds-distanza">600 m</span>
+          <button mat-stroked-button>Chiedi</button>
+        </div>
+      </app-book-card>
+    </div>
+
+    <h3 class="ds-etichetta">Griglia — libreria personale</h3>
+    <div class="ds-griglia-libri">
+      <app-book-card titolo="Il nome della rosa" autore="Umberto Eco" variante="griglia" stato="disponibile" />
+      <app-book-card titolo="Le città invisibili" autore="Italo Calvino" variante="griglia" stato="in-prestito" />
+      <app-book-card titolo="Sapiens" autore="Y. N. Harari" variante="griglia" stato="disponibile" />
+      <app-book-card titolo="La coscienza di Zeno" autore="Italo Svevo" variante="griglia" stato="richiesto" />
+    </div>
+  </section>
+
+  <!-- ===================== Copertine ===================== -->
+  <section class="ds-sezione">
+    <h2>Copertine</h2>
+    <div class="ds-riga">
+      <app-book-cover dimensione="sm" titolo="46 × 64" />
+      <app-book-cover dimensione="md" titolo="50 × 70" />
+      <app-book-cover dimensione="lg" titolo="88 × 124" />
+    </div>
+  </section>
+
+  <!-- ===================== Caricamento ===================== -->
+  <section class="ds-sezione">
+    <h2>Caricamento</h2>
+    <div class="ds-griglia-due">
+      <app-skeleton forma="card-compatta" [ripetizioni]="3" />
+      <div class="ds-griglia-libri">
+        <app-skeleton forma="card-griglia" [ripetizioni]="2" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Stato vuoto ===================== -->
+  <section class="ds-sezione">
+    <h2>Stato vuoto</h2>
+    <div class="apl-surface">
+      <app-empty-state
+        titolo="La tua libreria è ancora vuota"
+        descrizione="Aggiungi il primo libro che sei disposto a prestare: chi ti sta vicino potrà trovarlo sulla mappa."
+      >
+        <button mat-flat-button>Aggiungi un libro</button>
+      </app-empty-state>
+    </div>
+  </section>
+
+  <!-- ===================== Pin mappa ===================== -->
+  <section class="ds-sezione">
+    <h2>Pin mappa</h2>
+    <div class="apl-inset ds-mappa-finta">
+      <span class="apl-pin">3</span>
+      <span class="apl-pin apl-pin-evidenziato">5</span>
+      <span class="apl-pin apl-pin-selezionato">
+        <span class="apl-pin-anello"></span>
+        <span>2</span>
+      </span>
+      <span class="apl-pin-posizione"></span>
+    </div>
+  </section>
+</main>

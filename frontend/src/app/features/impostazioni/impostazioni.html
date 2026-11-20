@@ -1,0 +1,223 @@
+<!--
+  Impostazioni dell'account: correggere i propri dati, cambiare la password,
+  uscire. Sono le sole tre cose che il server sa fare su un account, e la pagina
+  non ne mostra altre: il design prevede anche raggio di ricerca, preferenze di
+  notifica ed eliminazione, ma un controllo che non salva nulla sembrerebbe
+  funzionare senza farlo.
+
+  È anche l'unica schermata in cui nome, cognome ed email compaiono, e solo
+  perché chi la guarda ne è il titolare: tutto il resto dell'applicazione
+  conosce una persona attraverso il nickname.
+
+  I due form sono separati, ciascuno con il suo invio e la sua conferma, perché
+  sono due richieste diverse al server: uniti, un errore sulla password
+  bloccherebbe anche la correzione dell'email.
+-->
+<div class="apl-reading">
+  <h1>Impostazioni</h1>
+
+  @switch (stato()) {
+    @case ('loading') {
+      <app-skeleton forma="blocco" [altezza]="220" [ripetizioni]="2" />
+    }
+
+    @case ('error') {
+      <app-empty-state
+        titolo="Non siamo riusciti a caricare il tuo profilo"
+        descrizione="Controlla la connessione e riprova."
+        icona="cloud_off"
+        [compatto]="true"
+      >
+        <button mat-stroked-button (click)="carica()">Riprova</button>
+      </app-empty-state>
+    }
+
+    @default {
+      @if (profilo(); as p) {
+        <section class="impostazioni-sezione">
+          <h2>Dati account</h2>
+
+          <!--
+            Il nome utente è testo e non un campo disabilitato: è la credenziale
+            di accesso ed è scritto nei token già emessi, quindi non si potrà
+            cambiare da qui. Un campo spento lascerebbe intendere che in qualche
+            condizione si sblocchi.
+          -->
+          <div class="impostazioni-riga impostazioni-riga-fissa">
+            <span class="impostazioni-label">Nome utente</span>
+            <span class="impostazioni-valore">{{ p.username }}</span>
+          </div>
+          <p class="impostazioni-nota">
+            Il nome utente serve per accedere e non è modificabile. Agli altri utenti mostriamo
+            solo il tuo nickname pubblico.
+          </p>
+
+          <form [formGroup]="formProfilo" (ngSubmit)="salvaProfilo()" class="impostazioni-form">
+            <div class="apl-field" [class.apl-field-invalid]="formProfilo.controls.nickname.invalid && formProfilo.controls.nickname.touched">
+              <label for="imp-nickname">Nickname pubblico</label>
+              <input id="imp-nickname" type="text" formControlName="nickname" autocomplete="nickname" />
+              @if (formProfilo.controls.nickname.hasError('required') && formProfilo.controls.nickname.touched) {
+                <span class="apl-field-error">Il nickname è obbligatorio.</span>
+              } @else {
+                <span class="apl-field-hint">Come appari agli altri utenti.</span>
+              }
+            </div>
+
+            <div class="impostazioni-coppia">
+              <div class="apl-field" [class.apl-field-invalid]="formProfilo.controls.nome.invalid && formProfilo.controls.nome.touched">
+                <label for="imp-nome">Nome</label>
+                <input id="imp-nome" type="text" formControlName="nome" autocomplete="given-name" />
+                @if (formProfilo.controls.nome.hasError('required') && formProfilo.controls.nome.touched) {
+                  <span class="apl-field-error">Campo obbligatorio.</span>
+                }
+              </div>
+
+              <div class="apl-field" [class.apl-field-invalid]="formProfilo.controls.cognome.invalid && formProfilo.controls.cognome.touched">
+                <label for="imp-cognome">Cognome</label>
+                <input id="imp-cognome" type="text" formControlName="cognome" autocomplete="family-name" />
+                @if (formProfilo.controls.cognome.hasError('required') && formProfilo.controls.cognome.touched) {
+                  <span class="apl-field-error">Campo obbligatorio.</span>
+                }
+              </div>
+            </div>
+
+            <div class="apl-field" [class.apl-field-invalid]="formProfilo.controls.email.invalid && formProfilo.controls.email.touched">
+              <label for="imp-email">Email</label>
+              <input id="imp-email" type="email" formControlName="email" autocomplete="email" />
+              @if (formProfilo.controls.email.hasError('required') && formProfilo.controls.email.touched) {
+                <span class="apl-field-error">L'email è obbligatoria.</span>
+              } @else if (formProfilo.controls.email.hasError('email') && formProfilo.controls.email.touched) {
+                <span class="apl-field-error">Inserisci un indirizzo email valido.</span>
+              } @else {
+                <span class="apl-field-hint">Nome, cognome ed email non sono mai visibili agli altri utenti.</span>
+              }
+            </div>
+
+            <!--
+              Il pulsante resta spento finché non si tocca un campo, così non si
+              invia un salvataggio identico a ciò che c'è già. La conferma è
+              legata alla stessa condizione al contrario: sparisce appena si
+              riprende a scrivere, altrimenti «Modifiche salvate» resterebbe
+              accanto a valori non ancora salvati. role="status" la fa annunciare
+              dallo screen reader senza spostare il focus dal form.
+            -->
+            <div class="impostazioni-azioni">
+              <button mat-flat-button type="submit" [disabled]="salvataggioInCorso() || formProfilo.pristine">
+                @if (salvataggioInCorso()) {
+                  <mat-spinner diameter="18" />
+                }
+                Salva modifiche
+              </button>
+
+              @if (profiloSalvato() && formProfilo.pristine) {
+                <span class="impostazioni-conferma" role="status">
+                  <mat-icon aria-hidden="true">check_circle</mat-icon>
+                  Modifiche salvate
+                </span>
+              }
+            </div>
+          </form>
+        </section>
+
+        <section class="impostazioni-sezione">
+          <h2>Password</h2>
+
+          <!--
+            I due autocomplete diversi (current-password, new-password) dicono al
+            gestore di password del browser quale campo riempire con quella
+            salvata e per quale proporne una nuova; con lo stesso valore su
+            entrambi compilerebbe la vecchia password anche nel secondo.
+          -->
+          <form [formGroup]="formPassword" (ngSubmit)="cambiaPassword()" class="impostazioni-form">
+            <div class="apl-field" [class.apl-field-invalid]="formPassword.controls.passwordAttuale.invalid && formPassword.controls.passwordAttuale.touched">
+              <label for="imp-password-attuale">Password attuale</label>
+              <input
+                id="imp-password-attuale"
+                type="password"
+                formControlName="passwordAttuale"
+                autocomplete="current-password"
+              />
+              @if (formPassword.controls.passwordAttuale.hasError('required') && formPassword.controls.passwordAttuale.touched) {
+                <span class="apl-field-error">Campo obbligatorio.</span>
+              }
+            </div>
+
+            <div class="apl-field" [class.apl-field-invalid]="formPassword.controls.nuovaPassword.invalid && formPassword.controls.nuovaPassword.touched">
+              <label for="imp-password-nuova">Nuova password</label>
+              <input
+                id="imp-password-nuova"
+                type="password"
+                formControlName="nuovaPassword"
+                autocomplete="new-password"
+              />
+              @if (formPassword.controls.nuovaPassword.hasError('required') && formPassword.controls.nuovaPassword.touched) {
+                <span class="apl-field-error">Campo obbligatorio.</span>
+              } @else if (formPassword.controls.nuovaPassword.hasError('minlength') && formPassword.controls.nuovaPassword.touched) {
+                <span class="apl-field-error">
+                  La password deve contenere almeno {{ lunghezzaMinimaPassword }} caratteri.
+                </span>
+              } @else {
+                <span class="apl-field-hint">Almeno {{ lunghezzaMinimaPassword }} caratteri.</span>
+              }
+            </div>
+
+            <div class="impostazioni-azioni">
+              <button mat-stroked-button type="submit" [disabled]="cambioPasswordInCorso()">
+                @if (cambioPasswordInCorso()) {
+                  <mat-spinner diameter="18" />
+                }
+                Cambia password
+              </button>
+
+              @if (passwordCambiata()) {
+                <span class="impostazioni-conferma" role="status">
+                  <mat-icon aria-hidden="true">check_circle</mat-icon>
+                  Password aggiornata
+                </span>
+              }
+            </div>
+          </form>
+        </section>
+
+        <section class="impostazioni-sezione">
+          <h2>Privacy</h2>
+
+          <div class="impostazioni-riga impostazioni-riga-fissa">
+            <span class="impostazioni-label">Iscritto dal</span>
+            <span class="impostazioni-valore">{{ p.dataRegistrazione | date: 'dd MMMM y' : undefined : 'it' }}</span>
+          </div>
+
+          <div class="impostazioni-riga impostazioni-riga-fissa">
+            <span class="impostazioni-label">Consenso accettato il</span>
+            <span class="impostazioni-valore">
+              @if (p.dataAccettazioneTermini) {
+                {{ p.dataAccettazioneTermini | date: 'dd MMMM y' : undefined : 'it' }}
+              } @else {
+                Non registrato
+              }
+            </span>
+          </div>
+
+          <!--
+            L'eliminazione dell'account è una frase e non un pulsante perché il
+            server non ha ancora un'operazione che la esegua: la pagina dichiara
+            il limite e indica a chi rivolgersi, invece di offrire un comando
+            che non potrebbe mantenere.
+          -->
+          <p class="impostazioni-nota">
+            Puoi rileggere in qualsiasi momento
+            <a routerLink="/privacy">l'informativa privacy e i termini di utilizzo</a>.
+            L'eliminazione autonoma dell'account non è ancora disponibile: per richiederla
+            contatta un amministratore.
+          </p>
+        </section>
+
+        <section class="impostazioni-sezione">
+          <h2>Sessione</h2>
+
+          <button mat-stroked-button (click)="logout()">Esci da questo dispositivo</button>
+        </section>
+      }
+    }
+  }
+</div>

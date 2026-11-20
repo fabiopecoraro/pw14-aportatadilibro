@@ -1,0 +1,132 @@
+@use '../../../../styles/typography' as type;
+
+:host {
+  display: flex;
+  // Il fondo e' esposto come custom property: nel pannello desktop le card
+  // stanno su paper-2 e sono paper, nel bottom sheet mobile il rapporto si
+  // inverte. E' l'unica differenza fra i due contesti, quindi si parametrizza
+  // questa invece di duplicare la variante.
+  background: var(--book-card-bg, var(--apl-paper));
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+  transition:
+    border-color var(--apl-duration-fast) var(--apl-ease),
+    box-shadow var(--apl-duration-fast) var(--apl-ease);
+}
+
+// Hover: l'ombra passa da `raised` a `card`. Nel design questo movimento e'
+// accoppiato all'ingrandimento del pin corrispondente sulla mappa, per cui
+// resta volutamente sobrio.
+:host(.interattiva) {
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: var(--apl-shadow-card);
+  }
+}
+
+// Selezione: bordo verde pieno. E' l'unico segnale di selezione del sistema,
+// usato sia dal click sulla card sia dalla selezione del pin sulla mappa.
+:host(.selezionata) {
+  border-color: var(--apl-green);
+}
+
+// --- Variante compatta: pannello elenco della mappa -------------------------
+
+:host(.variante-compatta) {
+  align-items: center;
+  gap: 13px;
+  padding: var(--apl-space-12);
+
+  .card-titolo {
+    font-size: 15.5px;
+  }
+}
+
+// --- Variante riga: risultati di ricerca ------------------------------------
+
+:host(.variante-riga) {
+  align-items: center;
+  gap: 15px;
+  padding: 13px;
+  border-radius: var(--apl-radius-xl);
+
+  .card-titolo {
+    font-size: 16.5px;
+  }
+
+  .card-autore {
+    margin-top: var(--apl-space-3);
+  }
+
+  .card-meta {
+    margin-top: var(--apl-space-5);
+  }
+}
+
+// --- Variante griglia: libreria personale -----------------------------------
+
+:host(.variante-griglia) {
+  flex-direction: column;
+  gap: var(--apl-space-7);
+  padding: 0;
+  background: transparent;
+  border: 0;
+
+  // Nella griglia la selezione non ha bordo card da colorare: si evidenzia la
+  // copertina, che e' l'unico elemento con una superficie propria.
+  &.selezionata app-book-cover {
+    outline: 2px solid var(--apl-green);
+    outline-offset: 2px;
+  }
+
+  &:hover {
+    box-shadow: none;
+  }
+
+  .card-titolo {
+    font-size: 14px;
+  }
+}
+
+// --- Elementi comuni --------------------------------------------------------
+
+.card-testo {
+  flex: 1;
+  min-width: 0;
+}
+
+// Titolo in Spectral 600: vedi nota di fedelta' nel componente.
+.card-titolo {
+  font-family: var(--apl-font-body);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--apl-ink);
+}
+
+.card-autore {
+  @include type.ui-s;
+  color: var(--apl-muted);
+}
+
+.card-meta {
+  @include type.ui-s;
+  color: var(--apl-muted);
+}
+
+.card-stato {
+  margin-top: var(--apl-space-7);
+}
+
+.card-coda {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--apl-space-9);
+
+  // Non occupa spazio quando il contenitore non proietta nulla.
+  &:empty {
+    display: none;
+  }
+}

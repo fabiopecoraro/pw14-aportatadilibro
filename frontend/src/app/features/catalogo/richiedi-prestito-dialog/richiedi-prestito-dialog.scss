@@ -1,0 +1,17 @@
+// La descrizione e' testo da leggere e non interfaccia: usa il carattere del
+// corpo, leggero, invece di quello dei controlli.
+.dialog-descrizione {
+  font-family: var(--apl-font-body);
+  font-weight: 300;
+  font-size: var(--apl-fs-body);
+  line-height: 1.55;
+  color: var(--apl-muted);
+  margin: 0 0 var(--apl-space-20);
+}
+
+// Fuori da qui .apl-field riserva un margine sotto per il campo successivo. In
+// questo dialog il campo e' l'ultimo elemento del contenuto, e quel margine si
+// sommerebbe allo spazio che il dialog lascia gia' prima dei pulsanti.
+.apl-field {
+  margin-bottom: 0;
+}

@@ -1,0 +1,76 @@
+// =============================================================================
+// Intestazione persona e recensioni ricevute
+// -----------------------------------------------------------------------------
+// Condiviso fra il profilo proprio e il profilo pubblico di un altro utente:
+// stessa intestazione (avatar, nome, badge di fiducia) e stessa griglia di
+// recensioni ricevute, che è l'unico dato reale disponibile su un utente
+// arbitrario (vedi ProfiloPubblico). Il profilo proprio aggiunge sopra le
+// statistiche personali, che restano locali al suo componente.
+// =============================================================================
+
+.persona-testa {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-26);
+  margin-bottom: var(--apl-space-34);
+}
+
+.persona-info {
+  flex: 1;
+  min-width: 0;
+
+  h1 {
+    font-family: var(--apl-font-display);
+    font-weight: 700;
+    font-size: var(--apl-fs-h1);
+    margin: 0 0 var(--apl-space-9);
+  }
+}
+
+.persona-badge-riga {
+  display: flex;
+  gap: var(--apl-space-9);
+}
+
+.persona-sottotitolo {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: var(--apl-fs-h3);
+  margin: 0 0 var(--apl-space-16);
+}
+
+.persona-recensioni {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--apl-space-16);
+}
+
+.persona-recensione {
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+  padding: var(--apl-space-14);
+}
+
+.persona-recensione-testa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--apl-space-5);
+}
+
+.persona-recensione-autore {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--apl-ink);
+}
+
+.persona-recensione-commento {
+  font-family: var(--apl-font-body);
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--apl-muted);
+  margin: 0;
+}

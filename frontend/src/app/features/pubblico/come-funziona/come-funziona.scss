@@ -1,0 +1,133 @@
+@use '../../../../styles/typography' as type;
+
+:host {
+  display: block;
+  background: var(--apl-paper-2);
+}
+
+// Solo cf-patto/cf-domande la usano: cf-intro e cf-passi hanno gia' il
+// padding orizzontale di .apl-reading/.apl-content (26px, leggermente meno
+// dei 44px del design ma coerente col resto dell'app, che usa sempre quella
+// stessa utility per le colonne di contenuto).
+.cf-pad {
+  padding-left: 44px;
+  padding-right: 44px;
+}
+
+.cf-intro {
+  padding-top: 56px;
+  padding-bottom: 44px;
+
+  h1 {
+    @include type.display-l;
+    font-size: 42px;
+    margin: 0 0 var(--apl-space-16);
+  }
+
+  p {
+    @include type.body-l;
+    font-size: 18px;
+    color: var(--apl-ink-soft);
+    margin: 0;
+  }
+}
+
+.cf-passi {
+  padding-bottom: 52px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--apl-space-30);
+}
+
+.cf-patto,
+.cf-domande {
+  padding-top: 52px;
+  padding-bottom: 52px;
+}
+
+.cf-patto {
+  background: var(--apl-ink);
+  color: var(--apl-paper-2);
+
+  h2 {
+    @include type.h2;
+    color: var(--apl-paper-2);
+    margin: 0 0 var(--apl-space-26);
+  }
+
+  // Il titolo di riga e' condiviso con la sezione chiara delle domande
+  // frequenti, dove eredita giustamente il grigio scuro dei paragrafi. Qui il
+  // fondo e' scuro: senza questa riga restava --apl-ink-soft su --apl-ink,
+  // cioe' 1,7:1, praticamente illeggibile.
+  .cf-titolo-riga {
+    color: var(--apl-paper-2);
+  }
+}
+
+.cf-patto-griglia {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--apl-space-22) var(--apl-space-40);
+
+  > div {
+    display: flex;
+    gap: var(--apl-space-12);
+  }
+
+  span {
+    color: var(--apl-green-soft);
+    font-size: 16px;
+  }
+}
+
+// Titolo condiviso fra un punto del patto e una domanda frequente: le due
+// dimensioni del design (15.5px/16px) differiscono per una frazione di
+// pixel, non abbastanza da giustificare due regole separate.
+.cf-titolo-riga {
+  @include type.ui-l;
+  font-size: 16px;
+  margin: 0 0 6px;
+}
+
+.cf-patto-testo {
+  @include type.ui-s;
+  font-size: 14.5px;
+  color: var(--apl-sage-300);
+  margin: 0;
+  line-height: 1.55;
+}
+
+.cf-domande {
+  background: var(--apl-paper);
+
+  h2 {
+    @include type.h3;
+    font-size: 26px;
+    margin: 0 0 var(--apl-space-26);
+  }
+}
+
+.cf-domanda {
+  padding: var(--apl-space-16) 0;
+  border-top: 1px solid var(--apl-border-soft);
+
+  &.cf-domanda-ultima {
+    border-bottom: 1px solid var(--apl-border-soft);
+  }
+}
+
+@media (max-width: 899px) {
+  .cf-intro h1 {
+    font-size: 32px;
+  }
+
+  .cf-passi,
+  .cf-patto-griglia {
+    grid-template-columns: 1fr;
+  }
+
+  .cf-pad {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

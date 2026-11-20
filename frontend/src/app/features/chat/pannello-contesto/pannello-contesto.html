@@ -1,0 +1,129 @@
+<!--
+  Colonna di destra della chat: di quale libro si sta parlando e che cosa si
+  può fare ora sul prestito. Le azioni non sono un elenco fisso: dipendono
+  dallo stato del prestito e da chi guarda (richiedente o proprietario), perché
+  ogni passaggio di stato spetta a una sola delle due parti. Il pannello non
+  chiama il server: emette l'intenzione e lascia alla schermata chat il compito
+  di eseguirla, così l'elenco e il thread si aggiornano insieme a lui.
+-->
+<div class="contesto-testa">
+  <p class="apl-overline">Libro in discussione</p>
+
+  <!--
+    Il pulsante è una sola icona: senza aria-label uno screen reader
+    annuncerebbe «pulsante» e basta. Dopo l'invio resta disabilitato e
+    l'etichetta cambia, così l'esito è detto a parole e non affidato al solo
+    colore della bandierina.
+  -->
+  <button
+    type="button"
+    class="contesto-segnala"
+    [class.inviata]="segnalazioneInviata()"
+    [disabled]="segnalazioneInviata()"
+    [matTooltip]="segnalazioneInviata() ? 'Segnalazione inviata' : 'Segnala un comportamento scorretto'"
+    [attr.aria-label]="segnalazioneInviata() ? 'Segnalazione inviata' : 'Segnala un comportamento scorretto'"
+    (click)="segnala.emit()"
+  >
+    <mat-icon>{{ segnalazioneInviata() ? 'flag' : 'outlined_flag' }}</mat-icon>
+  </button>
+</div>
+
+<a class="contesto-libro" [routerLink]="['/catalogo', conversazione().libroId]">
+  <mat-icon>menu_book</mat-icon>
+  <span class="contesto-libro-titolo">{{ conversazione().libroTitolo }}</span>
+</a>
+
+<div class="apl-inset contesto-dettagli">
+  <!--
+    Dell'altra persona compare il solo nickname, anche qui dove i due si
+    stanno accordando per incontrarsi: nome, cognome ed email non arrivano mai
+    al browser di un altro utente.
+  -->
+  <div class="contesto-riga">
+    <span>Con</span>
+    <a [routerLink]="['/profilo', conversazione().controparteId]">{{ conversazione().controparteNickname }}</a>
+  </div>
+  <div class="contesto-riga">
+    <span>Durata stimata</span>
+    <strong>{{ conversazione().giorniStimati }} giorni</strong>
+  </div>
+  @if (conversazione().dataDisponibilitaStimata) {
+    <div class="contesto-riga">
+      <span>Rientro previsto</span>
+      <strong>{{ conversazione().dataDisponibilitaStimata | date: 'd MMMM' }}</strong>
+    </div>
+  }
+  @if (conversazione().dataRestituzioneEffettiva) {
+    <div class="contesto-riga">
+      <span>Restituito il</span>
+      <strong>{{ conversazione().dataRestituzioneEffettiva | date: 'd MMMM' }}</strong>
+    </div>
+  }
+</div>
+
+<div class="contesto-azioni">
+  @switch (conversazione().stato) {
+    @case (StatoPrestito.Richiesto) {
+      <!--
+        Finché la richiesta è in attesa chi l'ha fatta può solo ritirarla;
+        accettare o rifiutare spetta al proprietario del libro.
+      -->
+      @if (conversazione().sonoRichiedente) {
+        <button mat-stroked-button [disabled]="azioneInCorso()" (click)="annulla.emit()">
+          @if (azioneInCorso()) {
+            <mat-spinner diameter="16" />
+          }
+          Annulla richiesta
+        </button>
+      } @else {
+        <button mat-flat-button [disabled]="azioneInCorso()" (click)="accetta.emit()">
+          @if (azioneInCorso()) {
+            <mat-spinner diameter="16" />
+          }
+          Accetta
+        </button>
+        <button mat-stroked-button [disabled]="azioneInCorso()" (click)="rifiuta.emit()">Rifiuta</button>
+      }
+    }
+    @case (StatoPrestito.Accettato) {
+      <!--
+        «Segna come restituito» lo vede solo il proprietario: è l'unico che sa
+        di aver riavuto il libro. Al richiedente non si lascia uno spazio vuoto
+        ma una riga che dice chi deve fare il passo successivo, altrimenti
+        cercherebbe un pulsante che per lui non esiste.
+      -->
+      @if (!conversazione().sonoRichiedente) {
+        <button mat-flat-button [disabled]="azioneInCorso()" (click)="completa.emit()">
+          @if (azioneInCorso()) {
+            <mat-spinner diameter="16" />
+          }
+          Segna come restituito
+        </button>
+      } @else {
+        <p class="contesto-nota">In attesa che {{ conversazione().controparteNickname }} confermi la restituzione.</p>
+      }
+    }
+    @case (StatoPrestito.Completato) {
+      <!--
+        La recensione si lascia a prestito concluso e una volta sola.
+        `giaRecensito` arriva dal server insieme al prestito: se fosse uno
+        stato tenuto solo in pagina, dopo un ricaricamento il pulsante
+        tornerebbe a proporre una recensione già scritta.
+      -->
+      @if (conversazione().giaRecensito) {
+        <p class="contesto-nota">Hai già recensito questo prestito.</p>
+      } @else {
+        <button mat-stroked-button (click)="recensisci.emit()">
+          <mat-icon>rate_review</mat-icon>
+          Recensisci
+        </button>
+      }
+    }
+    @case (StatoPrestito.Rifiutato) {
+      <p class="contesto-nota">La richiesta è stata rifiutata.</p>
+    }
+    @case (StatoPrestito.Annullato) {
+      <p class="contesto-nota">La richiesta è stata annullata.</p>
+    }
+  }
+</div>

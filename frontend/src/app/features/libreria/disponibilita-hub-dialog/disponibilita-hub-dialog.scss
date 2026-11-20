@@ -1,0 +1,79 @@
+// Dialog delle esclusioni per Hub: un elenco di righe, ciascuna con il nome
+// dell'Hub a sinistra e il suo interruttore a destra. Il bordo delle righe usa il token di
+// sistema di Material, lo stesso del dialog che le contiene; il testo
+// secondario usa invece il grigio del progetto pensato per essere letto, perche'
+// un colore da bordo non raggiunge il contrasto richiesto.
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  // La larghezza minima cede sugli schermi stretti: a 375px un valore fisso
+  // sarebbe piu' largo del dialog e lo farebbe scorrere in orizzontale.
+  min-width: min(420px, 100%);
+}
+
+.sottotitolo {
+  margin: 0;
+  font-weight: 500;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--apl-muted-2);
+}
+
+.hub-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hub-riga {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 4px;
+
+  // Di un Hub escluso si attenua solo il testo, non l'intera riga:
+  // l'interruttore deve restare pienamente visibile, perche' e' il comando con
+  // cui l'esclusione si toglie.
+  &.escluso .info {
+    opacity: 0.6;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+
+    span {
+      font-size: 0.85rem;
+      color: var(--apl-muted-2);
+    }
+  }
+}
+
+.riepilogo {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--apl-muted-2);
+}
+
+// L'avviso «nessun Hub attivo» va a capo e prende il colore d'errore: e' una
+// conseguenza da non perdere, e in coda alla riga di riepilogo, con lo stesso
+// grigio, passerebbe per una nota.
+.avviso {
+  display: block;
+  margin-top: 4px;
+  color: var(--mat-sys-error);
+}

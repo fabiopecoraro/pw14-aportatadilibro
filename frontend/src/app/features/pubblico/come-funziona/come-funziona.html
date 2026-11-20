@@ -1,0 +1,139 @@
+<!--
+  Pagina pubblica che spiega il prestito a chi non ha ancora un account: tre
+  passi, le regole di convivenza, le domande frequenti. Stando fuori dal layout
+  delle schermate dietro login porta da sé intestazione pubblica e <main>, che
+  è il bersaglio del link «salta al contenuto».
+
+  I testi non sono quelli del design, che descriveva due meccanismi inesistenti:
+  una posizione «approssimativa» mostrata agli altri, mentre qui la posizione
+  non si salva affatto e ciò che gli altri vedono sono gli Hub pubblici scelti
+  dal proprietario; e una proroga del prestito, per la quale non esiste alcuna
+  azione. Una pagina che racconta la privacy in modo diverso da com'è
+  realizzata è un difetto più grave di una differenza grafica.
+-->
+<app-public-header paginaAttiva="come-funziona" />
+
+<main id="contenuto-principale" tabindex="-1">
+
+<div class="cf-intro apl-reading">
+  <h1>Come funziona il prestito tra vicini</h1>
+  <p>
+    Nessun pagamento, nessun deposito. Solo persone che si fidano l'una dell'altra, con
+    qualche regola condivisa per rendere tutto semplice.
+  </p>
+</div>
+
+<div class="cf-passi apl-content">
+  <article class="pubblico-passo">
+    <div class="pubblico-numero">01</div>
+    <h2>Metti i tuoi libri sulla mappa</h2>
+    <p>
+      Aggiungi i titoli che sei disposto a prestare e scegli in quali punti di ritrovo
+      pubblici (gli Hub — bar, biblioteche, piazze) renderli disponibili. La tua posizione
+      esatta non viene mai salvata: gli altri vedono solo gli Hub pubblici che hai scelto.
+    </p>
+  </article>
+  <article class="pubblico-passo">
+    <div class="pubblico-numero">02</div>
+    <h2>Chiedi quello che ti serve</h2>
+    <p>
+      Cerca sulla mappa, guarda le recensioni del prestatore e manda la richiesta. Vi
+      accordate in chat su dove e quando incontrarvi.
+    </p>
+  </article>
+  <article class="pubblico-passo">
+    <div class="pubblico-numero">03</div>
+    <h2>Restituisci e lascia una recensione</h2>
+    <p>
+      Riporti il libro nello stesso Hub. Le recensioni costruiscono la reputazione che rende
+      possibile prestare a uno sconosciuto.
+    </p>
+  </article>
+</div>
+
+<section class="cf-patto cf-pad">
+  <div class="apl-content">
+    <h2>Il patto tra lettori</h2>
+
+    <div class="cf-patto-griglia">
+      <div>
+        <span>—</span>
+        <div>
+          <p class="cf-titolo-riga">Rispetta i tempi</p>
+          <p class="cf-patto-testo">Restituisci il libro entro la data concordata in chat.</p>
+        </div>
+      </div>
+      <div>
+        <span>—</span>
+        <div>
+          <p class="cf-titolo-riga">Tratta bene i libri altrui</p>
+          <p class="cf-patto-testo">Niente sottolineature, orecchie o pagine strappate su copie non tue.</p>
+        </div>
+      </div>
+      <div>
+        <span>—</span>
+        <div>
+          <p class="cf-titolo-riga">Incontratevi negli Hub pubblici</p>
+          <p class="cf-patto-testo">
+            Un bar, una biblioteca, una piazza: lo scambio avviene sempre in un luogo
+            pubblico, mai a casa di qualcuno.
+          </p>
+        </div>
+      </div>
+      <div>
+        <span>—</span>
+        <div>
+          <p class="cf-titolo-riga">Il prestito è gratuito</p>
+          <p class="cf-patto-testo">Chi chiede denaro per un prestito può essere segnalato a un amministratore.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cf-domande cf-pad">
+  <div class="apl-reading">
+    <h2>Domande frequenti</h2>
+
+    <!--
+      La risposta si ferma dove si ferma il software: una segnalazione fa
+      leggere la chat a un amministratore, che può solo chiuderla. Sospensioni
+      o blocchi degli account non esistono, e prometterli a chi sta decidendo
+      se prestare un libro sarebbe la rassicurazione sbagliata.
+    -->
+    <div class="cf-domanda">
+      <p class="cf-titolo-riga">E se qualcuno non mi restituisce un libro?</p>
+      <p class="apl-body apl-text-muted">
+        Puoi aprire una segnalazione dalla chat del prestito: un amministratore la esamina
+        leggendo la conversazione. Il servizio oggi si ferma qui, e non prevede ancora
+        provvedimenti sugli account.
+      </p>
+    </div>
+    <div class="cf-domanda">
+      <p class="cf-titolo-riga">Chi vede dove abito?</p>
+      <p class="apl-body apl-text-muted">
+        Nessuno. La tua posizione esatta non viene mai salvata su un server: i libri si
+        scambiano nei punti di ritrovo pubblici che scegli tu, mai al tuo indirizzo.
+      </p>
+    </div>
+    <div class="cf-domanda">
+      <p class="cf-titolo-riga">Devo per forza prestare per poter prendere?</p>
+      <p class="apl-body apl-text-muted">No. Puoi chiedere un libro in prestito anche senza averne pubblicato nessuno.</p>
+    </div>
+    <div class="cf-domanda cf-domanda-ultima">
+      <p class="cf-titolo-riga">Il servizio è gratuito?</p>
+      <p class="apl-body apl-text-muted">Sì, per chi presta e per chi prende. Non ci sono commissioni né abbonamenti.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!--
+  Il piè di pagina resta fuori dal <main>: così è un punto di riferimento della
+  pagina a sé stante, e lo skip link porta al contenuto senza includerlo.
+-->
+<footer class="pubblico-footer">
+  <span class="pubblico-footer-wordmark">a portata di libro</span>
+  <span>Fatto per i lettori di quartiere · 2026</span>
+</footer>

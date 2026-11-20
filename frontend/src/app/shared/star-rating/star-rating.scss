@@ -1,0 +1,42 @@
+// Stelle di valutazione.
+//
+// Il design le disegna in verde: la valutazione e' un dato di fiducia, non un
+// avviso, quindi resta nell'accento del sistema invece di prendere il giallo
+// convenzionale delle recensioni.
+
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  color: var(--apl-green);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  // Il pulsante che avvolge ogni stella non deve vedersi: resta l'icona, e il
+  // contorno di focus del sistema quando ci si arriva da tastiera.
+  .stella {
+    display: inline-flex;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    border-radius: var(--apl-radius-pill);
+  }
+
+  // In modalita' interattiva le stelle diventano un bersaglio da toccare, non
+  // solo un'informazione da leggere.
+  &.interattivo mat-icon {
+    font-size: 30px;
+    width: 30px;
+    height: 30px;
+    transition: transform var(--apl-duration-fast) var(--apl-ease);
+  }
+
+  &.interattivo .stella:hover mat-icon {
+    transform: scale(1.1);
+  }
+}

@@ -1,0 +1,32 @@
+<!--
+  Le chat sono private: un Admin legge una conversazione soltanto se su quel
+  prestito esiste una segnalazione aperta. Inviarla significa quindi aprire la
+  cronologia a una terza persona, e il testo lo dichiara prima della conferma,
+  non dopo. Il dialog raccoglie solo il motivo; chi viene segnalato compare con
+  il nickname.
+-->
+<h2 mat-dialog-title>Segnala {{ data.controparteNickname }}</h2>
+
+<mat-dialog-content class="content">
+  <p class="hint">
+    Descrivi il comportamento scorretto riscontrato in chat. La segnalazione
+    verrà esaminata da un Admin, che potrà consultare la cronologia della
+    conversazione.
+  </p>
+
+  <!--
+    Il motivo va scritto per poter inviare: il server rifiuta una segnalazione
+    senza motivo, e il pulsante disabilitato evita di scoprirlo da un errore.
+  -->
+  <mat-form-field appearance="outline" class="motivo-field">
+    <mat-label>Motivo della segnalazione</mat-label>
+    <textarea matInput rows="4" [ngModel]="motivo()" (ngModelChange)="motivo.set($event)"></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="annulla()">Annulla</button>
+  <button mat-flat-button color="warn" [disabled]="!motivo().trim()" (click)="conferma()">
+    Invia segnalazione
+  </button>
+</mat-dialog-actions>

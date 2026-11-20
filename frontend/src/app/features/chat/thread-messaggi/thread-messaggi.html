@@ -1,0 +1,102 @@
+<!--
+  Cronologia di una conversazione e campo per scrivere. Sono due blocchi
+  distinti di proposito: solo la cronologia scorre al proprio interno, mentre il
+  campo di scrittura sta fuori dall'@if e resta fermo in basso in ogni stato
+  (caricamento, errore, conversazione vuota). Il componente non conosce né la
+  rete né SignalR: riceve i messaggi ed emette il testo da inviare.
+-->
+@if (loading()) {
+  <div class="thread-scheletro">
+    <app-skeleton forma="riga" [ripetizioni]="5" />
+  </div>
+} @else {
+  <!--
+    `#contenitore` è l'elemento che scorre: il componente lo porta in fondo a
+    ogni nuovo messaggio, arrivato o inviato che sia.
+  -->
+  <div #contenitore class="thread-corpo">
+    <!--
+      Errore e «nessun messaggio» sono due stati separati: se una richiesta
+      caduta mostrasse l'invito a scrivere per primi, chi ha già una
+      conversazione avviata la crederebbe sparita.
+    -->
+    @if (errore()) {
+      <app-empty-state
+        titolo="Non siamo riusciti a caricare i messaggi"
+        descrizione="Controlla la connessione e riprova."
+        icona="cloud_off"
+        [compatto]="true"
+      >
+        <button mat-stroked-button type="button" (click)="riprova.emit()">Riprova</button>
+      </app-empty-state>
+    } @else if (messaggi().length === 0) {
+      <app-empty-state
+        titolo="Nessun messaggio"
+        descrizione="Scrivi per iniziare la conversazione con chi presta o chiede questo libro."
+        icona="chat_bubble_outline"
+        [compatto]="true"
+      />
+    } @else {
+      <!--
+        L'elenco mescola messaggi e separatori di data («Oggi», «Ieri»), e i
+        separatori non hanno un identificativo proprio: per questo il track è
+        sulla posizione e non sull'id del messaggio.
+      -->
+      @for (voce of vociThread(); track $index) {
+        @if (voce.tipo === 'data') {
+          <div class="thread-separatore">
+            <span>{{ voce.etichetta }}</span>
+          </div>
+        } @else {
+          <!--
+            La chat è sempre fra due persone, quindi basta il lato della bolla
+            a dire chi ha scritto: si confronta il mittente con l'utente
+            corrente e non si ripete il nickname a ogni messaggio.
+          -->
+          <div
+            class="thread-bolla-riga"
+            [class.in-uscita]="voce.messaggio.mittenteId === utenteId()"
+          >
+            <div class="thread-bolla">
+              <p class="thread-testo">{{ voce.messaggio.testo }}</p>
+            </div>
+            <span class="thread-orario">{{ voce.messaggio.dataInvio | date: 'HH:mm' }}</span>
+          </div>
+        }
+      }
+    }
+  </div>
+}
+
+<!--
+  È un form vero e non un campo con un gestore di tasti: Invio spedisce il
+  messaggio senza codice dedicato, come ci si aspetta da una chat.
+
+  Il design non prevede un'etichetta visibile sopra il campo, e il placeholder
+  non la sostituisce (sparisce appena si scrive e non è un nome affidabile per
+  gli screen reader): da qui l'aria-label. Lo stesso vale per il pulsante, che
+  è una sola icona. Resta disabilitato finché il testo è vuoto o fatto di soli
+  spazi, così non parte un messaggio senza contenuto.
+-->
+<form class="thread-composer" (ngSubmit)="invioMessaggio()">
+  <input
+    type="text"
+    placeholder="Scrivi un messaggio..."
+    aria-label="Messaggio"
+    [(ngModel)]="testoBozza"
+    name="messaggio"
+    autocomplete="off"
+  />
+  <button
+    type="submit"
+    class="thread-invia"
+    [disabled]="invioInCorso() || !testoBozza.trim()"
+    aria-label="Invia messaggio"
+  >
+    @if (invioInCorso()) {
+      <mat-spinner diameter="18" />
+    } @else {
+      <mat-icon>send</mat-icon>
+    }
+  </button>
+</form>

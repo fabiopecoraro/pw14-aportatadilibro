@@ -1,0 +1,25 @@
+// =============================================================================
+// Foglio di stile globale — "a portata di libro"
+// -----------------------------------------------------------------------------
+// Ordine di importazione voluto:
+//   1. tokens              — le custom properties del design (nessuna regola)
+//   2. material-theme      — mat.theme() e rimappatura dei ruoli --mat-sys-*
+//   3. material-overrides  — allineamento dei singoli componenti Material
+//   4. base                — reset, elementi HTML, focus, utility di layout
+//   5. typography          — classi utility della scala tipografica
+//
+// I token vengono per primi perche' tutti i livelli successivi li referenziano;
+// base e typography vengono per ultimi perche' devono poter vincere sui default
+// che Material emette per gli elementi HTML.
+// =============================================================================
+
+@use './styles/tokens';
+@use './styles/material-theme';
+@use './styles/material-overrides';
+@use './styles/base';
+@use './styles/typography';
+@use './styles/map';
+@use './styles/auth';
+@use './styles/pubblico';
+@use './styles/home-pubblica';
+@use './styles/persona';

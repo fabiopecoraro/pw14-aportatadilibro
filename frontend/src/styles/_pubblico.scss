@@ -1,0 +1,84 @@
+// =============================================================================
+// Sito pubblico (home, come funziona)
+// -----------------------------------------------------------------------------
+// Pattern condivisi fra le due sole pagine non autenticate del progetto:
+// titolo di sezione centrato, numero di passo in stile editoriale, footer
+// scuro. Estratti qui invece che duplicati per restare sotto il budget di
+// stile per componente e perche' sono letteralmente lo stesso elemento nelle
+// due schermate del design.
+// =============================================================================
+
+.pubblico-sezione {
+  padding: 52px 44px;
+}
+
+.pubblico-titolo-sezione {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: 28px;
+  margin: 0 0 var(--apl-space-30);
+  text-align: center;
+}
+
+// Il numero italic verde che apre ogni passo numerato ("01", "02"...).
+.pubblico-numero {
+  font-family: var(--apl-font-display);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--apl-green);
+  margin-bottom: var(--apl-space-10);
+}
+
+// Tipografia del "passo numerato" (numero + titolo + paragrafo): identica in
+// home ("Tre gesti") e in come-funziona (i 3 passi), solo il layout della
+// griglia cambia da un componente all'altro.
+.pubblico-passo {
+  // Titolo di passo: e' h2 e non h3 perche' segue direttamente l'h1 della
+  // pagina, e saltare un livello di intestazione disorienta chi naviga il
+  // documento per struttura. La scala tipografica resta quella del design.
+  h2 {
+    font-family: var(--apl-font-ui);
+    font-weight: 600;
+    font-size: 17px;
+    margin: 0 0 var(--apl-space-9);
+  }
+
+  p {
+    font-family: var(--apl-font-body);
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--apl-muted);
+    margin: 0;
+  }
+}
+
+.pubblico-footer {
+  padding: 26px 44px;
+  background: var(--apl-ink);
+  color: #a9b3ac;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--apl-font-ui);
+  font-size: 13px;
+}
+
+.pubblico-footer-wordmark {
+  font-family: var(--apl-font-display);
+  font-size: 16px;
+  color: var(--apl-paper-2);
+}
+
+@media (max-width: 639px) {
+  .pubblico-sezione {
+    padding: 40px 20px;
+  }
+
+  .pubblico-footer {
+    padding: 22px 20px;
+    flex-direction: column;
+    gap: var(--apl-space-9);
+    text-align: center;
+  }
+}

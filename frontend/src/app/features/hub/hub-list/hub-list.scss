@@ -1,0 +1,107 @@
+@use '../../../../styles/typography' as type;
+
+// Schermata «I miei Hub»: una mappa su cui scegliere il punto, il riquadro del
+// nuovo Hub e l'elenco di quelli registrati, uno sotto l'altro in un'unica
+// colonna che scorre con la pagina. A differenza della mappa di ricerca, che
+// occupa tutta l'altezza della schermata, questa ha un'altezza fissa: sotto di
+// lei ci sono il form e l'elenco, che devono restare raggiungibili scorrendo.
+
+.hub-testa {
+  margin-bottom: var(--apl-space-16);
+
+  // Il titolo e' l'unico h1 della schermata ma prende la misura tipografica di
+  // un h2: il livello dell'intestazione serve alla struttura letta dagli screen
+  // reader, la dimensione al disegno, e le due cose non devono coincidere.
+  h1 {
+    @include type.h2;
+    margin: 0 0 4px;
+  }
+
+  .hub-usa-centro {
+    margin-top: var(--apl-space-10);
+  }
+}
+
+// Leaflet disegna solo dentro un contenitore con un'altezza definita: senza i
+// 380px la mappa collasserebbe a zero. Cornice e tela sono due elementi
+// distinti perche' `overflow: hidden` deve ritagliare le tessere sugli angoli
+// arrotondati, mentre la tela, in posizione assoluta, riempie la cornice
+// qualunque sia la sua misura.
+.hub-mappa {
+  position: relative;
+  height: 380px;
+  border-radius: var(--apl-radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--apl-space-20);
+  box-shadow: var(--apl-shadow-raised);
+}
+
+.hub-tela {
+  position: absolute;
+  inset: 0;
+}
+
+.hub-form-riquadro {
+  padding: var(--apl-space-20);
+  margin-bottom: var(--apl-space-30);
+  max-width: 420px;
+}
+
+.hub-form-etichetta {
+  color: var(--apl-muted);
+  margin: 0 0 var(--apl-space-5);
+}
+
+// Le coordinate del punto scelto sono testo da leggere, per quanto secondario:
+// usano --apl-muted-2, che raggiunge il contrasto di 4,5:1, e non il tono piu'
+// chiaro riservato a placeholder e controlli disabilitati.
+.hub-form-coordinate {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted-2);
+  margin: 0 0 var(--apl-space-16);
+}
+
+.hub-form-azioni {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--apl-space-10);
+  margin-top: var(--apl-space-9);
+}
+
+.hub-sottotitolo {
+  @include type.h3;
+  margin: 0 0 var(--apl-space-16);
+}
+
+.hub-elenco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-9);
+}
+
+.hub-riga {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apl-space-14);
+  padding: var(--apl-space-14);
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+}
+
+.hub-riga-nome {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: var(--apl-fs-ui-l);
+  color: var(--apl-ink);
+  margin: 0;
+}
+
+.hub-riga-indirizzo {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted);
+  margin: 2px 0 0;
+}

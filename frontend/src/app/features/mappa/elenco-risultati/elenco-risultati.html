@@ -1,0 +1,107 @@
+<!--
+  Libri disponibili nell'area di mappa che l'utente sta guardando. Scheletro,
+  errore, elenco vuoto ed elenco pieno sono risolti tutti qui, cosi' la schermata
+  mappa monta un solo componente e non sparge condizioni attorno ad esso.
+  L'elenco e' legato alla mappa nei due sensi: scegliere una card seleziona il
+  pin, e il clic su un pin fa scorrere fino alla card corrispondente.
+-->
+@switch (stato()) {
+  @case ('loading') {
+    <app-skeleton forma="card-compatta" [ripetizioni]="4" />
+  }
+
+  @case ('error') {
+    <app-empty-state
+      titolo="Non siamo riusciti a caricare i libri"
+      descrizione="Controlla la connessione e riprova."
+      icona="cloud_off"
+      [compatto]="true"
+    >
+      <button mat-stroked-button (click)="riprova.emit()">Riprova</button>
+    </app-empty-state>
+  }
+
+  @default {
+    @if (risultati().length === 0) {
+      <app-empty-state
+        titolo="Nessun libro in quest'area"
+        descrizione="Sposta la mappa o allarga la vista per trovare gli Hub più vicini."
+        icona="travel_explore"
+        [compatto]="true"
+      />
+    } @else {
+      <p class="elenco-conteggio apl-overline">
+        {{ risultati().length }} {{ risultati().length === 1 ? 'libro' : 'libri' }} in quest'area
+      </p>
+
+      <!--
+        `#elenco` e' il contenitore che scorre al proprio interno: la mappa
+        accanto deve restare ferma mentre si sfogliano i risultati, quindi lo
+        scorrimento non puo' essere quello della pagina.
+      -->
+      <div #elenco class="elenco-card">
+        @for (risultato of risultati(); track risultato.libroId) {
+          <!--
+            La card libro non sa nulla di navigazione ne' di selezione: e' un
+            elemento qualunque, e per il browser non e' un controllo. Qui pero'
+            si clicca, quindi le si danno a mano le tre cose che un pulsante
+            nativo avrebbe da se': `role="button"` perche' uno screen reader la
+            annunci come tale, `tabindex="0"` perche' sia raggiungibile con
+            Tab, Invio e Spazio perche' si attivi da tastiera. Su Spazio va
+            fermato il comportamento predefinito, che farebbe scorrere l'elenco.
+
+            `aria-pressed` dice a parole cio' che a schermo e' solo un bordo
+            verde. `data-libro-id` serve a ritrovare la card quando la
+            selezione arriva dalla mappa e bisogna portarla in vista.
+
+            Focus e passaggio del mouse emettono lo stesso evento: il pin del
+            libro si ingrandisce sulla mappa anche per chi scorre l'elenco con
+            la tastiera, non solo per chi usa il puntatore.
+          -->
+          <app-book-card
+            [attr.data-libro-id]="risultato.libroId"
+            [titolo]="risultato.titolo"
+            [autore]="descrizione(risultato)"
+            variante="compatta"
+            [selezionata]="risultato.libroId === libroSelezionatoId()"
+            role="button"
+            tabindex="0"
+            [attr.aria-pressed]="risultato.libroId === libroSelezionatoId()"
+            (click)="libroSelezionato.emit(risultato)"
+            (keydown.enter)="libroSelezionato.emit(risultato)"
+            (keydown.space)="$event.preventDefault(); libroSelezionato.emit(risultato)"
+            (focus)="libroEvidenziato.emit(risultato.libroId)"
+            (blur)="libroEvidenziato.emit(null)"
+            (mouseenter)="libroEvidenziato.emit(risultato.libroId)"
+            (mouseleave)="libroEvidenziato.emit(null)"
+          >
+            <div card-trailing class="elenco-coda">
+              <!--
+                La distanza dall'Hub piu' vicino e' calcolata nel browser: la
+                posizione dell'utente non viene inviata al server ne' salvata.
+                Se manca un punto da cui misurare il testo e' vuoto e la riga
+                non compare, invece di mostrare un numero finto.
+              -->
+              @if (risultato.distanzaTesto) {
+                <span
+                  class="elenco-distanza"
+                  [class.vicina]="risultato.libroId === libroSelezionatoId()"
+                >
+                  {{ risultato.distanzaTesto }}
+                </span>
+              }
+              <!--
+                Lo stesso libro puo' essere ritirabile in piu' Hub. La card ne
+                nomina uno solo, il piu' vicino, e qui dice quanti altri ce ne
+                sono senza ripetere il libro una volta per Hub.
+              -->
+              @if (risultato.altriHub > 0) {
+                <span class="elenco-altri">+{{ risultato.altriHub }} hub</span>
+              }
+            </div>
+          </app-book-card>
+        }
+      </div>
+    }
+  }
+}

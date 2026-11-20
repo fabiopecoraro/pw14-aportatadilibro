@@ -1,0 +1,542 @@
+// =============================================================================
+// Allineamento dei componenti Angular Material al design
+// -----------------------------------------------------------------------------
+// Si usano i mixin `*-overrides` esposti da Angular Material invece di
+// selettori ::ng-deep sulle classi MDC interne: sono l'API pubblica di
+// personalizzazione, sopravvivono agli aggiornamenti di versione e producono
+// custom properties, quindi restano coerenti con l'impianto a token del resto
+// del sistema.
+//
+// Dove le specifiche del design e il prototipo HTML divergono, si segue il
+// prototipo, che e' il riferimento per i dettagli. Le divergenze
+// sono annotate caso per caso qui sotto.
+// =============================================================================
+
+@use '@angular/material' as mat;
+
+html {
+  // ---------------------------------------------------------------------------
+  // Bottoni
+  // ---------------------------------------------------------------------------
+  // Primario (mat-flat-button): fondo ink, testo paper-2, Archivo 600 15px,
+  // padding 14px 28px, radius 6px.
+  // Secondario (mat-stroked-button): trasparente, bordo 1.5px, testo ink.
+  // Testo (mat-button): verde, Archivo 500.
+  @include mat.button-overrides(
+    (
+      filled-container-color: var(--apl-ink),
+      filled-label-text-color: var(--apl-paper-2),
+      filled-container-shape: var(--apl-radius-md),
+      filled-container-height: 48px,
+      filled-horizontal-padding: 28px,
+      filled-label-text-font: var(--apl-font-ui),
+      filled-label-text-size: var(--apl-fs-ui-l),
+      filled-label-text-weight: 600,
+      filled-label-text-tracking: 0,
+      filled-state-layer-color: #ffffff,
+      filled-hover-state-layer-opacity: 0.14,
+      filled-pressed-state-layer-opacity: 0.2,
+
+      outlined-outline-color: var(--apl-border),
+      outlined-outline-width: 1.5px,
+      outlined-label-text-color: var(--apl-ink),
+      outlined-container-shape: var(--apl-radius-md),
+      outlined-container-height: 48px,
+      outlined-horizontal-padding: 24px,
+      outlined-label-text-font: var(--apl-font-ui),
+      outlined-label-text-size: var(--apl-fs-ui-l),
+      outlined-label-text-weight: 500,
+      outlined-label-text-tracking: 0,
+      outlined-state-layer-color: var(--apl-ink),
+      outlined-hover-state-layer-opacity: 0.04,
+
+      text-label-text-color: var(--apl-green),
+      text-container-shape: var(--apl-radius-md),
+      text-label-text-font: var(--apl-font-ui),
+      text-label-text-size: var(--apl-fs-ui-l),
+      text-label-text-weight: 500,
+      text-label-text-tracking: 0,
+      text-state-layer-color: var(--apl-green),
+      text-hover-state-layer-opacity: 0.06,
+
+      protected-container-color: var(--apl-paper),
+      protected-label-text-color: var(--apl-ink),
+      protected-container-shape: var(--apl-radius-md),
+      protected-container-elevation-shadow: var(--apl-shadow-raised),
+    )
+  );
+
+  @include mat.icon-button-overrides(
+    (
+      icon-color: var(--apl-muted),
+      state-layer-color: var(--apl-ink),
+      hover-state-layer-opacity: 0.06,
+    )
+  );
+
+  @include mat.fab-overrides(
+    (
+      container-color: var(--apl-ink),
+      foreground-color: var(--apl-paper-2),
+      container-shape: var(--apl-radius-pill),
+      container-elevation-shadow: var(--apl-shadow-fab),
+      hover-container-elevation-shadow: var(--apl-shadow-card),
+    )
+  );
+
+  // ---------------------------------------------------------------------------
+  // Campi di input
+  // ---------------------------------------------------------------------------
+  // Fondo paper, bordo 1.5px, radius 6px, testo Archivo, placeholder muted-3,
+  // focus verde senza glow. Il design disegna la label sopra il campo anziche'
+  // flottante: per i campi nuovi si usa la classe .apl-field piu' sotto, mentre
+  // qui si allineano i mat-form-field gia' presenti nelle schermate esistenti.
+  @include mat.form-field-overrides(
+    (
+      outlined-outline-color: var(--apl-border-input),
+      outlined-hover-outline-color: var(--apl-border),
+      outlined-focus-outline-color: var(--apl-green),
+      outlined-focus-outline-width: 1.5px,
+      outlined-outline-width: 1.5px,
+      outlined-container-shape: var(--apl-radius-md),
+      outlined-label-text-color: var(--apl-muted),
+      outlined-focus-label-text-color: var(--apl-green),
+      outlined-input-text-color: var(--apl-ink),
+      outlined-input-text-placeholder-color: var(--apl-muted-3),
+      outlined-caret-color: var(--apl-green),
+      outlined-error-outline-color: var(--apl-danger),
+      outlined-error-focus-outline-color: var(--apl-danger),
+      outlined-error-label-text-color: var(--apl-danger),
+      outlined-error-caret-color: var(--apl-danger),
+      container-text-font: var(--apl-font-ui),
+      container-text-size: 14.5px,
+      container-text-weight: 400,
+      container-text-tracking: 0,
+      outlined-label-text-font: var(--apl-font-ui),
+      outlined-label-text-size: var(--apl-fs-ui),
+      outlined-label-text-weight: 500,
+      error-text-color: var(--apl-danger),
+      subscript-text-font: var(--apl-font-ui),
+      subscript-text-size: var(--apl-fs-ui-s),
+    )
+  );
+
+  // ---------------------------------------------------------------------------
+  // Chip
+  // ---------------------------------------------------------------------------
+  // Prototipo: chip filtro attivo = fondo verde, testo bianco; inattivo =
+  // trasparente con bordo 1px. (Le specifiche scritte indicavano ink/sage-100; il
+  // prototipo e' coerente su 19 occorrenze verdi contro 5 ink, quindi lo si segue.)
+  @include mat.chips-overrides(
+    (
+      container-shape-radius: var(--apl-radius-pill),
+      label-text-font: var(--apl-font-ui),
+      label-text-size: var(--apl-fs-ui-s),
+      label-text-weight: 500,
+      label-text-tracking: 0,
+      outline-color: var(--apl-border-input),
+      outline-width: 1px,
+      elevated-container-color: transparent,
+      label-text-color: var(--apl-ink),
+      elevated-selected-container-color: var(--apl-green),
+      selected-label-text-color: #ffffff,
+      flat-selected-outline-width: 0,
+      hover-state-layer-opacity: 0.05,
+      container-height: 32px,
+    )
+  );
+
+  // ---------------------------------------------------------------------------
+  // Superfici: card, dialog, menu, tooltip, snackbar
+  // ---------------------------------------------------------------------------
+  @include mat.card-overrides(
+    (
+      elevated-container-color: var(--apl-paper),
+      elevated-container-shape: var(--apl-radius-md),
+      elevated-container-elevation: var(--apl-shadow-raised),
+      outlined-container-color: var(--apl-paper),
+      outlined-container-shape: var(--apl-radius-md),
+      outlined-outline-color: var(--apl-border-soft),
+      title-text-font: var(--apl-font-display),
+      title-text-size: var(--apl-fs-h4),
+      title-text-weight: 700,
+      title-text-line-height: 1.25,
+      title-text-tracking: 0,
+      subtitle-text-font: var(--apl-font-ui),
+      subtitle-text-size: var(--apl-fs-ui),
+      subtitle-text-weight: 400,
+      subtitle-text-color: var(--apl-muted),
+      subtitle-text-tracking: 0,
+    )
+  );
+
+  @include mat.dialog-overrides(
+    (
+      container-color: var(--apl-paper),
+      container-shape: var(--apl-radius-lg),
+      container-elevation-shadow: var(--apl-shadow-modal),
+      subhead-font: var(--apl-font-display),
+      subhead-size: var(--apl-fs-h3),
+      subhead-weight: 700,
+      subhead-line-height: 1.2,
+      subhead-color: var(--apl-ink),
+      subhead-tracking: 0,
+      supporting-text-font: var(--apl-font-body),
+      supporting-text-size: var(--apl-fs-body),
+      supporting-text-weight: 300,
+      supporting-text-color: var(--apl-ink-soft),
+      supporting-text-tracking: 0,
+    )
+  );
+
+  @include mat.menu-overrides(
+    (
+      container-color: var(--apl-paper),
+      container-shape: var(--apl-radius-lg),
+      item-label-text-font: var(--apl-font-ui),
+      item-label-text-size: var(--apl-fs-ui),
+      item-label-text-weight: 400,
+      item-label-text-color: var(--apl-ink),
+      item-icon-color: var(--apl-muted),
+    )
+  );
+
+  @include mat.tooltip-overrides(
+    (
+      container-color: var(--apl-ink),
+      container-shape: var(--apl-radius-md),
+      supporting-text-color: var(--apl-paper-2),
+      supporting-text-font: var(--apl-font-ui),
+      supporting-text-size: var(--apl-fs-ui-s),
+      supporting-text-weight: 400,
+    )
+  );
+
+  @include mat.snack-bar-overrides(
+    (
+      container-color: var(--apl-ink),
+      container-shape: var(--apl-radius-md),
+      supporting-text-color: var(--apl-paper-2),
+      supporting-text-font: var(--apl-font-ui),
+      supporting-text-size: var(--apl-fs-ui),
+      supporting-text-weight: 400,
+      button-color: var(--apl-green-soft),
+    )
+  );
+
+  // ---------------------------------------------------------------------------
+  // Controlli di form secondari
+  // ---------------------------------------------------------------------------
+  @include mat.checkbox-overrides(
+    (
+      selected-icon-color: var(--apl-green),
+      selected-hover-icon-color: var(--apl-green-dark),
+      selected-focus-icon-color: var(--apl-green),
+      selected-pressed-icon-color: var(--apl-green-dark),
+      selected-checkmark-color: #ffffff,
+      unselected-icon-color: var(--apl-border),
+      label-text-font: var(--apl-font-ui),
+      label-text-size: var(--apl-fs-ui),
+      label-text-color: var(--apl-ink),
+    )
+  );
+
+  @include mat.radio-overrides(
+    (
+      selected-icon-color: var(--apl-green),
+      selected-hover-icon-color: var(--apl-green-dark),
+      selected-focus-icon-color: var(--apl-green),
+      unselected-icon-color: var(--apl-border),
+      label-text-font: var(--apl-font-ui),
+      label-text-size: var(--apl-fs-ui),
+      label-text-color: var(--apl-ink),
+    )
+  );
+
+  @include mat.slide-toggle-overrides(
+    (
+      selected-track-color: var(--apl-green),
+      selected-hover-track-color: var(--apl-green-dark),
+      selected-focus-track-color: var(--apl-green),
+      selected-pressed-track-color: var(--apl-green-dark),
+      selected-handle-color: #ffffff,
+      unselected-track-color: var(--apl-sage-300),
+      unselected-handle-color: var(--apl-paper),
+      label-text-font: var(--apl-font-ui),
+      label-text-size: var(--apl-fs-ui),
+    )
+  );
+
+  @include mat.select-overrides(
+    (
+      panel-background-color: var(--apl-paper),
+      enabled-trigger-text-color: var(--apl-ink),
+      placeholder-text-color: var(--apl-muted-3),
+      trigger-text-font: var(--apl-font-ui),
+      trigger-text-size: 14.5px,
+      trigger-text-weight: 400,
+      trigger-text-tracking: 0,
+    )
+  );
+
+  @include mat.progress-spinner-overrides(
+    (
+      active-indicator-color: var(--apl-green),
+    )
+  );
+
+  @include mat.progress-bar-overrides(
+    (
+      active-indicator-color: var(--apl-green),
+      track-color: var(--apl-sage-200),
+    )
+  );
+
+  @include mat.tabs-overrides(
+    (
+      active-label-text-color: var(--apl-ink),
+      inactive-label-text-color: var(--apl-muted),
+      active-indicator-color: var(--apl-green),
+      active-indicator-height: 2px,
+      active-focus-label-text-color: var(--apl-ink),
+      active-hover-label-text-color: var(--apl-ink),
+      label-text-font: var(--apl-font-ui),
+      label-text-size: var(--apl-fs-ui-l),
+      label-text-weight: 500,
+      label-text-tracking: 0,
+      divider-color: var(--apl-border-soft),
+    )
+  );
+
+  @include mat.list-overrides(
+    (
+      list-item-label-text-font: var(--apl-font-ui),
+      list-item-label-text-size: var(--apl-fs-ui-l),
+      list-item-label-text-weight: 500,
+      list-item-label-text-color: var(--apl-ink),
+      list-item-supporting-text-font: var(--apl-font-ui),
+      list-item-supporting-text-size: var(--apl-fs-ui-s),
+      list-item-supporting-text-color: var(--apl-muted),
+      list-item-leading-icon-color: var(--apl-muted),
+      list-item-container-shape: var(--apl-radius-md),
+      active-indicator-color: var(--apl-sage-100),
+      active-indicator-shape: var(--apl-radius-md),
+    )
+  );
+
+  @include mat.toolbar-overrides(
+    (
+      container-background-color: var(--apl-paper),
+      container-text-color: var(--apl-ink),
+      title-text-font: var(--apl-font-display),
+      title-text-size: 20px,
+      title-text-weight: 700,
+      title-text-tracking: 0,
+      standard-height: var(--apl-header-height),
+    )
+  );
+
+  @include mat.sidenav-overrides(
+    (
+      container-background-color: var(--apl-paper),
+      content-background-color: var(--apl-paper-2),
+      container-divider-color: var(--apl-border-soft),
+      container-text-color: var(--apl-ink),
+      container-shape: 0,
+    )
+  );
+
+  @include mat.bottom-sheet-overrides(
+    (
+      container-background-color: var(--apl-paper),
+      container-shape: var(--apl-radius-xl),
+      container-text-color: var(--apl-ink),
+    )
+  );
+
+  @include mat.slider-overrides(
+    (
+      active-track-color: var(--apl-green),
+      inactive-track-color: var(--apl-sage-300),
+      handle-color: var(--apl-green),
+      focus-handle-color: var(--apl-green-dark),
+      hover-handle-color: var(--apl-green-dark),
+      label-container-color: var(--apl-ink),
+      label-label-text-color: var(--apl-paper-2),
+    )
+  );
+}
+
+// -----------------------------------------------------------------------------
+// Correzioni puntuali che i token non coprono
+// -----------------------------------------------------------------------------
+
+// Hover del bottone primario: il design prescrive il colore pieno #2c3a31, non
+// un velo di stato semitrasparente. Sostituiamo quindi il container-color in
+// hover invece di affidarci allo state layer.
+.mat-mdc-unelevated-button:not(:disabled):hover,
+.mat-mdc-raised-button:not(:disabled):hover {
+  --mdc-filled-button-container-color: var(--apl-ink-hover);
+}
+
+// Hover del bottone secondario: si scurisce solo il bordo.
+.mat-mdc-outlined-button:not(:disabled):hover {
+  --mdc-outlined-button-outline-color: var(--apl-border-strong);
+}
+
+// Disabilitato: opacita' .45 e cursore normale, come da specifica.
+.mat-mdc-button-base:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+// Il design non usa il velo di superficie dietro alle modali di Material ma il
+// proprio overlay ink al 55%.
+.cdk-overlay-dark-backdrop {
+  background: var(--apl-overlay);
+}
+
+// I mat-form-field del design hanno fondo paper: la variante outlined di
+// Material e' trasparente per default.
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  background: var(--apl-paper);
+  border-radius: var(--apl-radius-md);
+}
+
+// -----------------------------------------------------------------------------
+// Campo con label sopra (.apl-field)
+// -----------------------------------------------------------------------------
+// Impaginazione dei campi come nel prototipo: label Archivo 600 13px sopra il
+// controllo, input a fondo paper con bordo 1.5px. E' un pattern piu' semplice
+// del mat-form-field e riproduce esattamente il disegno, quindi e' la forma da
+// preferire nelle schermate nuove.
+
+.apl-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--apl-space-16);
+
+  > label {
+    font-family: var(--apl-font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--apl-ink);
+    margin-bottom: var(--apl-space-7);
+  }
+
+  input,
+  textarea,
+  select {
+    font-family: var(--apl-font-ui);
+    font-size: 14.5px;
+    font-weight: 400;
+    color: var(--apl-ink);
+    background: var(--apl-paper);
+    border: 1.5px solid var(--apl-border-input);
+    border-radius: var(--apl-radius-md);
+    padding: 13px 15px;
+    transition: border-color var(--apl-duration-fast) var(--apl-ease);
+
+    &::placeholder {
+      color: var(--apl-muted-3);
+    }
+
+    &:hover:not(:disabled) {
+      border-color: var(--apl-border);
+    }
+
+    &:focus {
+      // Focus del campo: solo il bordo verde, nessun glow (regola del design).
+      // L'anello info resta riservato alla navigazione da tastiera.
+      border-color: var(--apl-green);
+      outline: none;
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 96px;
+    line-height: 1.5;
+  }
+
+  // Messaggio di errore sotto il campo, Archivo 12.5px danger.
+  .apl-field-error {
+    font-family: var(--apl-font-ui);
+    font-size: var(--apl-fs-ui-s);
+    color: var(--apl-danger);
+    margin-top: var(--apl-space-5);
+  }
+
+  .apl-field-hint {
+    font-family: var(--apl-font-ui);
+    font-size: var(--apl-fs-ui-s);
+    color: var(--apl-muted);
+    margin-top: var(--apl-space-5);
+  }
+
+  &.apl-field-invalid {
+    input,
+    textarea,
+    select {
+      border-color: var(--apl-danger);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Gruppo di chip filtro (.apl-chips)
+// -----------------------------------------------------------------------------
+// I token di Material non espongono il padding orizzontale della chip, che nel
+// design e' 13px: si interviene qui sull'elemento di azione MDC, che e' l'unico
+// punto in cui quel valore vive.
+
+.apl-chips {
+  .mat-mdc-chip {
+    // Il design usa la chip solo come filtro: nessuna elevazione, solo bordo.
+    box-shadow: none;
+  }
+
+  // MDC applica un padding asimmetrico (0 a sinistra) quando la chip dichiara
+  // un'area grafica per la spunta di selezione. Si riporta a 13px simmetrici,
+  // come nel prototipo. La catena di classi e' volutamente lunga: serve a
+  // superare la specificita' della regola MDC, che a parita' di peso vincerebbe
+  // per ordine di iniezione degli stili di componente.
+  .mat-mdc-chip.mat-mdc-standard-chip .mdc-evolution-chip__action--primary {
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+
+  .mat-mdc-chip-action-label {
+    font-family: var(--apl-font-ui);
+    font-size: var(--apl-fs-ui-s);
+    font-weight: 500;
+  }
+
+  // Chip inattiva: trasparente con bordo sottile.
+  .mat-mdc-chip:not(.mat-mdc-chip-selected) {
+    background: transparent;
+    border: 1px solid var(--apl-border-input);
+  }
+
+  // Chip attiva: verde pieno, testo bianco, nessun bordo.
+  .mat-mdc-chip.mat-mdc-chip-selected {
+    background: var(--apl-green);
+    border-color: transparent;
+
+    .mat-mdc-chip-action-label {
+      color: #ffffff;
+    }
+  }
+
+  // La spunta di selezione toglie spazio all'etichetta e raddoppia
+  // l'informazione gia' data dal riempimento verde: il design non la prevede.
+  .mat-mdc-chip-graphic,
+  .mdc-evolution-chip__graphic {
+    display: none;
+  }
+}

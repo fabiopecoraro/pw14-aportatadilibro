@@ -1,0 +1,180 @@
+<!--
+  Informativa privacy e termini di utilizzo: e' il testo che la casella di
+  consenso della registrazione chiede di accettare, quindi deve potersi leggere
+  senza avere un account. Per questo la pagina e' pubblica e, stando fuori dal
+  layout delle schermate dietro login, porta da se' il proprio <main>: e' il
+  bersaglio del link «salta al contenuto», e tabindex="-1" serve a potergli dare
+  il focus da codice senza metterlo nell'ordine di tabulazione.
+
+  Le sezioni non seguono un modello generico ma cio' che l'applicazione fa
+  davvero, dato per dato. Ogni frase qui sotto descrive un comportamento del
+  codice: se quel comportamento cambia, va cambiata anche la frase, perche'
+  un'informativa che promette altro e' peggio di nessuna informativa.
+-->
+<app-public-header paginaAttiva="privacy" />
+
+<main id="contenuto-principale" tabindex="-1">
+
+<div class="pv-intro apl-reading">
+  <h1>Informativa privacy e termini di utilizzo</h1>
+  <p>
+    Questa pagina descrive quali dati raccogliamo, perché, e cosa non facciamo mai. È il
+    documento che accetti quando crei un account.
+  </p>
+</div>
+
+<div class="pv-corpo apl-reading">
+  <section class="pv-sezione">
+    <h2>1. Quali dati raccogliamo</h2>
+
+    <h3>Dati che fornisci in registrazione</h3>
+    <ul class="pv-elenco">
+      <li>
+        <strong>Nome e cognome</strong> — servono a dare una identità reale dietro ogni
+        account, come garanzia per chi ti presta un libro. <em>Non vengono mai mostrati
+        agli altri utenti.</em>
+      </li>
+      <li>
+        <strong>Email</strong> — è l'indirizzo a cui inviamo le notifiche di disponibilità
+        che hai richiesto. <em>Non viene mai mostrata agli altri utenti.</em>
+      </li>
+      <li>
+        <strong>Nome utente</strong> — serve solo per accedere.
+      </li>
+      <li>
+        <strong>Nickname pubblico</strong> — è l'unica cosa che gli altri utenti vedono di
+        te. Puoi cambiarlo quando vuoi dalle impostazioni.
+      </li>
+      <li>
+        <strong>Password</strong> — non viene mai salvata. Ne conserviamo solo un'impronta
+        crittografica (PBKDF2-HMAC-SHA256, 600.000 iterazioni, con sale casuale per ogni
+        utente) da cui la password non è ricostruibile.
+      </li>
+    </ul>
+
+    <h3>Dati che generi usando il servizio</h3>
+    <ul class="pv-elenco">
+      <li>
+        <strong>I tuoi Hub</strong> — nome, indirizzo e coordinate dei punti di ritrovo
+        pubblici che scegli tu (un bar, una piazza, una biblioteca). Sono pubblici per
+        definizione: sono i luoghi dove avviene lo scambio.
+      </li>
+      <li><strong>I libri che possiedi</strong> e le copertine che carichi.</li>
+      <li><strong>Prestiti, recensioni e segnalazioni</strong> che crei.</li>
+      <li>
+        <strong>Messaggi di chat</strong> dei tuoi prestiti (vedi il punto 4).
+      </li>
+    </ul>
+  </section>
+
+  <!--
+    Questa sezione ha un rilievo grafico proprio perche' contiene gli impegni
+    che reggono il progetto: la posizione di chi cerca non viene inviata ne'
+    salvata (al server arriva solo l'area di mappa guardata) e nome, cognome ed
+    email non compaiono in nessuna schermata altrui. Sono le promesse che un
+    lettore frettoloso deve trovare anche senza leggere il resto.
+  -->
+  <section class="pv-sezione pv-sezione-rilievo">
+    <h2>2. Cosa non facciamo mai</h2>
+    <ul class="pv-elenco">
+      <li>
+        <strong>Non salviamo la tua posizione.</strong> Quando premi «La tua posizione» il
+        browser usa le coordinate per centrare la mappa, e finisce lì: non vengono
+        inviate al server né scritte in nessun database. La ricerca funziona mandando al
+        server il <em>rettangolo di mappa che stai guardando</em>, allargato a una griglia
+        di circa un chilometro perché dal suo centro non si possa risalire a dove sei.
+      </li>
+      <li>
+        <strong>Non mostriamo il tuo indirizzo di casa.</strong> Il progetto non lo chiede
+        e non ha un campo dove conservarlo. Gli scambi avvengono solo negli Hub pubblici.
+      </li>
+      <li>
+        <strong>Non mostriamo nome, cognome o email</strong> ad altri utenti, in nessuna
+        schermata.
+      </li>
+      <li><strong>Non usiamo cookie di profilazione</strong> e non c'è pubblicità.</li>
+      <li><strong>Non cediamo dati a terzi</strong> e non li usiamo per finalità diverse da quelle qui descritte.</li>
+      <li>
+        <strong>Due risorse arrivano da fuori.</strong> Le immagini della mappa sono servite da
+        OpenStreetMap e i caratteri tipografici da Google Fonts: come per ogni risorsa esterna,
+        quei servizi ricevono l'indirizzo IP del tuo browser e, per la mappa, la zona che stai
+        guardando. Non ricevono nulla del tuo account.
+      </li>
+    </ul>
+  </section>
+
+  <section class="pv-sezione">
+    <h2>3. Statistiche d'uso</h2>
+    <p>
+      Contiamo quante volte viene aperta la scheda di ogni libro, per capire quali titoli
+      interessano di più. Il conteggio è <strong>aggregato per libro e per giorno</strong>:
+      non registriamo chi ha aperto quale scheda, né a che ora. Le altre statistiche
+      (prestiti, copie disponibili, durata media) sono calcolate sui dati che già esistono,
+      senza raccoglierne di nuovi.
+    </p>
+  </section>
+
+  <section class="pv-sezione">
+    <h2>4. Le chat</h2>
+    <p>
+      I messaggi di un prestito sono leggibili solo dalle due persone coinvolte. Vengono
+      conservati per un motivo preciso: se una delle due segnala un comportamento
+      scorretto, un amministratore deve poter leggere quella conversazione per valutare.
+      <strong>L'accesso dell'amministratore è limitato alle sole chat oggetto di una
+      segnalazione</strong> — non esiste alcuna schermata che gli permetta di leggere le
+      altre.
+    </p>
+  </section>
+
+  <section class="pv-sezione">
+    <h2>5. I tuoi diritti</h2>
+    <ul class="pv-elenco">
+      <li>
+        <strong>Vedere e correggere i tuoi dati</strong> — da
+        <a routerLink="/impostazioni">Impostazioni</a> puoi consultare e modificare
+        nickname, nome, cognome ed email, e cambiare la password.
+      </li>
+      <li>
+        <strong>Cancellare l'account</strong> — la cancellazione autonoma non è ancora
+        disponibile in questa versione. Fino ad allora la richiesta va inoltrata a un
+        amministratore, che elimina l'account e i dati collegati.
+      </li>
+    </ul>
+  </section>
+
+  <section class="pv-sezione">
+    <h2>6. Termini di utilizzo</h2>
+    <ul class="pv-elenco">
+      <li>
+        Il servizio mette in contatto persone che si prestano libri di persona. Non
+        gestisce pagamenti, spedizioni né depositi cauzionali.
+      </li>
+      <li>
+        Ogni scambio avviene sotto la responsabilità delle due persone coinvolte. Il
+        prestito si chiude quando il proprietario conferma di aver riavuto il libro.
+      </li>
+      <li>
+        Pubblica solo libri che possiedi davvero e che sei disposto a prestare. I dati del
+        catalogo condiviso (titolo, autore, categorie, anno) sono corretti da un
+        amministratore quando serve, perché sono comuni a tutte le copie.
+      </li>
+      <li>
+        Sono vietati messaggi offensivi o minacciosi in chat. Puoi segnalarli con il
+        pulsante apposito nella conversazione.
+      </li>
+    </ul>
+  </section>
+
+  <!--
+    La nota finale dichiara il limite del documento: descrive fedelmente il
+    software, ma non e' un testo legale validato. Tacerlo farebbe passare un
+    prototipo universitario per un servizio con un'informativa a norma.
+  -->
+  <p class="pv-nota">
+    «A portata di libro» è un prototipo realizzato come project work universitario. Questa
+    informativa descrive fedelmente il trattamento implementato nel software, ma non
+    sostituisce l'informativa legale che sarebbe necessaria per un servizio in esercizio.
+  </p>
+</div>
+
+</main>

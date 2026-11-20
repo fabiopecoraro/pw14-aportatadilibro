@@ -1,0 +1,86 @@
+@use '../../../../styles/typography' as type;
+
+// Lista puntata del pannello editoriale verde: specifica di questa
+// schermata, non condivisa con il login (che ha le costole di libro al suo
+// posto), quindi non vive in _auth.scss.
+.auth-checklist {
+  list-style: none;
+  margin: var(--apl-space-24) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-14);
+  position: relative;
+  z-index: 1;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--apl-space-12);
+    font-family: var(--apl-font-body);
+    font-weight: 300;
+    font-size: 15px;
+    color: var(--apl-paper-2);
+  }
+
+  // Il segno di spunta e' un elenco puntato disegnato, non contenuto: il
+  // significato sta nel testo accanto, ed e' per questo marcato
+  // `aria-hidden` nel template. Resta comunque in bianco pieno invece che nel
+  // paper del testo, perche' sul cerchio traslucido il paper scendeva a
+  // 3,5:1 e il glifo si perdeva sul verde.
+  span {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--apl-radius-full);
+    background: rgba(242, 241, 234, 0.2);
+    color: #ffffff;
+    font-family: var(--apl-font-ui);
+    font-weight: 600;
+    font-size: 13px;
+  }
+}
+
+// Consenso privacy: riga con checkbox allineata alla prima riga del testo,
+// non centrata verticalmente sul blocco, cosi' resta agganciata alla frase
+// anche quando la label va a capo su schermi stretti.
+.auth-consenso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--apl-space-10);
+  margin: var(--apl-space-16) 0 0;
+
+  input[type='checkbox'] {
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+    margin: 2px 0 0;
+    accent-color: var(--apl-green);
+    cursor: pointer;
+  }
+
+  label {
+    @include type.ui-s;
+    color: var(--apl-muted);
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  a {
+    color: var(--apl-green);
+    text-decoration: underline;
+  }
+}
+
+.auth-consenso-invalid input[type='checkbox'] {
+  outline: 2px solid var(--apl-danger);
+  outline-offset: 1px;
+}
+
+.auth-consenso-errore {
+  display: block;
+  margin-top: 6px;
+}

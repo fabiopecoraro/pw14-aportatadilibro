@@ -1,0 +1,23 @@
+// Le due "costole di libro" decorative del pannello editoriale: specifiche di
+// questa schermata, non condivise con la registrazione (che ha una lista
+// puntata al loro posto), quindi non vivono in _auth.scss.
+.auth-costole {
+  display: flex;
+  gap: var(--apl-space-14);
+  position: relative;
+  z-index: 1;
+
+  span {
+    width: 88px;
+    height: 130px;
+    border-radius: var(--apl-radius-sm);
+    background: repeating-linear-gradient(135deg, #26332b, #26332b 8px, #2c3a31 8px, #2c3a31 16px);
+    transform: rotate(-5deg);
+
+    &:last-child {
+      transform: rotate(4deg);
+      margin-top: 10px;
+      background: repeating-linear-gradient(135deg, #2a3a30, #2a3a30 8px, #324237 8px, #324237 16px);
+    }
+  }
+}

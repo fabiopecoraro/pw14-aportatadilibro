@@ -1,0 +1,67 @@
+@use '../../../../styles/typography' as type;
+
+:host {
+  display: block;
+}
+
+.chart-svg {
+  display: block;
+  width: 100%;
+  height: 140px;
+  overflow: visible;
+}
+
+.chart-linea {
+  fill: none;
+  stroke: var(--apl-green);
+  stroke-width: 2;
+  // Con preserveAspectRatio="none" l'SVG viene stirato in orizzontale: senza
+  // vector-effect lo spessore del tratto si deformerebbe insieme al disegno.
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.chart-area {
+  fill: var(--apl-green);
+  opacity: 0.12;
+}
+
+.chart-punto {
+  fill: var(--apl-green);
+  stroke: var(--apl-paper);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.chart-guida,
+.chart-base {
+  stroke: var(--apl-border-soft);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.chart-guida {
+  stroke-dasharray: 3 4;
+}
+
+.chart-assi {
+  @include type.meta;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: var(--apl-muted-2);
+  margin-top: var(--apl-space-9);
+}
+
+.chart-picco {
+  color: var(--apl-muted-2);
+}
+
+.chart-vuoto {
+  @include type.ui-s;
+  color: var(--apl-muted-2);
+  margin: 0;
+  padding: var(--apl-space-22) 0;
+  text-align: center;
+}

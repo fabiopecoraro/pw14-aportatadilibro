@@ -1,0 +1,532 @@
+<!--
+  Dashboard dell'Admin: numeri del catalogo, statistiche d'uso, vocabolario delle
+  categorie, proposte di nuovi libri e segnalazioni, in un'unica pagina.
+
+  Le cinque sezioni si caricano ciascuna per conto proprio e ognuna ha il suo
+  @switch con tre esiti distinti: scheletro, errore con «Riprova», contenuto. Un
+  solo caricamento per tutta la pagina farebbe sparire quattro sezioni sane per
+  colpa della quinta; e un errore mostrato come elenco vuoto direbbe all'Admin
+  «nessuna segnalazione» quando in realtà non si è riusciti a leggerle.
+
+  Qui non c'è un <main>: lo fornisce il layout che ospita le schermate dietro
+  login, e deve restare l'unico della pagina perché è il bersaglio dello skip
+  link. La schermata porta solo il proprio h1 e, sotto, un h2 per sezione.
+-->
+<div class="dash-testa">
+  <h1>Dashboard Admin</h1>
+</div>
+
+<section class="dash-sezione">
+  @switch (statoStatistiche()) {
+    @case ('loading') {
+      <div class="dash-stats">
+        <app-skeleton forma="blocco" [altezza]="86" [ripetizioni]="6" />
+      </div>
+    }
+
+    @case ('error') {
+      <app-empty-state
+        titolo="Non siamo riusciti a caricare le statistiche"
+        descrizione="Controlla la connessione e riprova."
+        icona="cloud_off"
+        [compatto]="true"
+      >
+        <button mat-stroked-button (click)="caricaStatistiche()">Riprova</button>
+      </app-empty-state>
+    }
+
+    @default {
+      @if (statistiche(); as s) {
+        <div class="dash-stats">
+          <div class="dash-stat">
+            <div class="dash-stat-numero">{{ s.totaleLibri }}</div>
+            <div class="dash-stat-etichetta">Libri nel catalogo</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-numero">{{ s.totaleCopie }}</div>
+            <div class="dash-stat-etichetta">Copie totali</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-numero">{{ s.copieDisponibili }}</div>
+            <div class="dash-stat-etichetta">Copie disponibili</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-numero">{{ s.copieInPrestito }}</div>
+            <div class="dash-stat-etichetta">Copie in prestito</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-numero">
+              @if (s.durataMediaPrestitiGiorni !== null) {
+                {{ s.durataMediaPrestitiGiorni!.toFixed(1) }}
+              } @else {
+                –
+              }
+            </div>
+            <div class="dash-stat-etichetta">Durata media prestiti (giorni)</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-numero">{{ s.reportAperti }}</div>
+            <div class="dash-stat-etichetta">Report aperti</div>
+          </div>
+        </div>
+
+        <!--
+          Ogni esportazione ha il proprio stato di attesa: con uno solo condiviso
+          avviare uno scaricamento spegnerebbe anche l'altro pulsante, che invece
+          resta usabile. Il secondo esporta il periodo scelto con i chip più sotto,
+          così il file contiene la stessa finestra dei grafici.
+        -->
+        <div class="dash-esportazioni">
+          <button mat-flat-button (click)="esportaCsv()" [disabled]="esportazioneInCorso()" class="dash-export">
+            @if (esportazioneInCorso()) {
+              <mat-spinner diameter="16" />
+            } @else {
+              <mat-icon>download</mat-icon>
+            }
+            Esporta catalogo CSV
+          </button>
+
+          <button
+            mat-stroked-button
+            (click)="esportaMetricheCsv()"
+            [disabled]="esportazioneMetricheInCorso()"
+            class="dash-export"
+          >
+            @if (esportazioneMetricheInCorso()) {
+              <mat-spinner diameter="16" />
+            } @else {
+              <mat-icon>download</mat-icon>
+            }
+            Esporta metriche CSV
+          </button>
+        </div>
+      }
+    }
+  }
+</section>
+
+<!--
+  I periodi sono <button> con aria-pressed dentro un gruppo etichettato, non dei
+  <div> cliccabili: si raggiungono con Tab, si attivano con Invio o Spazio e lo
+  screen reader annuncia quale dei tre è attivo. La sola classe «attiva»
+  comunicherebbe la scelta soltanto a chi vede il colore.
+-->
+<div class="dash-sezione-testa">
+  <h2 class="dash-sottotitolo">Statistiche d'uso</h2>
+  <div class="apl-chip-group" role="group" aria-label="Periodo delle statistiche">
+    <button type="button" class="apl-chip-toggle" [class.attiva]="giorniPeriodo() === 7" [attr.aria-pressed]="giorniPeriodo() === 7" (click)="impostaPeriodo(7)">
+      7 giorni
+    </button>
+    <button type="button" class="apl-chip-toggle" [class.attiva]="giorniPeriodo() === 30" [attr.aria-pressed]="giorniPeriodo() === 30" (click)="impostaPeriodo(30)">
+      30 giorni
+    </button>
+    <button type="button" class="apl-chip-toggle" [class.attiva]="giorniPeriodo() === 90" [attr.aria-pressed]="giorniPeriodo() === 90" (click)="impostaPeriodo(90)">
+      90 giorni
+    </button>
+  </div>
+</div>
+
+<section class="dash-sezione">
+  @switch (statoMetriche()) {
+    @case ('loading') {
+      <app-skeleton forma="blocco" [altezza]="86" [ripetizioni]="4" />
+      <app-skeleton forma="blocco" [altezza]="200" [ripetizioni]="2" />
+    }
+
+    @case ('error') {
+      <app-empty-state
+        titolo="Non siamo riusciti a caricare le statistiche d'uso"
+        descrizione="Controlla la connessione e riprova."
+        icona="cloud_off"
+        [compatto]="true"
+      >
+        <button mat-stroked-button (click)="caricaMetriche()">Riprova</button>
+      </app-empty-state>
+    }
+
+    @default {
+      @if (metriche(); as m) {
+        <!--
+          Sono solo conteggi: le visualizzazioni vengono registrate per libro e
+          per giorno, senza chi ha aperto la scheda né a che ora. Per questo la
+          sezione non offre, e non potrebbe offrire, un dettaglio per utente o
+          per fascia oraria: è una scelta di riservatezza fatta alla raccolta.
+        -->
+        <div class="dash-stats">
+          <div class="dash-stat">
+            <div class="dash-stat-numero">{{ m.visualizzazioniTotali }}</div>
+            <div class="dash-stat-etichetta">Visualizzazioni totali</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-numero">{{ m.visualizzazioniPeriodo }}</div>
+            <div class="dash-stat-etichetta">Visualizzazioni negli ultimi {{ m.giorniPeriodo }} giorni</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-numero">{{ m.richiestePrestitoTotali }}</div>
+            <div class="dash-stat-etichetta">Richieste di prestito totali</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-numero">{{ m.richiestePrestitoPeriodo }}</div>
+            <div class="dash-stat-etichetta">Richieste negli ultimi {{ m.giorniPeriodo }} giorni</div>
+          </div>
+        </div>
+
+        <!--
+          Ogni grafico è una <figure> con la sua <figcaption>, che fa da titolo
+          visibile. Nei grafici a linea il «titolo» passato al componente è un
+          testo diverso e più esplicito perché diventa, insieme a un riassunto
+          a parole dell'andamento, il nome accessibile del disegno: chi non vede
+          la curva ne riceve comunque il contenuto.
+        -->
+        <div class="dash-grafici">
+          <figure class="dash-grafico">
+            <figcaption>Visualizzazioni delle schede libro</figcaption>
+            <app-chart-linea
+              [punti]="puntiVisualizzazioni()"
+              titolo="Visualizzazioni delle schede libro per giorno"
+              unita="visualizzazioni"
+            />
+          </figure>
+
+          <figure class="dash-grafico">
+            <figcaption>Richieste di prestito</figcaption>
+            <app-chart-linea
+              [punti]="puntiRichieste()"
+              titolo="Richieste di prestito per giorno"
+              unita="richieste"
+            />
+          </figure>
+
+          <figure class="dash-grafico">
+            <figcaption>I libri più visti</figcaption>
+            <app-chart-barre
+              [barre]="barreLibriPiuVisti()"
+              testoVuoto="Nessuna scheda libro è ancora stata aperta."
+            />
+          </figure>
+
+          <figure class="dash-grafico">
+            <figcaption>Prestiti per stato</figcaption>
+            <app-chart-barre
+              [barre]="barrePrestitiPerStato()"
+              testoVuoto="Nessuna richiesta di prestito registrata."
+            />
+          </figure>
+        </div>
+      }
+    }
+  }
+</section>
+
+<!--
+  Questa è l'unica schermata dell'applicazione in cui il nome di una categoria si
+  scrive a mano. Ovunque altrove le categorie si scelgono da questo elenco: è ciò
+  che impedisce a «Giallo», «giallo» e «Gialli» di diventare tre filtri diversi,
+  e che permette a una rinomina fatta qui di valere per tutte le opere insieme.
+-->
+<h2 class="dash-sottotitolo">Vocabolario delle categorie</h2>
+
+<section class="dash-sezione">
+  <p class="dash-nota">
+    Le categorie sono un elenco chiuso: gli utenti scelgono da qui e non possono aggiungerne
+    di proprie. Rinominare una voce aggiorna tutte le opere che la usano; eliminarla è
+    possibile solo quando non è usata da nessuna opera né da una proposta in attesa.
+  </p>
+
+  <form class="dash-nuova-categoria" (ngSubmit)="creaCategoria()">
+    <div class="apl-field">
+      <label for="nuova-categoria">Nuova categoria</label>
+      <input
+        id="nuova-categoria"
+        type="text"
+        maxlength="50"
+        [value]="nuovaCategoria()"
+        (input)="aggiornaNuovaCategoria($event)"
+      />
+    </div>
+    <button mat-flat-button type="submit" [disabled]="!nuovaCategoria().trim() || categoriaInCorso() === 'nuova'">
+      @if (categoriaInCorso() === 'nuova') {
+        <mat-spinner diameter="16" />
+      } @else {
+        <mat-icon>add</mat-icon>
+      }
+      Aggiungi
+    </button>
+  </form>
+
+  @switch (statoCategorie()) {
+    @case ('loading') {
+      <app-skeleton forma="riga" [ripetizioni]="3" />
+    }
+
+    @case ('error') {
+      <app-empty-state
+        titolo="Non siamo riusciti a caricare le categorie"
+        descrizione="Controlla la connessione e riprova."
+        icona="cloud_off"
+        [compatto]="true"
+      >
+        <button mat-stroked-button (click)="caricaCategorie()">Riprova</button>
+      </app-empty-state>
+    }
+
+    @default {
+      @if (categorie().length === 0) {
+        <app-empty-state
+          titolo="Il vocabolario è vuoto"
+          descrizione="Aggiungi la prima categoria: senza, gli utenti non possono proporre libri."
+          icona="sell"
+          [compatto]="true"
+        />
+      } @else {
+        <div class="dash-elenco">
+          @for (categoria of categorie(); track categoria.id) {
+            <div class="dash-riga">
+              <!--
+                La rinomina avviene nella riga stessa, che scambia il testo con
+                un campo. Lì non c'è posto per un'etichetta visibile, ma senza
+                etichetta lo screen reader leggerebbe solo «casella di testo»:
+                da qui la label nascosta, che nomina la voce che si sta cambiando
+                e distingue questo campo da quelli delle altre righe.
+              -->
+              @if (rinominaId() === categoria.id) {
+                <div class="dash-riga-info dash-rinomina">
+                  <label class="apl-sr-only" [attr.for]="'rinomina-' + categoria.id">
+                    Nuovo nome per {{ categoria.nome }}
+                  </label>
+                  <input
+                    [id]="'rinomina-' + categoria.id"
+                    type="text"
+                    maxlength="50"
+                    [value]="rinominaNome()"
+                    (input)="aggiornaRinominaNome($event)"
+                  />
+                </div>
+
+                <div class="dash-riga-azioni">
+                  <button
+                    mat-button
+                    (click)="confermaRinomina(categoria.id)"
+                    [disabled]="!rinominaNome().trim() || categoriaInCorso() === categoria.id"
+                  >
+                    <mat-icon>check</mat-icon>
+                    Salva
+                  </button>
+                  <button mat-button (click)="annullaRinomina()">Annulla</button>
+                </div>
+              } @else {
+                <div class="dash-riga-info">
+                  <p class="dash-riga-titolo">{{ categoria.nome }}</p>
+                  <p class="dash-riga-meta">
+                    {{ usoCategoria(categoria) }}
+                  </p>
+                </div>
+
+                <div class="dash-riga-azioni">
+                  <button mat-button (click)="iniziaRinomina(categoria)">
+                    <mat-icon>edit</mat-icon>
+                    Rinomina
+                  </button>
+                  <!--
+                    Una voce usata da un'opera o da una proposta in attesa non si
+                    può eliminare e il server rifiuterebbe comunque. Il pulsante
+                    resta visibile ma spento, con il motivo nel title: nasconderlo
+                    lascerebbe l'Admin a chiedersi perché su alcune righe manca,
+                    lasciarlo acceso lo porterebbe a un errore già prevedibile.
+                  -->
+                  <button
+                    mat-button
+                    color="warn"
+                    (click)="eliminaCategoria(categoria)"
+                    [disabled]="!eliminabile(categoria) || categoriaInCorso() === categoria.id"
+                    [attr.title]="motivoNonEliminabile(categoria)"
+                  >
+                    <mat-icon>delete</mat-icon>
+                    Elimina
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  }
+</section>
+
+<h2 class="dash-sottotitolo">Proposte di nuovi libri</h2>
+
+@switch (statoProposte()) {
+  @case ('loading') {
+    <app-skeleton forma="riga" [ripetizioni]="2" />
+  }
+
+  @case ('error') {
+    <app-empty-state
+      titolo="Non siamo riusciti a caricare le proposte"
+      descrizione="Controlla la connessione e riprova."
+      icona="cloud_off"
+      [compatto]="true"
+    >
+      <button mat-stroked-button (click)="caricaProposte()">Riprova</button>
+    </app-empty-state>
+  }
+
+  @default {
+    @if (proposte().length === 0) {
+      <app-empty-state
+        titolo="Nessuna proposta in attesa"
+        descrizione="Le proposte di nuovi libri inviate dagli utenti compariranno qui."
+        icona="fact_check"
+        [compatto]="true"
+      />
+    } @else {
+      <div class="dash-elenco">
+        @for (proposta of proposte(); track proposta.id) {
+          <div class="dash-riga">
+            <div class="dash-riga-info">
+              <p class="dash-riga-titolo">{{ proposta.titolo }}</p>
+              <p class="dash-riga-meta">
+                {{ proposta.autore }} · {{ nomiCategorie(proposta.categorie) }}
+                @if (proposta.anno) {
+                  · {{ proposta.anno }}
+                }
+                @if (proposta.isbn) {
+                  · ISBN {{ proposta.isbn }}
+                }
+              </p>
+              <!--
+                Anche davanti all'Admin chi propone è identificato dal solo
+                nickname: nome, cognome ed email non arrivano a questa schermata,
+                perché per valutare un titolo non servono.
+              -->
+              <p class="dash-riga-meta">
+                Proposto da <strong>{{ proposta.proponenteNickname }}</strong>
+                il {{ proposta.dataProposta | date: 'dd/MM/yyyy' }}
+              </p>
+            </div>
+
+            <div class="dash-riga-azioni">
+              <button
+                mat-button
+                (click)="approvaProposta(proposta)"
+                [disabled]="gestionePropostaInCorso() === proposta.id"
+              >
+                @if (gestionePropostaInCorso() === proposta.id) {
+                  <mat-spinner diameter="16" />
+                } @else {
+                  <mat-icon>check_circle</mat-icon>
+                }
+                Approva
+              </button>
+
+              <button
+                mat-button
+                color="warn"
+                (click)="rifiutaProposta(proposta)"
+                [disabled]="gestionePropostaInCorso() === proposta.id"
+              >
+                <mat-icon>cancel</mat-icon>
+                Rifiuta
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+}
+
+<div class="dash-sezione-testa">
+  <h2 class="dash-sottotitolo">Segnalazioni</h2>
+  <div class="apl-chip-group" role="group" aria-label="Filtra le segnalazioni">
+    <button type="button" class="apl-chip-toggle" [class.attiva]="!mostraChiusi()" [attr.aria-pressed]="!mostraChiusi()" (click)="impostaMostraChiusi(false)">
+      Aperte
+    </button>
+    <button type="button" class="apl-chip-toggle" [class.attiva]="mostraChiusi()" [attr.aria-pressed]="mostraChiusi()" (click)="impostaMostraChiusi(true)">
+      Chiuse
+    </button>
+  </div>
+</div>
+
+@switch (statoReports()) {
+  @case ('loading') {
+    <app-skeleton forma="riga" [ripetizioni]="2" />
+  }
+
+  @case ('error') {
+    <app-empty-state
+      titolo="Non siamo riusciti a caricare le segnalazioni"
+      descrizione="Controlla la connessione e riprova."
+      icona="cloud_off"
+      [compatto]="true"
+    >
+      <button mat-stroked-button (click)="caricaReports()">Riprova</button>
+    </app-empty-state>
+  }
+
+  @default {
+    @if (reports().length === 0) {
+      <app-empty-state
+        [titolo]="mostraChiusi() ? 'Nessuna segnalazione chiusa' : 'Nessuna segnalazione aperta'"
+        descrizione="Le segnalazioni inviate dagli utenti dalla chat compariranno qui."
+        icona="gpp_good"
+        [compatto]="true"
+      />
+    } @else {
+      <div class="dash-elenco">
+        @for (report of reports(); track report.id) {
+          <div class="dash-riga">
+            <div class="dash-riga-info">
+              <p class="dash-riga-titolo">{{ report.utenteSegnalatoNickname }}</p>
+              <p class="dash-riga-meta">
+                Segnalato da {{ report.segnalanteNickname }} · {{ report.dataCreazione | date: 'dd/MM/yyyy' }}
+              </p>
+              <p class="dash-riga-motivo">{{ report.motivo }}</p>
+            </div>
+
+            <div class="dash-riga-coda">
+              <span
+                class="apl-pill"
+                [class.apl-pill-danger]="report.stato === StatoReport.Aperto"
+                [class.apl-pill-neutra]="report.stato === StatoReport.Chiuso"
+              >
+                {{ report.stato === StatoReport.Aperto ? 'Aperto' : 'Chiuso' }}
+              </span>
+
+              <!--
+                «Vedi chat» compare solo sulle segnalazioni aperte. Le chat sono
+                private e l'Admin può leggerne una soltanto finché su quel
+                prestito c'è una segnalazione da valutare: chiusa quella, il
+                server non restituisce più la conversazione, e un pulsante che
+                la promettesse porterebbe a un rifiuto.
+              -->
+              @if (report.stato === StatoReport.Aperto) {
+                <div class="dash-riga-azioni">
+                  <button mat-button (click)="apriDettaglio(report)">
+                    <mat-icon>visibility</mat-icon>
+                    Vedi chat
+                  </button>
+
+                  <button
+                    mat-button
+                    color="warn"
+                    (click)="chiudiReport(report)"
+                    [disabled]="chiusuraInCorso() === report.id"
+                  >
+                    @if (chiusuraInCorso() === report.id) {
+                      <mat-spinner diameter="16" />
+                    } @else {
+                      <mat-icon>check_circle</mat-icon>
+                    }
+                    Chiudi
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+}

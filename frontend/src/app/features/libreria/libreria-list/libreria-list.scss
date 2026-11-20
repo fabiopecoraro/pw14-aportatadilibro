@@ -1,0 +1,111 @@
+@use '../../../../styles/typography' as type;
+
+.libreria-testa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apl-space-20);
+  margin-bottom: var(--apl-space-22);
+
+  h1 {
+    @include type.h2;
+    margin: 0;
+  }
+}
+
+.libreria-conteggio {
+  margin: var(--apl-space-3) 0 0;
+}
+
+.apl-chip-group {
+  margin-bottom: var(--apl-space-22);
+}
+
+.libreria-griglia {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--apl-space-20);
+}
+
+// Elemento di griglia: senza min-width esplicito non potrebbe restringersi
+// sotto la larghezza del proprio contenuto, e un titolo lungo allargherebbe
+// la colonna oltre lo schermo.
+.libreria-card {
+  min-width: 0;
+}
+
+.libreria-card-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+// Bottone di gestione hub proiettato nel piede della card griglia. E' l'unica
+// azione disponibile in questo contesto: le altre voci del menu previste dal
+// design ("Modifica", "Nascondi") non hanno un endpoint corrispondente.
+.libreria-hub {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-5);
+  width: 100%;
+  padding: 6px 0 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  color: var(--apl-muted);
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    color: var(--apl-green);
+  }
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.libreria-sottotitolo {
+  @include type.h3;
+  margin: var(--apl-space-40) 0 var(--apl-space-16);
+}
+
+.proposte-elenco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-9);
+}
+
+.proposta-riga {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apl-space-12);
+  padding: var(--apl-space-12) var(--apl-space-14);
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+}
+
+.proposta-titolo {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: var(--apl-fs-ui);
+  color: var(--apl-ink);
+  margin: 0;
+}
+
+.proposta-meta {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted);
+  margin: var(--apl-space-3) 0 0;
+}

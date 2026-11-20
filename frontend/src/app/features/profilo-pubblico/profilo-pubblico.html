@@ -1,0 +1,65 @@
+<!--
+  Il nome della persona fa da titolo solo quando il profilo c'e'. Negli altri
+  casi la schermata avrebbe soltanto l'h2 dello stato vuoto.
+-->
+@if (stato() === 'loading' || stato() === 'error' || !nickname()) {
+  <h1 class="apl-sr-only">Profilo</h1>
+}
+
+@switch (stato()) {
+  @case ('loading') {
+    <app-skeleton forma="blocco" [altezza]="100" />
+  }
+
+  @case ('error') {
+    <app-empty-state
+      titolo="Non siamo riusciti a caricare questo profilo"
+      descrizione="Controlla la connessione e riprova."
+      icona="cloud_off"
+    >
+      <button mat-stroked-button (click)="carica()">Riprova</button>
+    </app-empty-state>
+  }
+
+  @default {
+    @if (nickname(); as nome) {
+      <header class="persona-testa">
+        <app-avatar [nome]="nome" [dimensione]="96" />
+
+        <div class="persona-info">
+          <h1>{{ nome }}</h1>
+
+          @if (ratingMedio(); as rating) {
+            <span class="apl-pill apl-pill-verde">★ {{ rating | number: '1.1-1' : 'it' }} fiducia</span>
+          }
+        </div>
+      </header>
+
+      <h2 class="persona-sottotitolo">Cosa dicono di {{ nome }}</h2>
+
+      @if (recensioni().length === 0) {
+        <p class="apl-body apl-text-muted">Nessuna recensione ricevuta finora.</p>
+      } @else {
+        <div class="persona-recensioni">
+          @for (recensione of recensioni(); track recensione.id) {
+            <article class="persona-recensione">
+              <div class="persona-recensione-testa">
+                <span class="persona-recensione-autore">{{ recensione.autoreNickname }}</span>
+                <app-star-rating [voto]="recensione.voto" />
+              </div>
+              @if (recensione.commento) {
+                <p class="persona-recensione-commento">{{ recensione.commento }}</p>
+              }
+            </article>
+          }
+        </div>
+      }
+    } @else {
+      <app-empty-state
+        titolo="Profilo non disponibile"
+        descrizione="Questo utente non ha ancora ricevuto recensioni: non abbiamo un modo per mostrarne il profilo."
+        icona="person_off"
+      />
+    }
+  }
+}

@@ -1,0 +1,63 @@
+.copie-elenco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-9);
+}
+
+.copia-riga {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-12);
+  padding: var(--apl-space-10) var(--apl-space-14);
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+}
+
+.copia-info {
+  flex: 1;
+  min-width: 0;
+}
+
+// Anche da link (verso il profilo pubblico) resta nero come il testo che la
+// circonda: e' un'etichetta di riga, non una call to action, quindi non deve
+// leggersi come uno dei link verdi del sistema.
+.copia-proprietario {
+  display: block;
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: var(--apl-fs-ui);
+  color: var(--apl-ink);
+  margin: 0 0 var(--apl-space-5);
+
+  &:hover {
+    color: var(--apl-ink);
+    text-decoration: underline;
+  }
+}
+
+.copia-stato {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-9);
+  flex-wrap: wrap;
+}
+
+// Testo, non accento decorativo: il terracotta pieno renderebbe 2,9:1 su
+// fondo paper (vedi nota contrasto in _tokens.scss).
+.copia-rientro {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-terracotta-text);
+}
+
+.copia-azioni {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-5);
+}
+
+.copia-icona-danger {
+  color: var(--apl-danger);
+}

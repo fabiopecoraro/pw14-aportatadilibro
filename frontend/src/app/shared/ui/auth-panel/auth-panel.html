@@ -1,0 +1,18 @@
+<div class="pannello-cerchio" aria-hidden="true"></div>
+
+<span class="pannello-wordmark">a portata di libro</span>
+
+<div class="pannello-testo">
+  <!--
+    E' uno slogan, non un titolo di sezione: come h2 precederebbe l'h1 della
+    pagina di accesso, rompendo l'ordine delle intestazioni.
+  -->
+  <p class="pannello-titolo">{{ titolo() }}</p>
+  @if (sottotitolo()) {
+    <p>{{ sottotitolo() }}</p>
+  }
+
+  <div class="pannello-decorazione">
+    <ng-content />
+  </div>
+</div>

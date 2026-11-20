@@ -1,0 +1,143 @@
+// =============================================================================
+// Scala tipografica
+// -----------------------------------------------------------------------------
+// Il design impone tre famiglie con ruoli non intercambiabili. Invece di
+// ripetere font-family/size/weight in ogni componente, la scala e' esposta come
+// classi utility (.apl-h1, .apl-ui, ...) e come mixin Sass riusabili dagli SCSS
+// di componente: cosi' un ritocco alla scala resta una modifica in un solo file,
+// che e' la ragione per cui il design la definisce in modo chiuso.
+// =============================================================================
+
+// --- Mixin, per l'uso dentro gli SCSS di componente -------------------------
+
+@mixin display-xl {
+  font-family: var(--apl-font-display);
+  font-weight: 800;
+  font-size: var(--apl-fs-display-xl);
+  line-height: var(--apl-lh-tight);
+  letter-spacing: var(--apl-ls-display);
+}
+
+@mixin display-l {
+  font-family: var(--apl-font-display);
+  font-weight: 800;
+  font-size: var(--apl-fs-display-l);
+  line-height: 1.06;
+  letter-spacing: var(--apl-ls-display);
+}
+
+@mixin display-m {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: var(--apl-fs-display-m);
+  line-height: var(--apl-lh-display);
+}
+
+@mixin h1 {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: var(--apl-fs-h1);
+  line-height: var(--apl-lh-heading);
+}
+
+@mixin h2 {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: var(--apl-fs-h2);
+  line-height: var(--apl-lh-heading);
+}
+
+@mixin h3 {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: var(--apl-fs-h3);
+  line-height: 1.2;
+}
+
+@mixin h4 {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: var(--apl-fs-h4);
+  line-height: 1.25;
+}
+
+// Corpo editoriale: Spectral in peso 300, come da design. Il peso leggero e'
+// una scelta voluta del sistema, non un refuso: regge perche' usato solo su
+// misure di riga larghe.
+@mixin body-l {
+  font-family: var(--apl-font-body);
+  font-weight: 300;
+  font-size: var(--apl-fs-body-l);
+  line-height: var(--apl-lh-reading);
+}
+
+@mixin body {
+  font-family: var(--apl-font-body);
+  font-weight: 300;
+  font-size: var(--apl-fs-body);
+  line-height: var(--apl-lh-reading);
+}
+
+// Interfaccia: Archivo. Tutto cio' che si clicca, si legge come etichetta o si
+// scansiona come metadato passa da qui.
+@mixin ui-l {
+  font-family: var(--apl-font-ui);
+  font-weight: 500;
+  font-size: var(--apl-fs-ui-l);
+  line-height: 1.4;
+}
+
+@mixin ui {
+  font-family: var(--apl-font-ui);
+  font-weight: 400;
+  font-size: var(--apl-fs-ui);
+  line-height: var(--apl-lh-ui);
+}
+
+@mixin ui-s {
+  font-family: var(--apl-font-ui);
+  font-weight: 400;
+  font-size: var(--apl-fs-ui-s);
+  line-height: 1.5;
+}
+
+@mixin meta {
+  font-family: var(--apl-font-ui);
+  font-weight: 400;
+  font-size: var(--apl-fs-meta);
+  line-height: 1.4;
+}
+
+@mixin overline {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: var(--apl-fs-overline);
+  line-height: 1.4;
+  letter-spacing: var(--apl-ls-overline);
+  text-transform: uppercase;
+}
+
+// --- Classi utility, per l'uso diretto nei template -------------------------
+
+.apl-display-xl { @include display-xl; }
+.apl-display-l { @include display-l; }
+.apl-display-m { @include display-m; }
+.apl-h1 { @include h1; }
+.apl-h2 { @include h2; }
+.apl-h3 { @include h3; }
+.apl-h4 { @include h4; }
+.apl-body-l { @include body-l; }
+.apl-body { @include body; }
+.apl-ui-l { @include ui-l; }
+.apl-ui { @include ui; }
+.apl-ui-s { @include ui-s; }
+.apl-meta { @include meta; }
+.apl-overline { @include overline; }
+
+// Modificatori di colore del testo, gli unici ammessi dal design.
+.apl-text-muted { color: var(--apl-muted); }
+.apl-text-muted-2 { color: var(--apl-muted-2); }
+.apl-text-muted-3 { color: var(--apl-muted-3); }
+.apl-text-green { color: var(--apl-green); }
+.apl-text-terracotta { color: var(--apl-terracotta); }
+.apl-text-danger { color: var(--apl-danger); }

@@ -1,0 +1,98 @@
+<!--
+  Titolo della schermata solo per le tecnologie assistive: il design non
+  prevede un'intestazione visibile qui — la mappa occupa tutta l'area e un
+  titolo le ruberebbe spazio — ma una pagina senza h1 lascia chi naviga per
+  intestazioni senza un punto di partenza.
+-->
+<h1 class="apl-sr-only">Mappa dei libri disponibili vicino a te</h1>
+
+<!--
+  Barra dei filtri mobile: sopra la mappa. Sul desktop la stessa
+  coppia di controlli vive in cima al pannello di sinistra.
+-->
+<div class="mappa-barra-mobile">
+  <app-filtri-mappa
+    [testo]="testo()"
+    [categorieDisponibili]="categorieDisponibili()"
+    [categoriaAttiva]="categoriaAttiva()"
+    (testoChange)="aggiornaTesto($event)"
+    (categoriaChange)="aggiornaCategoria($event)"
+  />
+</div>
+
+<!-- Pannello desktop: filtri in alto, elenco a scorrimento indipendente sotto. -->
+<aside class="mappa-pannello">
+  <div class="mappa-pannello-testa">
+    <app-filtri-mappa
+      [testo]="testo()"
+      [categorieDisponibili]="categorieDisponibili()"
+      [categoriaAttiva]="categoriaAttiva()"
+      (testoChange)="aggiornaTesto($event)"
+      (categoriaChange)="aggiornaCategoria($event)"
+    />
+  </div>
+
+  <app-elenco-risultati
+    class="mappa-pannello-elenco"
+    [risultati]="risultati()"
+    [stato]="stato()"
+    [libroSelezionatoId]="libroSelezionatoId()"
+    [libroDaScorrere]="libroDaScorrere()"
+    (libroSelezionato)="selezionaDaElenco($event)"
+    (libroEvidenziato)="evidenzia($event)"
+    (riprova)="cerca()"
+  />
+</aside>
+
+<!-- Mappa -->
+<div class="mappa-area">
+  <div #contenitore class="mappa-tela"></div>
+
+  <button type="button" class="mappa-posizione" (click)="localizza()">
+    <mat-icon>my_location</mat-icon>
+    La tua posizione
+  </button>
+
+  @if (posizioneNegata()) {
+    <p class="mappa-avviso">
+      Non abbiamo la tua posizione: le distanze sono calcolate dal centro della mappa.
+    </p>
+  }
+</div>
+
+<!--
+  Bottom sheet mobile a tre agganci. L'altezza e' guidata dallo stato di
+  aggancio; durante il trascinamento passa a un valore libero e la transizione
+  viene sospesa, perche' il foglio deve seguire il dito senza ritardo.
+-->
+<section
+  #foglio
+  class="mappa-sheet"
+  [class]="'aggancio-' + agganciosheet()"
+  [class.in-trascinamento]="altezzaTrascinata() !== null"
+  [style.height.px]="altezzaTrascinata()"
+>
+  <button
+    type="button"
+    class="mappa-maniglia"
+    aria-label="Ridimensiona l'elenco dei risultati"
+    (click)="cambiaAggancio()"
+    (pointerdown)="iniziaTrascinamento($event)"
+    (pointermove)="trascina($event)"
+    (pointerup)="concludiTrascinamento()"
+    (pointercancel)="concludiTrascinamento()"
+  >
+    <span class="mappa-maniglia-barra"></span>
+  </button>
+
+  <app-elenco-risultati
+    class="mappa-sheet-elenco"
+    [risultati]="risultati()"
+    [stato]="stato()"
+    [libroSelezionatoId]="libroSelezionatoId()"
+    [libroDaScorrere]="libroDaScorrere()"
+    (libroSelezionato)="selezionaDaElenco($event)"
+    (libroEvidenziato)="evidenzia($event)"
+    (riprova)="cerca()"
+  />
+</section>

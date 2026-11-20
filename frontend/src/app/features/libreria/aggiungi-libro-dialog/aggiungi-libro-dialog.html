@@ -1,0 +1,194 @@
+<!--
+  Aggiunta di un libro alla propria libreria. Il dialog obbliga a cercare prima
+  nel catalogo perche' il catalogo e' condiviso: un'opera vi compare una volta
+  sola e ogni utente vi aggancia la propria copia. Chi trova il titolo aggiunge
+  la copia con un click; chi non lo trova non puo' crearlo da se', puo' solo
+  proporlo, e l'opera entra in catalogo dopo l'approvazione di un amministratore.
+  Un form «nuovo libro» libero in cima riempirebbe il catalogo di doppioni dello
+  stesso titolo, ciascuno con metadati scritti in modo diverso.
+
+  Il design prevedeva anche condizione della copia, durata massima e una nota:
+  mancano perche' il server non ha dove salvarle, e chiederle per poi scartarle
+  sarebbe promettere piu' di quanto il sistema mantiene.
+-->
+<h2 mat-dialog-title>Aggiungi un libro</h2>
+
+<mat-dialog-content>
+  <p class="apl-ui-s apl-text-muted dialog-descrizione">
+    Cerca il titolo nel catalogo condiviso: se è già presente potrai aggiungere subito una tua
+    copia, altrimenti potrai proporne l'inserimento.
+  </p>
+
+  <form [formGroup]="ricercaForm" (ngSubmit)="cerca()" class="ricerca-riga">
+    <!--
+      L'etichetta c'e' ma e' visibile solo agli screen reader: il segnaposto
+      sparisce al primo carattere e non vale come nome del campo.
+    -->
+    <div class="apl-field ricerca-campo">
+      <label for="ricerca-titolo" class="apl-sr-only">Titolo</label>
+      <input id="ricerca-titolo" type="text" formControlName="titolo" placeholder="Cerca per titolo..." />
+      @if (ricercaForm.controls.titolo.hasError('required') && ricercaForm.controls.titolo.touched) {
+        <span class="apl-field-error">Il titolo è obbligatorio.</span>
+      }
+    </div>
+
+    <button mat-flat-button type="submit" [disabled]="cercaInCorso()">
+      @if (cercaInCorso()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        <mat-icon>search</mat-icon>
+      }
+      Cerca
+    </button>
+  </form>
+
+  @if (cercato()) {
+    @if (risultati().length > 0) {
+      <p class="ricerca-conteggio apl-overline">
+        {{ risultati().length }} {{ risultati().length === 1 ? 'risultato' : 'risultati' }}
+      </p>
+
+      <div class="risultati-elenco">
+        @for (libro of risultati(); track libro.id) {
+          <div class="risultato-riga">
+            <div class="risultato-copertina"></div>
+
+            <div class="risultato-info">
+              <p class="risultato-titolo">{{ libro.titolo }}</p>
+              <p class="risultato-meta">
+                {{ libro.autore }} · {{ nomiCategorie(libro.categorie)
+                }}{{ libro.copieTotali > 0 ? ' · ' + libro.copieTotali + ' già in giro nel quartiere' : '' }}
+              </p>
+            </div>
+
+            <!--
+              Il pulsante mostra solo un'icona, quindi il nome lo riceve da
+              aria-label, che include il titolo: con un generico «Aggiungi» chi
+              scorre l'elenco con lo screen reader sentirebbe la stessa parola
+              a ogni riga senza sapere a quale libro si riferisce. Durante
+              l'invio si spegne solo il pulsante della riga interessata.
+            -->
+            <button
+              type="button"
+              class="risultato-azione"
+              (click)="aggiungiCopia(libro)"
+              [disabled]="aggiuntaInCorso() === libro.id"
+              [attr.aria-label]="'Aggiungi ' + libro.titolo + ' alla mia libreria'"
+            >
+              @if (aggiuntaInCorso() === libro.id) {
+                <mat-spinner diameter="16" />
+              } @else {
+                <mat-icon>add</mat-icon>
+              }
+            </button>
+          </div>
+        }
+      </div>
+
+      <!--
+        Con dei risultati la proposta resta una via secondaria, da aprire a
+        mano: prima si guarda se il libro c'e' gia'. Con zero risultati invece
+        il form si apre da solo, col titolo cercato gia' compilato, perche' a
+        quel punto proporre e' l'unica cosa che resta da fare.
+      -->
+      @if (!mostraProposta()) {
+        <button mat-button class="ricerca-proponi" (click)="proponiNuovoLibro()">
+          Non è il libro che cerco, proponine uno nuovo →
+        </button>
+      }
+    } @else {
+      <p class="apl-body apl-text-muted">Nessun libro trovato in catalogo con questo titolo.</p>
+    }
+  }
+
+  @if (mostraProposta()) {
+    <h3 class="proposta-titolo-sezione">Proponi un nuovo libro</h3>
+    <p class="apl-ui-s apl-text-muted dialog-descrizione">
+      Il libro verrà inserito nel catalogo e nella tua libreria solo dopo l'approvazione di un
+      amministratore.
+    </p>
+
+    <form [formGroup]="propostaForm" (ngSubmit)="inviaProposta()" class="proposta-form">
+      <div class="apl-field">
+        <label for="proposta-titolo">Titolo</label>
+        <input id="proposta-titolo" type="text" formControlName="titolo" />
+        @if (propostaForm.controls.titolo.hasError('required') && propostaForm.controls.titolo.touched) {
+          <span class="apl-field-error">Il titolo è obbligatorio.</span>
+        }
+      </div>
+
+      <div class="apl-field">
+        <label for="proposta-autore">Autore</label>
+        <input id="proposta-autore" type="text" formControlName="autore" />
+        @if (propostaForm.controls.autore.hasError('required') && propostaForm.controls.autore.touched) {
+          <span class="apl-field-error">L'autore è obbligatorio.</span>
+        }
+      </div>
+
+      <!--
+        Le categorie non si scrivono: si scelgono, da una a cinque, fra le voci
+        del vocabolario gestito dall'Admin. Un campo di testo qui farebbe
+        nascere varianti della stessa categoria che poi nessun filtro
+        riconoscerebbe come uguali. L'intestazione e' uno <span> collegato con
+        aria-labelledby e non una <label for>, perche' il selettore e' un gruppo
+        di pulsanti e non un singolo campo a cui una label possa puntare.
+        L'errore compare solo dopo un tentativo d'invio, non a form appena aperto.
+      -->
+      <div class="apl-field">
+        <span class="apl-field-label" id="proposta-categorie-label">Categorie</span>
+        <app-selettore-categorie
+          [categorie]="categorie()"
+          [(selezione)]="categorieScelte"
+          aria-labelledby="proposta-categorie-label"
+        />
+        @if (categorieMancanti() && categorieScelte().length === 0) {
+          <span class="apl-field-error">Scegli almeno una categoria.</span>
+        }
+      </div>
+
+      <!--
+        L'anno e' facoltativo: meglio un metadato assente che uno indovinato,
+        dato che poi vale per tutte le copie dell'opera e solo l'Admin puo'
+        correggerlo. I limiti sono gli stessi applicati dal server; ripeterli
+        qui risparmia una richiesta per un refuso, ma chi decide resta il server.
+      -->
+      <div class="apl-field">
+        <label for="proposta-anno">Anno di pubblicazione (opzionale)</label>
+        <input
+          id="proposta-anno"
+          type="number"
+          inputmode="numeric"
+          formControlName="anno"
+          [min]="annoMinimo"
+          [max]="annoMassimo"
+          [attr.aria-describedby]="'proposta-anno-aiuto'"
+        />
+        @if (propostaForm.controls.anno.invalid && propostaForm.controls.anno.touched) {
+          <span id="proposta-anno-aiuto" class="apl-field-error">
+            Inserisci un anno fra {{ annoMinimo }} e {{ annoMassimo }}.
+          </span>
+        } @else {
+          <span id="proposta-anno-aiuto" class="apl-field-hint">
+            Lascia vuoto se non lo conosci con certezza.
+          </span>
+        }
+      </div>
+
+      <div class="apl-field">
+        <label for="proposta-isbn">ISBN (opzionale)</label>
+        <input id="proposta-isbn" type="text" formControlName="isbn" />
+      </div>
+
+      <button mat-flat-button type="submit" [disabled]="propostaInCorso()">
+        @if (propostaInCorso()) {
+          <mat-spinner diameter="18" />
+        }
+        Invia proposta
+      </button>
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="annulla()">Chiudi</button>
+</mat-dialog-actions>

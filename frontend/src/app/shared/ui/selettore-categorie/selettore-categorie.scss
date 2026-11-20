@@ -1,0 +1,64 @@
+@use '../../../../styles/typography' as type;
+
+:host {
+  display: block;
+}
+
+.sc-chip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apl-space-7);
+}
+
+// Stessa forma delle chip filtro del catalogo e della mappa: e' lo stesso
+// gesto (accendere o spegnere una categoria) in un contesto diverso, e vale
+// la pena che si somiglino.
+.sc-voce {
+  @include type.ui-s;
+  padding: 6px 13px;
+  border-radius: var(--apl-radius-pill);
+  border: 1px solid var(--apl-border-input);
+  background: transparent;
+  color: var(--apl-ink);
+  cursor: pointer;
+  transition:
+    background var(--apl-duration-fast) var(--apl-ease),
+    border-color var(--apl-duration-fast) var(--apl-ease);
+
+  &:hover:not(:disabled) {
+    border-color: var(--apl-border-strong);
+  }
+
+  &.attiva {
+    background: var(--apl-green-dark);
+    border-color: var(--apl-green-dark);
+    color: #ffffff;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.sc-conteggio {
+  @include type.meta;
+  color: var(--apl-muted-2);
+  margin: var(--apl-space-9) 0 0;
+}
+
+.sc-conteggio-limite {
+  color: var(--apl-terracotta-text);
+}
+
+.sc-vuoto {
+  @include type.ui-s;
+  color: var(--apl-muted-2);
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-voce {
+    transition: none;
+  }
+}

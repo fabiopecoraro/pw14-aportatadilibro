@@ -1,0 +1,110 @@
+<!--
+  Profilo personale: come l'utente appare agli altri, più i numeri della sua
+  attività. Mostra solo ciò che esiste davvero nei dati. Il design prevede anche
+  la zona di residenza e un badge di «lettrice verificata»: mancano di proposito,
+  perché la posizione dell'utente non viene mai salvata e il concetto di account
+  verificato non esiste. Qui il profilo si guarda soltanto; per cambiare i
+  propri dati si passa a Impostazioni.
+
+  L'intestazione sta fuori dallo @switch: il nickname arriva dalla sessione, non
+  dal caricamento, e può comparire subito mentre statistiche e recensioni sono
+  ancora in arrivo.
+-->
+@if (authService.currentUser(); as utente) {
+  <header class="persona-testa">
+    <app-avatar [nome]="utente.nickname" [dimensione]="96" variante="green" />
+
+    <div class="persona-info">
+      <!--
+        Il titolo della schermata è il nickname, non nome e cognome: è l'unica
+        identità che l'applicazione mostra, anche al diretto interessato, così
+        vede sé stesso esattamente come lo vedono gli altri.
+      -->
+      <h1>{{ utente.nickname }}</h1>
+
+      <!--
+        Senza recensioni la media è `null` e l'etichetta non compare affatto:
+        uno «0,0 fiducia» direbbe che l'utente è stato valutato male, quando
+        semplicemente non è stato ancora valutato.
+      -->
+      @if (ratingMedio(); as rating) {
+        <div class="persona-badge-riga">
+          <span class="apl-pill apl-pill-verde">
+            ★ {{ rating | number: '1.1-1' : 'it' }} fiducia
+          </span>
+        </div>
+      }
+    </div>
+
+    <a mat-stroked-button class="profilo-cta" routerLink="/impostazioni">Impostazioni</a>
+  </header>
+
+  @switch (stato()) {
+    @case ('loading') {
+      <app-skeleton forma="blocco" [altezza]="100" />
+    }
+
+    @case ('error') {
+      <app-empty-state
+        titolo="Non siamo riusciti a caricare il profilo"
+        descrizione="Controlla la connessione e riprova."
+        icona="cloud_off"
+        [compatto]="true"
+      >
+        <button mat-stroked-button (click)="carica()">Riprova</button>
+      </app-empty-state>
+    }
+
+    @default {
+      <!--
+        «Prestati» e «presi» contano solo i prestiti accettati o conclusi: una
+        richiesta rifiutata o annullata non ha mai spostato un libro. Questo
+        riquadro esiste solo sul profilo personale, perché nessun endpoint
+        espone gli stessi numeri per un altro utente.
+      -->
+      <div class="profilo-statistiche">
+        <div class="profilo-stat">
+          <div class="profilo-stat-numero">{{ libriPrestati() }}</div>
+          <div class="profilo-stat-etichetta">Libri prestati</div>
+        </div>
+        <div class="profilo-stat">
+          <div class="profilo-stat-numero">{{ libriPresi() }}</div>
+          <div class="profilo-stat-etichetta">Libri presi</div>
+        </div>
+        <div class="profilo-stat">
+          <div class="profilo-stat-numero">{{ recensioni().length }}</div>
+          <div class="profilo-stat-etichetta">Recensioni ricevute</div>
+        </div>
+        <div class="profilo-stat">
+          <div class="profilo-stat-numero">{{ libriInPrestitoOra() }}</div>
+          <div class="profilo-stat-etichetta">In prestito ora</div>
+        </div>
+      </div>
+
+      <h2 class="persona-sottotitolo">Cosa dicono di me</h2>
+
+      @if (recensioni().length === 0) {
+        <p class="apl-body apl-text-muted">Nessuna recensione ricevuta finora.</p>
+      } @else {
+        <div class="persona-recensioni">
+          @for (recensione of recensioni(); track recensione.id) {
+            <!--
+              Chi ha scritto la recensione è indicato con il nickname, come
+              ovunque. Il commento è facoltativo: se manca restano le stelle,
+              senza un paragrafo vuoto.
+            -->
+            <article class="persona-recensione">
+              <div class="persona-recensione-testa">
+                <span class="persona-recensione-autore">{{ recensione.autoreNickname }}</span>
+                <app-star-rating [voto]="recensione.voto" />
+              </div>
+              @if (recensione.commento) {
+                <p class="persona-recensione-commento">{{ recensione.commento }}</p>
+              }
+            </article>
+          }
+        </div>
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+<!--
+  Colonna di sinistra della chat: una riga per ogni prestito a cui l'utente
+  partecipa, come richiedente o come proprietario. Non esiste una conversazione
+  slegata da un prestito, ed è per questo che ogni riga si identifica con l'id
+  del prestito. Caricamento, errore ed elenco vuoto sono gestiti qui dentro,
+  così la schermata chat non deve distinguere i casi.
+-->
+@switch (stato()) {
+  @case ('loading') {
+    <app-skeleton forma="card-compatta" [ripetizioni]="4" />
+  }
+
+  @case ('error') {
+    <app-empty-state
+      titolo="Non siamo riusciti a caricare le conversazioni"
+      descrizione="Controlla la connessione e riprova."
+      icona="cloud_off"
+      [compatto]="true"
+    >
+      <button type="button" class="apl-chip-toggle" (click)="riprova.emit()">Riprova</button>
+    </app-empty-state>
+  }
+
+  @default {
+    @if (conversazioni().length === 0) {
+      <app-empty-state
+        titolo="Nessuna conversazione"
+        descrizione="Le chat con chi presta o chiede in prestito i tuoi libri compariranno qui."
+        icona="forum"
+        [compatto]="true"
+      />
+    } @else {
+      <ul class="conversazioni-elenco">
+        @for (conversazione of conversazioni(); track conversazione.prestitoId) {
+          <li>
+            <!--
+              La riga intera è un pulsante nativo: focus da tastiera, Invio e
+              Spazio arrivano senza doverli riscrivere. Il contenuto è fatto di
+              soli <span> perché un <button> non può contenere blocchi come
+              <div> o <p>.
+            -->
+            <button
+              type="button"
+              class="conversazione-riga"
+              [class.selezionata]="conversazione.prestitoId === conversazioneSelezionataId()"
+              (click)="seleziona.emit(conversazione)"
+            >
+              <app-avatar [nome]="conversazione.controparteNickname" [dimensione]="44" />
+
+              <span class="conversazione-info">
+                <span class="conversazione-nome">{{ conversazione.controparteNickname }}</span>
+                <span class="conversazione-libro">{{ conversazione.libroTitolo }}</span>
+                <!--
+                  Il design mette qui l'anteprima dell'ultimo messaggio, ma il
+                  server non la espone per prestito. Al suo posto c'è lo stato
+                  del prestito, che è comunque ciò che serve per capire quale
+                  conversazione aspetta una risposta.
+                -->
+                <span class="conversazione-stato" [class]="'stato-' + conversazione.stato.toLowerCase()">
+                  {{ statoTesto(conversazione.stato) }}
+                </span>
+              </span>
+
+              <!--
+                Il tempo è quello della richiesta di prestito, non dell'ultimo
+                messaggio: è il dato più vicino all'attività recente fra quelli
+                disponibili.
+              -->
+              <span class="conversazione-tempo">{{ tempoRelativo(conversazione.dataRichiesta) }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  }
+}

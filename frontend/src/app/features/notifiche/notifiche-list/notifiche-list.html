@@ -1,0 +1,118 @@
+<!--
+  Lista dei desideri: i titoli per cui l'utente ha chiesto di essere avvisato
+  quando una copia torna libera. L'elenco è diviso in due gruppi perché le due
+  situazioni chiedono cose diverse: se una copia è già disponibile l'azione
+  utile è chiederla subito, altrimenti si può solo aspettare o togliere il
+  titolo. I disponibili stanno in alto perché sono il motivo per cui si apre
+  questa schermata.
+
+  Il design mostra anche la distanza della copia comparsa. Qui non c'è: l'avviso
+  scatta quando una copia qualsiasi torna libera, senza alcuna nozione di dove
+  si trovi chi aspetta, perché la posizione dell'utente non viene mai salvata.
+-->
+<div class="desideri-testa">
+  <h1>Lista dei desideri</h1>
+  @if (desideri().length > 0) {
+    <p class="apl-ui-s apl-text-muted">
+      {{ desideri().length }} {{ desideri().length === 1 ? 'titolo' : 'titoli' }} · ti avviseremo
+      quando una copia tornerà disponibile
+    </p>
+  }
+</div>
+
+@switch (stato()) {
+  @case ('loading') {
+    <app-skeleton forma="card-compatta" [ripetizioni]="3" />
+  }
+
+  @case ('error') {
+    <app-empty-state
+      titolo="Non siamo riusciti a caricare la lista dei desideri"
+      descrizione="Controlla la connessione e riprova."
+      icona="cloud_off"
+    >
+      <button mat-stroked-button (click)="carica()">Riprova</button>
+    </app-empty-state>
+  }
+
+  @default {
+    @if (desideri().length === 0) {
+      <app-empty-state
+        titolo="Nessun desiderio in lista"
+        descrizione="Dalla scheda di un libro non disponibile, tocca «Avvisami quando disponibile» per aggiungerlo qui."
+        icona="favorite_border"
+      />
+    } @else {
+      @if (disponibili().length > 0) {
+        <div class="desideri-elenco">
+          @for (desiderio of disponibili(); track desiderio.sottoscrizioneId) {
+            <!--
+              `selezionata` è fisso a vero: il bordo verde che altrove marca la
+              card scelta qui fa risaltare i titoli tornati disponibili rispetto
+              a quelli ancora in attesa. Il `!` su `primaCopiaDisponibile` è
+              sicuro perché `disponibili()` contiene solo voci che ne hanno una.
+              Il pulsante si blocca per la sola riga in corso, confrontando
+              l'id: le altre richieste restano possibili.
+            -->
+            <app-book-card
+              [titolo]="desiderio.titolo"
+              [autore]="desiderio.autore"
+              [meta]="'Disponibile ora — ' + desiderio.primaCopiaDisponibile!.proprietarioNickname"
+              [copertinaUrl]="desiderio.copertinaUrl"
+              variante="riga"
+              [selezionata]="true"
+            >
+              <button
+                card-trailing
+                mat-flat-button
+                [disabled]="richiestaInCorso() === desiderio.sottoscrizioneId"
+                (click)="chiediInPrestito(desiderio)"
+              >
+                @if (richiestaInCorso() === desiderio.sottoscrizioneId) {
+                  <mat-spinner diameter="16" />
+                }
+                Chiedi in prestito
+              </button>
+            </app-book-card>
+          }
+        </div>
+      }
+
+      @if (inAttesa().length > 0) {
+        <p class="desideri-sottotitolo apl-overline">In attesa</p>
+
+        <div class="desideri-elenco">
+          @for (desiderio of inAttesa(); track desiderio.sottoscrizioneId) {
+            <!--
+              Card non interattiva: finché non c'è una copia non porta a nessuna
+              azione sul libro, e gli effetti di hover prometterebbero un clic
+              che non fa nulla. L'unico controllo è «Rimuovi».
+            -->
+            <app-book-card
+              [titolo]="desiderio.titolo"
+              [autore]="desiderio.autore"
+              meta="Nessuna copia disponibile"
+              [copertinaUrl]="desiderio.copertinaUrl"
+              variante="riga"
+              [interattiva]="false"
+              class="desideri-in-attesa"
+            >
+              <button
+                card-trailing
+                mat-button
+                [disabled]="annullamentoInCorso() === desiderio.sottoscrizioneId"
+                (click)="rimuovi(desiderio)"
+              >
+                @if (annullamentoInCorso() === desiderio.sottoscrizioneId) {
+                  <mat-spinner diameter="16" />
+                } @else {
+                  Rimuovi
+                }
+              </button>
+            </app-book-card>
+          }
+        </div>
+      }
+    }
+  }
+}

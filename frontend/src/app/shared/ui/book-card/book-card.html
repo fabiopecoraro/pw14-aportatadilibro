@@ -1,0 +1,51 @@
+@if (variante() === 'griglia') {
+  <!--
+    Variante griglia: la copertina occupa tutta la larghezza e porta il badge
+    sovrapposto; testo sotto, allineato a sinistra.
+  -->
+  <app-book-cover [url]="copertinaUrl()" [titolo]="titolo()" dimensione="auto">
+    @if (stato(); as statoCorrente) {
+      <app-status-badge cover-badge [stato]="statoCorrente" variante="overlay" />
+    }
+  </app-book-cover>
+
+  <div class="card-testo">
+    <div class="card-titolo">{{ titolo() }}</div>
+    @if (autore()) {
+      <div class="card-autore">{{ autore() }}</div>
+    }
+    @if (meta(); as riga) {
+      <div class="card-meta">{{ riga }}</div>
+    }
+  </div>
+
+  <!-- Piede opzionale: vuoto per default, non introduce spazio se inutilizzato. -->
+  <ng-content select="[card-footer]" />
+} @else {
+  <!--
+    Varianti compatta e riga: copertina a sinistra, testo al centro, area
+    proiettata a destra per distanza e azioni.
+  -->
+  <app-book-cover
+    [url]="copertinaUrl()"
+    [titolo]="titolo()"
+    [dimensione]="variante() === 'riga' ? 'md' : 'sm'"
+  />
+
+  <div class="card-testo">
+    <div class="card-titolo">{{ titolo() }}</div>
+    @if (autore()) {
+      <div class="card-autore">{{ autore() }}</div>
+    }
+    @if (meta(); as riga) {
+      <div class="card-meta">{{ riga }}</div>
+    }
+    @if (stato(); as statoCorrente) {
+      <app-status-badge class="card-stato" [stato]="statoCorrente" variante="inline" />
+    }
+  </div>
+
+  <div class="card-coda">
+    <ng-content select="[card-trailing]" />
+  </div>
+}

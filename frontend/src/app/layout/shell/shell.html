@@ -1,0 +1,64 @@
+@if (authService.currentUser(); as utente) {
+  <app-header
+    [nickname]="utente.nickname"
+    [richieste]="richiesteInAttesa()"
+    [menuUtente]="menuUtente"
+  />
+}
+
+<main id="contenuto-principale" tabindex="-1" class="shell-contenuto">
+  <!--
+    Colonna di contenuto centrata a 1180px, come prescrive il design. Le
+    schermate a piena larghezza (mappa, chat) escono da questo contenitore con
+    la variante `piena`.
+  -->
+  <div class="shell-pagina" [class.piena]="paginaPiena()">
+    <router-outlet />
+  </div>
+</main>
+
+<app-tabbar [richieste]="richiesteInAttesa()" [menuUtente]="menuUtente" />
+
+<!--
+  Menu delle sezioni secondarie, condiviso fra l'avatar dell'header e la voce
+  "Altro" della tab bar: sono lo stesso elenco su due chrome diversi.
+-->
+<mat-menu #menuUtente="matMenu">
+  <!--
+    Il menu e' condiviso fra header desktop e tab bar mobile (vedi sopra): su
+    mobile la tab bar ha spazio solo per 4 destinazioni dirette piu' questo
+    menu, quindi "Catalogo" ci vive qui invece che in barra. Su desktop
+    compare anche nella nav diretta: la piccola ridondanza costa meno della
+    divergenza fra due elenchi separati.
+  -->
+  <a mat-menu-item routerLink="/profilo">
+    <mat-icon>account_circle</mat-icon>
+    <span>Il mio profilo</span>
+  </a>
+  <a mat-menu-item routerLink="/desideri">
+    <mat-icon>favorite_border</mat-icon>
+    <span>Desideri</span>
+  </a>
+  <a mat-menu-item routerLink="/catalogo">
+    <mat-icon>menu_book</mat-icon>
+    <span>Catalogo</span>
+  </a>
+  <a mat-menu-item routerLink="/hub">
+    <mat-icon>place</mat-icon>
+    <span>I miei Hub</span>
+  </a>
+  <a mat-menu-item routerLink="/impostazioni">
+    <mat-icon>settings</mat-icon>
+    <span>Impostazioni</span>
+  </a>
+  @if (authService.isAdmin()) {
+    <a mat-menu-item routerLink="/admin">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span>Dashboard Admin</span>
+    </a>
+  }
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>Esci</span>
+  </button>
+</mat-menu>

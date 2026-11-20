@@ -1,0 +1,85 @@
+<h1 class="apl-sr-only">Chat</h1>
+
+<!--
+  Elenco: sempre presente su desktop, visibile su mobile solo quando non c'è
+  una conversazione selezionata (la selezione la sostituisce, non vi si
+  affianca, come nel design mobile a colonna singola).
+-->
+<aside class="chat-elenco" [class.nascosto-mobile]="conversazioneSelezionata()">
+  <div class="chat-elenco-testa">
+    <!--
+      Il titolo visibile non e' l'h1 della schermata: su mobile questo pannello
+      sparisce quando si apre una conversazione, e l'h1 sparirebbe con lui.
+      L'h1 vero sta in testa al componente, riservato alle tecnologie assistive.
+    -->
+    <p class="chat-elenco-titolo" aria-hidden="true">Chat</p>
+  </div>
+
+  <app-elenco-conversazioni
+    class="chat-elenco-corpo"
+    [conversazioni]="conversazioni()"
+    [stato]="stato()"
+    [conversazioneSelezionataId]="prestitoSelezionatoId()"
+    (seleziona)="seleziona($event)"
+    (riprova)="carica()"
+  />
+</aside>
+
+@if (conversazioneSelezionata(); as conversazione) {
+  <div class="chat-thread-colonna">
+    <!-- Intestazione compatta, visibile solo su mobile: fa da barra "indietro". -->
+    <header class="chat-thread-testa-mobile">
+      <button type="button" class="chat-indietro" (click)="tornaAllElenco()" aria-label="Torna alle conversazioni">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="chat-thread-testa-info">
+        <p class="chat-thread-nome">{{ conversazione.controparteNickname }}</p>
+        <p class="chat-thread-libro">{{ conversazione.libroTitolo }}</p>
+      </div>
+      <!--
+        Le azioni di prestito restano nel pannello di contesto (desktop): il
+        design mobile mostra solo intestazione e thread. La
+        segnalazione non ha pero' altra collocazione su mobile, quindi resta
+        qui accanto al back.
+      -->
+      <button
+        type="button"
+        class="chat-segnala-mobile"
+        [class.inviata]="segnalazioneInviata()"
+        [disabled]="segnalazioneInviata()"
+        [attr.aria-label]="segnalazioneInviata() ? 'Segnalazione inviata' : 'Segnala un comportamento scorretto'"
+        (click)="segnala()"
+      >
+        <mat-icon>{{ segnalazioneInviata() ? 'flag' : 'outlined_flag' }}</mat-icon>
+      </button>
+    </header>
+
+    <app-thread-messaggi
+      [messaggi]="messaggi()"
+      [loading]="caricamentoThread()"
+      [errore]="erroreThread()"
+      [utenteId]="utenteId()"
+      [invioInCorso]="invioInCorso()"
+      (invia)="inviaMessaggio($event)"
+      (riprova)="riprovaThread()"
+    />
+  </div>
+
+  <app-pannello-contesto
+    class="chat-contesto"
+    [conversazione]="conversazione"
+    [azioneInCorso]="azioneInCorso()"
+    [segnalazioneInviata]="segnalazioneInviata()"
+    (accetta)="accetta()"
+    (rifiuta)="rifiuta()"
+    (annulla)="annulla()"
+    (completa)="completa()"
+    (recensisci)="recensisci()"
+    (segnala)="segnala()"
+  />
+} @else {
+  <div class="chat-vuoto">
+    <mat-icon>forum</mat-icon>
+    <p class="apl-ui apl-text-muted">Seleziona una conversazione per vedere i messaggi.</p>
+  </div>
+}

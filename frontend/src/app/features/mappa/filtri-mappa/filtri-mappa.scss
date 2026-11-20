@@ -1,0 +1,103 @@
+// `min-width: 0` per lo stesso motivo di mappa.scss: la riga di chip a
+// scorrimento orizzontale non deve poter allargare l'antenato.
+:host {
+  display: block;
+  min-width: 0;
+}
+
+// --- Campo di ricerca -------------------------------------------------------
+
+.filtri-ricerca {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-9);
+  background: var(--apl-paper);
+  border: 1.5px solid var(--apl-border-input);
+  // Il raggio arriva dal contenitore: rettangolo da 8px nel pannello desktop,
+  // pillola nella barra mobile. E' l'unica differenza fra le due forme.
+  border-radius: var(--filtri-raggio, var(--apl-radius-lg));
+  padding: 11px 14px;
+  transition: border-color var(--apl-duration-fast) var(--apl-ease);
+
+  &:focus-within {
+    border-color: var(--apl-green);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font-family: var(--apl-font-ui);
+    font-size: 14px;
+    color: var(--apl-ink);
+    outline: none;
+
+    // Placeholder: e' il ruolo per cui --apl-muted-3 esiste, ed e' escluso
+    // dal requisito di contrasto (vedi nota in _tokens.scss).
+    &::placeholder {
+      color: var(--apl-muted-3);
+    }
+
+    // La crocetta nativa di `type=search` non fa parte del design.
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
+}
+
+// Il prototipo usa un glifo tipografico per la lente; il design chiede di
+// sostituire i glifi con il set icone del codebase in fase di implementazione.
+.filtri-lente {
+  flex: none;
+  color: var(--apl-muted-2);
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+// --- Chip -------------------------------------------------------------------
+// Sono bottoni nativi e non mat-chip: qui servono come filtro esclusivo con
+// stato premuto, e un gruppo di bottoni con aria-pressed dice esattamente
+// questo senza il livello di interazione (listbox, ripple) di Material.
+
+.filtri-chip {
+  display: flex;
+  gap: var(--apl-space-7);
+  margin-top: var(--apl-space-12);
+  // Su mobile la riga scorre in orizzontale invece di andare a capo.
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-wrap: var(--filtri-chip-wrap, wrap);
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  button {
+    flex: none;
+    padding: 6px 13px;
+    border-radius: var(--apl-radius-pill);
+    border: 1px solid var(--apl-border-input);
+    background: transparent;
+    color: var(--apl-ink);
+    font-family: var(--apl-font-ui);
+    font-size: var(--apl-fs-ui-s);
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--apl-duration-fast) var(--apl-ease),
+      border-color var(--apl-duration-fast) var(--apl-ease);
+
+    &:hover {
+      border-color: var(--apl-border);
+    }
+
+    &.attiva {
+      background: var(--apl-green);
+      border-color: transparent;
+      color: #ffffff;
+    }
+  }
+}

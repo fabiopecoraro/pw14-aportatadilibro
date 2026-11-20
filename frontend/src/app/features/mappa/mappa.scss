@@ -1,0 +1,202 @@
+// Layout a due colonne: pannello a sinistra, mappa a destra.
+// Sotto i 1024px il pannello lascia il posto al bottom sheet sopra la mappa,
+// che e' il punto in cui il design cambia forma.
+
+:host {
+  flex: 1;
+  min-height: 0;
+  // `min-width: 0` non e' ridondante: senza, questo elemento — che e' un
+  // flex item — non scende mai sotto la larghezza minima del proprio
+  // contenuto, e la riga di chip dei generi (che su mobile e'
+  // `flex-wrap: nowrap`) la spingeva oltre il viewport, facendo scorrere
+  // l'intera pagina in orizzontale a 375px. Le chip hanno gia' il proprio
+  // `overflow-x: auto`: mancava solo il permesso di restringersi.
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(360px, var(--apl-map-panel-width)) 1fr;
+  position: relative;
+  background: var(--apl-paper-2);
+}
+
+// --- Pannello desktop -------------------------------------------------------
+
+.mappa-pannello {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--apl-paper-2);
+  border-right: 1px solid var(--apl-border-soft);
+}
+
+.mappa-pannello-testa {
+  flex: none;
+  padding: var(--apl-space-16) var(--apl-space-20);
+}
+
+.mappa-pannello-elenco {
+  flex: 1;
+  min-height: 0;
+  padding: 0 var(--apl-space-20) var(--apl-space-16);
+}
+
+// --- Mappa ------------------------------------------------------------------
+
+.mappa-area {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.mappa-tela {
+  position: absolute;
+  inset: 0;
+}
+
+.mappa-posizione {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  // Sopra i riquadri di Leaflet, che stanno a 400.
+  z-index: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--apl-space-7);
+  padding: 9px 13px;
+  border: 0;
+  border-radius: var(--apl-radius-lg);
+  background: #ffffff;
+  box-shadow: var(--apl-shadow-raised);
+  color: var(--apl-green);
+  font-family: var(--apl-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--apl-green-dark);
+  }
+
+  mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+  }
+}
+
+// Il design vuole che la mappa non resti mai muta: se il permesso di
+// geolocalizzazione manca si spiega da dove vengono le distanze.
+.mappa-avviso {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 500;
+  margin: 0;
+  max-width: 320px;
+  padding: 9px 13px;
+  border-radius: var(--apl-radius-md);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--apl-shadow-raised);
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted);
+}
+
+// --- Barra e foglio mobile --------------------------------------------------
+// Presenti nel DOM anche sul desktop e nascosti da qui: la media query e'
+// l'unico punto in cui la schermata cambia forma.
+
+.mappa-barra-mobile,
+.mappa-sheet {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  :host {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .mappa-pannello {
+    display: none;
+  }
+
+  .mappa-barra-mobile {
+    display: block;
+    // Anche gli elementi di una griglia hanno `min-width: auto`, quindi la
+    // barra ereditava la larghezza minima delle chip come il contenitore
+    // sopra: senza questa riga il fix su :host non basta.
+    min-width: 0;
+    padding: var(--apl-space-14) var(--apl-space-16) 11px;
+    background: var(--apl-paper);
+    border-bottom: 1px solid var(--apl-border-soft);
+    // Nella barra il campo di ricerca e' una pillola e le chip scorrono in
+    // orizzontale invece di andare a capo.
+    --filtri-raggio: var(--apl-radius-pill);
+    --filtri-chip-wrap: nowrap;
+  }
+
+  .mappa-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 600;
+    display: flex;
+    flex-direction: column;
+    background: var(--apl-paper);
+    border-top: 1px solid var(--apl-divider);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -6px 22px rgba(0, 0, 0, 0.08);
+    padding: var(--apl-space-12) var(--apl-space-16) var(--apl-space-16);
+    transition: height var(--apl-duration-sheet) var(--apl-ease-sheet);
+
+    // Nel foglio il rapporto fra le superfici si inverte rispetto al pannello
+    // desktop: il foglio e' paper e le card sono paper-2.
+    --book-card-bg: var(--apl-paper-2);
+  }
+
+  // Durante il trascinamento l'altezza e' pilotata dal dito: la transizione
+  // introdurrebbe un ritardo percepibile come scivolamento.
+  .mappa-sheet.in-trascinamento {
+    transition: none;
+  }
+
+  .aggancio-peek {
+    height: 120px;
+  }
+
+  .aggancio-meta {
+    height: 50%;
+  }
+
+  .aggancio-esteso {
+    height: 85%;
+  }
+
+  .mappa-sheet-elenco {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+.mappa-maniglia {
+  flex: none;
+  align-self: center;
+  padding: var(--apl-space-5) var(--apl-space-20) 11px;
+  background: transparent;
+  border: 0;
+  cursor: grab;
+  touch-action: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.mappa-maniglia-barra {
+  display: block;
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--apl-border-input);
+}

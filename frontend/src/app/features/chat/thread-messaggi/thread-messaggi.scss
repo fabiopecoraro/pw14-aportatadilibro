@@ -1,0 +1,149 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  background: var(--apl-paper-2);
+}
+
+.thread-scheletro {
+  flex: 1;
+  padding: var(--apl-space-20);
+}
+
+.thread-corpo {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--apl-space-20) var(--apl-space-26);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.thread-separatore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--apl-space-16) 0 var(--apl-space-10);
+
+  span {
+    padding: 4px 12px;
+    border-radius: var(--apl-radius-pill);
+    background: var(--apl-paper-3);
+    font-family: var(--apl-font-ui);
+    font-size: var(--apl-fs-meta);
+    font-weight: 500;
+    color: var(--apl-muted);
+  }
+}
+
+// --- Bolle -------------------------------------------------------------------
+// Valori del design: in uscita fondo ink/testo paper-2, in entrata fondo
+// paper/testo ink con bordo soft. Radius asimmetrico verso il mittente.
+
+.thread-bolla-riga {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: var(--apl-space-9);
+  max-width: 68%;
+
+  &.in-uscita {
+    align-self: flex-end;
+    align-items: flex-end;
+  }
+}
+
+.thread-bolla {
+  padding: 12px 16px;
+  border-radius: var(--apl-radius-bubble-in);
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+}
+
+.in-uscita .thread-bolla {
+  border-radius: var(--apl-radius-bubble-out);
+  background: var(--apl-ink);
+  border-color: transparent;
+}
+
+.thread-testo {
+  margin: 0;
+  font-family: var(--apl-font-ui);
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--apl-ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.in-uscita .thread-testo {
+  color: var(--apl-paper-2);
+}
+
+.thread-orario {
+  margin-top: var(--apl-space-3);
+  font-family: var(--apl-font-ui);
+  font-size: 11px;
+  color: var(--apl-muted-2);
+}
+
+// --- Composer ------------------------------------------------------------------
+
+.thread-composer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-10);
+  padding: var(--apl-space-14) var(--apl-space-26);
+  background: var(--apl-paper);
+  border-top: 1px solid var(--apl-border-soft);
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 16px;
+    border: 1.5px solid var(--apl-border-input);
+    border-radius: var(--apl-radius-pill);
+    background: var(--apl-paper-2);
+    font-family: var(--apl-font-ui);
+    font-size: 14.5px;
+    color: var(--apl-ink);
+
+    &::placeholder {
+      color: var(--apl-muted-2);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--apl-green);
+    }
+  }
+}
+
+.thread-invia {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--apl-radius-full);
+  border: 0;
+  background: var(--apl-ink);
+  color: #ffffff;
+  cursor: pointer;
+  transition: opacity var(--apl-duration-fast) var(--apl-ease);
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}

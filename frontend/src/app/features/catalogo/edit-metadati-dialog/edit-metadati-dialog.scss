@@ -1,0 +1,21 @@
+@use '../../../../styles/typography' as type;
+
+// Il dialog usa i campi Material, che portano la propria etichetta; il
+// selettore di categorie e' un controllo custom e la sua etichetta va
+// disegnata qui, allineata alla scala degli altri campi.
+.edit-categorie {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-9);
+  margin-bottom: var(--apl-space-16);
+}
+
+.edit-categorie-label {
+  @include type.ui-s;
+  color: var(--apl-muted);
+}
+
+.edit-categorie-errore {
+  @include type.ui-s;
+  color: var(--apl-danger);
+}

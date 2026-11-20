@@ -1,0 +1,43 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.recensione {
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+  padding: var(--apl-space-14);
+}
+
+.recensione-testa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apl-space-10);
+  margin-bottom: var(--apl-space-5);
+}
+
+.recensione-autore {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--apl-ink);
+}
+
+// Il commento e' contenuto da leggere, non interfaccia: Spectral leggero.
+.recensione-commento {
+  font-family: var(--apl-font-body);
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--apl-muted);
+  margin: 0 0 var(--apl-space-7);
+}
+
+.recensione-data {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  color: var(--apl-muted-2);
+}

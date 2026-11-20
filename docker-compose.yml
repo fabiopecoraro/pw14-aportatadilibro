@@ -1,0 +1,84 @@
+# Ambiente completo per la demo: database, API e frontend.
+#
+# Il frontend e' servito da nginx che fa da proxy verso l'API sulla stessa
+# origine. E' la ragione principale per cui questo file esiste: fuori da
+# compose il frontend di sviluppo parla con l'API in HTTPS su un'altra porta,
+# e il browser rifiuta il certificato di sviluppo .NET finche' non lo si rende
+# attendibile sulla macchina. In compose il problema non si pone.
+#
+#   docker compose up --build     avvia tutto (prima volta: qualche minuto)
+#   http://localhost:8080         applicazione
+#
+# Credenziali di prova: vedi database/README.md.
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: aportatadilibro
+    volumes:
+      - dati-postgres:/var/lib/postgresql/data
+      # I file in questa cartella vengono eseguiti in ordine alfabetico al
+      # primo avvio, su database vuoto: 01-schema.sql crea lo schema e
+      # 02-seed.sql lo popola. Sono gli stessi script documentati in
+      # database/README.md, non una copia divergente.
+      - ./database/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/02-seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d aportatadilibro"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ./backend
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=aportatadilibro;Username=postgres;Password=postgres"
+      # Segreto valido solo per la demo locale. In qualunque altro contesto va
+      # fornito da variabile d'ambiente o user-secrets, mai dal repository.
+      Jwt__Secret: "DemoLocaleCompose_SegretoDiAlmeno32Caratteri!"
+      ASPNETCORE_ENVIRONMENT: Production
+    volumes:
+      # La cartella delle copertine e' un volume con nome e non la cartella del
+      # seed montata direttamente: l'API ci deve scrivere quando un utente
+      # carica o sostituisce una copertina, e montando qui la cartella
+      # versionata i caricamenti finirebbero fra i file tracciati da git (o
+      # fallirebbero, se montata in sola lettura). Essendo un volume come
+      # quello del database, `down -v` azzera insieme dati e immagini, che
+      # altrimenti resterebbero disallineati.
+      - copertine:/app/wwwroot/covers
+      - ./database/seed-covers:/seed-covers:ro
+    # Le copertine del seed entrano nel volume all'avvio, e solo quelle che
+    # mancano: a un riavvio senza `-v` il database conserva i percorsi delle
+    # copertine sostituite dagli utenti, e ricopiare i file del seed sopra
+    # quelli nuovi mostrerebbe di nuovo l'immagine vecchia. Lo script sta qui
+    # e non in un file a parte perche' un .sh estratto su Windows con i fine
+    # riga convertiti non partirebbe dentro il container.
+    entrypoint:
+      - sh
+      - -c
+      - |
+        for f in /seed-covers/*.jpg; do
+          [ -e "/app/wwwroot/covers/$${f##*/}" ] || cp "$$f" /app/wwwroot/covers/
+        done
+        exec dotnet APortataDiLibro.API.dll
+    depends_on:
+      db:
+        # Non basta che il container del database sia partito: deve accettare
+        # connessioni, altrimenti l'API fallisce la prima query all'avvio.
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  dati-postgres:
+  copertine:

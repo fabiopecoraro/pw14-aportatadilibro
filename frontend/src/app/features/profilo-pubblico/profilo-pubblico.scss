@@ -1,0 +1,6 @@
+// Tutto il resto vive nelle classi condivise .persona-* (styles/_persona.scss):
+// questa pagina non ha nulla di suo oltre a quello che condivide col profilo
+// proprio.
+:host {
+  display: block;
+}

@@ -1,0 +1,40 @@
+@use '../styles/typography' as type;
+
+// Non `display: none`: un elemento nascosto cosi' non e' raggiungibile con Tab
+// e lo skip link smetterebbe di funzionare proprio per chi ne ha bisogno. Si
+// sposta invece fuori dall'area visibile e lo si riporta dentro al focus.
+// Si anima `top` e non `transform`: la traslazione finirebbe sul compositor,
+// dove il valore corrente non e' piu' leggibile ne' dai test ne' dagli
+// strumenti di verifica dell'accessibilita'. Per un elemento che appare una
+// volta ogni tanto il costo di un'animazione sul main thread e' irrilevante,
+// e in cambio lo stato e' ispezionabile.
+.apl-skip-link {
+  @include type.ui;
+  position: fixed;
+  top: -80px;
+  left: var(--apl-space-16);
+  z-index: 3000;
+  padding: 10px var(--apl-space-16);
+  background: var(--apl-ink);
+  color: var(--apl-paper-2);
+  border-radius: 0 0 var(--apl-radius-md) var(--apl-radius-md);
+  text-decoration: none;
+  transition: top var(--apl-duration-fast) var(--apl-ease);
+
+  &:focus {
+    top: 0;
+  }
+}
+
+// Il <main> riceve il focus programmaticamente quando si segue lo skip link
+// (tabindex="-1"): l'anello di focus sull'intera area di contenuto sarebbe
+// pero' solo rumore visivo, il salto e' gia' evidente dallo scorrimento.
+main:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apl-skip-link {
+    transition: none;
+  }
+}

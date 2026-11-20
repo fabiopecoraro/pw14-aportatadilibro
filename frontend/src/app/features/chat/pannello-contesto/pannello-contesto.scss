@@ -1,0 +1,130 @@
+// Pannello di contesto della chat: una colonna stretta con il libro, i dati
+// del prestito e le azioni impilate a tutta larghezza. Compare solo nella
+// disposizione a tre colonne: sotto i 1024px è la schermata chat a nasconderlo,
+// quindi qui non serve nessuna media query.
+
+:host {
+  display: flex;
+  flex-direction: column;
+  padding: var(--apl-space-20);
+  background: var(--apl-paper);
+  border-left: 1px solid var(--apl-border-soft);
+  // La schermata chat occupa l'altezza disponibile e non scorre come pagina:
+  // se il contenuto supera la colonna deve scorrere il pannello, altrimenti le
+  // azioni in fondo resterebbero fuori vista senza modo di raggiungerle.
+  overflow-y: auto;
+}
+
+.contesto-testa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--apl-space-14);
+
+  p {
+    color: var(--apl-muted);
+    margin: 0;
+  }
+}
+
+.contesto-segnala {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--apl-radius-full);
+  border: 0;
+  background: transparent;
+  color: var(--apl-muted);
+  cursor: pointer;
+
+  // L'hover vale solo finché il pulsante è attivo: a segnalazione inviata è
+  // disabilitato, e uno sfondo che reagisce al puntatore lo farebbe sembrare
+  // ancora premibile.
+  &:hover:not(:disabled) {
+    background: var(--apl-paper-3);
+    color: var(--apl-danger);
+  }
+
+  // Il rosso resta acceso dopo l'invio: è la conferma visibile che la
+  // segnalazione è partita, insieme all'icona piena al posto di quella vuota.
+  &.inviata {
+    color: var(--apl-danger);
+    cursor: default;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.contesto-libro {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-10);
+  padding: var(--apl-space-12);
+  border-radius: var(--apl-radius-lg);
+  background: var(--apl-paper-3);
+  margin-bottom: var(--apl-space-16);
+  color: var(--apl-ink);
+
+  &:hover {
+    background: var(--apl-sage-100);
+    text-decoration: none;
+  }
+
+  mat-icon {
+    flex: none;
+    color: var(--apl-muted);
+  }
+}
+
+.contesto-libro-titolo {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.contesto-dettagli {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-9);
+  margin-bottom: var(--apl-space-20);
+}
+
+.contesto-riga {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--apl-space-10);
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted);
+
+  strong {
+    color: var(--apl-ink);
+    font-weight: 600;
+  }
+}
+
+.contesto-azioni {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-10);
+
+  button {
+    width: 100%;
+  }
+}
+
+.contesto-nota {
+  font-family: var(--apl-font-body);
+  font-weight: 300;
+  font-size: var(--apl-fs-body);
+  color: var(--apl-muted);
+  margin: 0;
+}

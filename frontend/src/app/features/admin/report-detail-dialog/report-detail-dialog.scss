@@ -1,0 +1,84 @@
+@use '../../../../styles/typography' as type;
+
+// Dialog di moderazione: un riquadro di riepilogo e, sotto, la chat segnalata
+// come elenco piatto. Non riusa le bolle della chat vera perché lì l'aspetto
+// dipende da chi guarda (messaggi propri a destra, altrui a sinistra), mentre
+// l'Admin legge da esterno e tutti i messaggi hanno la stessa forma.
+
+.report-riepilogo {
+  margin-bottom: var(--apl-space-20);
+}
+
+.report-riga {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--apl-space-14);
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted);
+
+  & + & {
+    margin-top: var(--apl-space-7);
+  }
+
+  strong {
+    color: var(--apl-ink);
+    font-weight: 600;
+  }
+}
+
+.report-motivo {
+  margin: var(--apl-space-12) 0 0;
+  padding-top: var(--apl-space-12);
+  border-top: 1px solid var(--apl-border-soft);
+  font-family: var(--apl-font-body);
+  color: var(--apl-ink-soft);
+}
+
+.report-sottotitolo {
+  @include type.h4;
+  margin: 0 0 var(--apl-space-12);
+}
+
+.report-messaggi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-9);
+}
+
+.report-messaggio {
+  padding: var(--apl-space-12) 14px;
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-bubble-in);
+
+  p {
+    margin: var(--apl-space-3) 0 0;
+    font-family: var(--apl-font-ui);
+    font-size: 14.5px;
+    color: var(--apl-ink);
+    // Il testo va letto come è stato scritto, a capo compresi: è materiale su
+    // cui si decide una segnalazione. `break-word` impedisce a una parola
+    // lunghissima o a un indirizzo web di allargare il dialog oltre lo schermo.
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
+.report-messaggio-testa {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--apl-space-10);
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+
+  strong {
+    color: var(--apl-ink);
+  }
+
+  // Data e ora sono testo da leggere: --apl-muted-2 rispetta il contrasto di
+  // 4,5:1, a differenza del tono più chiaro riservato ai placeholder.
+  span {
+    color: var(--apl-muted-2);
+  }
+}

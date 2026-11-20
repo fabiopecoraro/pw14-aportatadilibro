@@ -1,0 +1,84 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-12);
+}
+
+// Blocchi sage-100 con shimmer 1.4s, come da specifica. Il gradiente scorre in
+// orizzontale su un fondo unico: e' meno invasivo di un pulsare di opacita' e
+// non compete con il movimento reale dei contenuti che stanno arrivando.
+.shimmer {
+  display: block;
+  background: var(--apl-sage-100);
+  background-image: linear-gradient(
+    90deg,
+    var(--apl-sage-100) 0%,
+    var(--apl-paper-3) 50%,
+    var(--apl-sage-100) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--apl-radius-md);
+  animation: apl-shimmer 1.4s linear infinite;
+}
+
+@keyframes apl-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: var(--apl-space-12);
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-lg);
+}
+
+.skeleton-griglia {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-7);
+}
+
+.skeleton-righe {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-7);
+}
+
+.copertina-sm {
+  width: 46px;
+  height: 64px;
+  flex: none;
+  border-radius: var(--apl-radius-xs);
+}
+
+.copertina-auto {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 4px;
+}
+
+.riga {
+  height: 11px;
+  border-radius: var(--apl-radius-sm);
+}
+
+.riga-lunga {
+  width: 72%;
+}
+
+.riga-corta {
+  width: 45%;
+}
+
+.blocco {
+  width: 100%;
+}

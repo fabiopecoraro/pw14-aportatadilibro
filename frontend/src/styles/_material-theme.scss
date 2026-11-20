@@ -1,0 +1,209 @@
+// =============================================================================
+// Tema Angular Material
+// -----------------------------------------------------------------------------
+// STRATEGIA (rilevante per la relazione tecnica):
+// il design non e' Material Design. Invece di combattere la libreria componente
+// per componente con ::ng-deep, la si riconfigura alla radice: mat.theme()
+// emette l'intera famiglia di custom properties --mat-sys-*, e subito dopo ne
+// riscriviamo i ruoli con i valori esatti del design. Da quel momento ogni
+// componente Material (bottoni, campi, chip, dialog, menu) eredita
+// automaticamente palette, tipografia e raggi corretti, e gli SCSS di componente
+// restano puliti.
+//
+// Le palette tonali in _theme-colors.scss sono generate da
+// `ng generate @angular/material:theme-color` con i colori seme del design
+// (primary #3f7a5c, tertiary #c9764a, error #a8544a): servono a Material per
+// derivare gli stati (hover, ripple, container) in modo coerente. Gli hex
+// definitivi del design vengono comunque riapplicati sotto, perche' le tonali
+// generate approssimano il seme ma non lo riproducono esattamente.
+// =============================================================================
+
+@use '@angular/material' as mat;
+@use './theme-colors' as theme;
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        primary: theme.$primary-palette,
+        tertiary: theme.$tertiary-palette,
+      ),
+      // Archivo come famiglia "plain" (tutta l'interfaccia) e Playfair Display
+      // come famiglia "brand" (titoli): e' esattamente la divisione di ruoli
+      // che il design prescrive, quindi la mappatura e' 1:1 senza forzature.
+      typography: (
+        plain-family: (
+          'Archivo',
+          system-ui,
+          sans-serif,
+        ),
+        brand-family: (
+          'Playfair Display',
+          Georgia,
+          serif,
+        ),
+        bold-weight: 700,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      density: 0,
+    )
+  );
+
+  // ---------------------------------------------------------------------------
+  // Ruoli colore: i valori generati da Material sostituiti con quelli del design
+  // ---------------------------------------------------------------------------
+  // Mappatura concettuale:
+  //   primary   -> ink   (il bottone primario del design e' scuro, non verde)
+  //   secondary -> green (il verde e' accento: link, stati attivi, pin)
+  //   surface   -> paper / paper-2 (le due sole superfici ammesse)
+  --mat-sys-primary: var(--apl-ink);
+  --mat-sys-on-primary: var(--apl-paper-2);
+  --mat-sys-primary-container: var(--apl-sage-100);
+  --mat-sys-on-primary-container: var(--apl-green);
+  --mat-sys-inverse-primary: var(--apl-green-soft);
+
+  --mat-sys-secondary: var(--apl-green);
+  --mat-sys-on-secondary: #ffffff;
+  --mat-sys-secondary-container: var(--apl-sage-100);
+  --mat-sys-on-secondary-container: var(--apl-green-dark);
+
+  --mat-sys-tertiary: var(--apl-terracotta);
+  --mat-sys-on-tertiary: #ffffff;
+  --mat-sys-tertiary-container: var(--apl-terracotta-soft);
+  --mat-sys-on-tertiary-container: var(--apl-terracotta);
+
+  --mat-sys-error: var(--apl-danger);
+  --mat-sys-on-error: #ffffff;
+  --mat-sys-error-container: #f6e3e0;
+  --mat-sys-on-error-container: var(--apl-danger);
+
+  --mat-sys-background: var(--apl-paper-2);
+  --mat-sys-on-background: var(--apl-ink);
+  --mat-sys-surface: var(--apl-paper);
+  --mat-sys-on-surface: var(--apl-ink);
+  --mat-sys-surface-variant: var(--apl-paper-3);
+  --mat-sys-on-surface-variant: var(--apl-muted);
+  --mat-sys-surface-dim: var(--apl-canvas);
+  --mat-sys-surface-bright: var(--apl-paper);
+  --mat-sys-surface-container-lowest: #ffffff;
+  --mat-sys-surface-container-low: var(--apl-paper);
+  --mat-sys-surface-container: var(--apl-paper-2);
+  --mat-sys-surface-container-high: var(--apl-paper-3);
+  --mat-sys-surface-container-highest: var(--apl-sage-100);
+  --mat-sys-inverse-surface: var(--apl-ink);
+  --mat-sys-inverse-on-surface: var(--apl-paper-2);
+
+  --mat-sys-outline: var(--apl-border);
+  --mat-sys-outline-variant: var(--apl-border-soft);
+  --mat-sys-scrim: var(--apl-overlay);
+  --mat-sys-shadow: rgba(0, 0, 0, 0.3);
+  --mat-sys-surface-tint: transparent; // il design non usa il velo tonale M3
+
+  // ---------------------------------------------------------------------------
+  // Raggi: il design ne ammette pochi e precisi
+  // ---------------------------------------------------------------------------
+  --mat-sys-corner-none: 0;
+  --mat-sys-corner-extra-small: var(--apl-radius-xs);
+  --mat-sys-corner-small: var(--apl-radius-md);
+  --mat-sys-corner-medium: var(--apl-radius-md);
+  --mat-sys-corner-large: var(--apl-radius-lg);
+  --mat-sys-corner-extra-large: var(--apl-radius-xl);
+  --mat-sys-corner-full: var(--apl-radius-pill);
+
+  // ---------------------------------------------------------------------------
+  // Scala tipografica: i ruoli Material ricondotti alla scala del design
+  // ---------------------------------------------------------------------------
+  // I ruoli display/headline/title prendono Playfair; body prende Spectral;
+  // label (bottoni, chip, campi) prende Archivo. E' la stessa regola enunciata
+  // nel design, tradotta nel vocabolario di Material.
+  --mat-sys-display-large-font: var(--apl-font-display);
+  --mat-sys-display-large-size: var(--apl-fs-display-xl);
+  --mat-sys-display-large-line-height: var(--apl-lh-tight);
+  --mat-sys-display-large-weight: 800;
+  --mat-sys-display-large-tracking: var(--apl-ls-display);
+
+  --mat-sys-display-medium-font: var(--apl-font-display);
+  --mat-sys-display-medium-size: var(--apl-fs-display-l);
+  --mat-sys-display-medium-line-height: 1.06;
+  --mat-sys-display-medium-weight: 800;
+  --mat-sys-display-medium-tracking: var(--apl-ls-display);
+
+  --mat-sys-display-small-font: var(--apl-font-display);
+  --mat-sys-display-small-size: var(--apl-fs-display-m);
+  --mat-sys-display-small-line-height: var(--apl-lh-display);
+  --mat-sys-display-small-weight: 700;
+  --mat-sys-display-small-tracking: 0;
+
+  --mat-sys-headline-large-font: var(--apl-font-display);
+  --mat-sys-headline-large-size: var(--apl-fs-h1);
+  --mat-sys-headline-large-line-height: var(--apl-lh-heading);
+  --mat-sys-headline-large-weight: 700;
+  --mat-sys-headline-large-tracking: 0;
+
+  --mat-sys-headline-medium-font: var(--apl-font-display);
+  --mat-sys-headline-medium-size: var(--apl-fs-h2);
+  --mat-sys-headline-medium-line-height: var(--apl-lh-heading);
+  --mat-sys-headline-medium-weight: 700;
+  --mat-sys-headline-medium-tracking: 0;
+
+  --mat-sys-headline-small-font: var(--apl-font-display);
+  --mat-sys-headline-small-size: var(--apl-fs-h3);
+  --mat-sys-headline-small-line-height: 1.2;
+  --mat-sys-headline-small-weight: 700;
+  --mat-sys-headline-small-tracking: 0;
+
+  --mat-sys-title-large-font: var(--apl-font-display);
+  --mat-sys-title-large-size: var(--apl-fs-h4);
+  --mat-sys-title-large-line-height: 1.25;
+  --mat-sys-title-large-weight: 700;
+  --mat-sys-title-large-tracking: 0;
+
+  --mat-sys-title-medium-font: var(--apl-font-ui);
+  --mat-sys-title-medium-size: var(--apl-fs-ui-l);
+  --mat-sys-title-medium-line-height: 1.4;
+  --mat-sys-title-medium-weight: 600;
+  --mat-sys-title-medium-tracking: 0;
+
+  --mat-sys-title-small-font: var(--apl-font-ui);
+  --mat-sys-title-small-size: var(--apl-fs-ui);
+  --mat-sys-title-small-line-height: var(--apl-lh-ui);
+  --mat-sys-title-small-weight: 600;
+  --mat-sys-title-small-tracking: 0;
+
+  --mat-sys-body-large-font: var(--apl-font-body);
+  --mat-sys-body-large-size: var(--apl-fs-body-l);
+  --mat-sys-body-large-line-height: var(--apl-lh-reading);
+  --mat-sys-body-large-weight: 300;
+  --mat-sys-body-large-tracking: 0;
+
+  --mat-sys-body-medium-font: var(--apl-font-body);
+  --mat-sys-body-medium-size: var(--apl-fs-body);
+  --mat-sys-body-medium-line-height: var(--apl-lh-reading);
+  --mat-sys-body-medium-weight: 300;
+  --mat-sys-body-medium-tracking: 0;
+
+  --mat-sys-body-small-font: var(--apl-font-ui);
+  --mat-sys-body-small-size: var(--apl-fs-ui-s);
+  --mat-sys-body-small-line-height: 1.5;
+  --mat-sys-body-small-weight: 400;
+  --mat-sys-body-small-tracking: 0;
+
+  --mat-sys-label-large-font: var(--apl-font-ui);
+  --mat-sys-label-large-size: var(--apl-fs-ui-l);
+  --mat-sys-label-large-line-height: 1.4;
+  --mat-sys-label-large-weight: 600;
+  --mat-sys-label-large-tracking: 0;
+
+  --mat-sys-label-medium-font: var(--apl-font-ui);
+  --mat-sys-label-medium-size: var(--apl-fs-ui);
+  --mat-sys-label-medium-line-height: var(--apl-lh-ui);
+  --mat-sys-label-medium-weight: 500;
+  --mat-sys-label-medium-tracking: 0;
+
+  --mat-sys-label-small-font: var(--apl-font-ui);
+  --mat-sys-label-small-size: var(--apl-fs-ui-s);
+  --mat-sys-label-small-line-height: 1.5;
+  --mat-sys-label-small-weight: 500;
+  --mat-sys-label-small-tracking: 0;
+}

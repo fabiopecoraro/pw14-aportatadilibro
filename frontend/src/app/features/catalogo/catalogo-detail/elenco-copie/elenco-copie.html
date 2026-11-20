@@ -1,0 +1,94 @@
+<!--
+  Tutte le copie di un titolo, una riga per copia. Il design immagina un libro
+  per proprietario e non ha questa sezione: serve perche' il catalogo e'
+  condiviso e lo stesso titolo puo' essere posseduto da piu' persone. Che cosa
+  si puo' fare su una riga dipende da chi guarda: sulle proprie copie si
+  amministra (copertina, rimozione), su quelle altrui si puo' solo chiedere il
+  prestito.
+-->
+<div class="copie-elenco">
+  @for (copia of copie(); track copia.id) {
+    <article class="copia-riga">
+      <!--
+        E' la foto della copia fisica caricata dal suo proprietario, non
+        un'immagine del titolo: due copie dello stesso libro possono apparire
+        diverse. Il titolo dell'opera viene passato per comporre il testo
+        alternativo, che la sola copia non saprebbe dare.
+      -->
+      <app-book-cover [url]="resolveFileUrl(copia.percorsoCopertinaThumbnail)" [titolo]="titolo()" dimensione="sm" />
+
+      <div class="copia-info">
+        <!--
+          Del proprietario si mostra il solo nickname, con il collegamento al
+          suo profilo pubblico. Sulla propria copia il collegamento non c'e':
+          «La tua copia» la fa riconoscere subito nell'elenco.
+        -->
+        @if (copia.proprietarioId === utenteId()) {
+          <p class="copia-proprietario">La tua copia</p>
+        } @else {
+          <a class="copia-proprietario" [routerLink]="['/profilo', copia.proprietarioId]">
+            {{ copia.proprietarioNickname }}
+          </a>
+        }
+
+        <div class="copia-stato">
+          @if (copia.stato === StatoCopia.Disponibile) {
+            <app-status-badge stato="disponibile" />
+          } @else {
+            <app-status-badge stato="in-prestito" />
+            @if (copia.dataDisponibilitaStimata) {
+              <span class="copia-rientro">
+                rientra il {{ copia.dataDisponibilitaStimata | date: 'd MMMM' }}
+              </span>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="copia-azioni">
+        <!--
+          Il pulsante «Chiedi» non compare mai sulle proprie copie, perche' il
+          server rifiuta la richiesta di prestito di un libro proprio, ne' su
+          quelle gia' in prestito. La rimozione e' disabilitata finche' la
+          copia non e' disponibile: un libro che in questo momento e' in mano a
+          qualcun altro non si puo' togliere dal sistema. Quel pulsante e' una
+          sola icona, da cui l'aria-label.
+        -->
+        @if (copia.proprietarioId === utenteId()) {
+          <button
+            mat-button
+            (click)="cambiaCopertina.emit(copia)"
+            [disabled]="copiaInAttesa() === copia.id"
+          >
+            @if (copiaInAttesa() === copia.id) {
+              <mat-spinner diameter="16" />
+            } @else {
+              <mat-icon>image</mat-icon>
+            }
+            Copertina
+          </button>
+
+          <button
+            mat-button
+            (click)="rimuovi.emit(copia)"
+            [disabled]="copia.stato !== StatoCopia.Disponibile"
+            aria-label="Rimuovi la copia"
+          >
+            <mat-icon class="copia-icona-danger">delete</mat-icon>
+          </button>
+        } @else if (copia.stato === StatoCopia.Disponibile) {
+          <button
+            mat-stroked-button
+            (click)="chiediPrestito.emit(copia)"
+            [disabled]="copiaInAttesa() === copia.id"
+          >
+            @if (copiaInAttesa() === copia.id) {
+              <mat-spinner diameter="16" />
+            }
+            Chiedi
+          </button>
+        }
+      </div>
+    </article>
+  }
+</div>

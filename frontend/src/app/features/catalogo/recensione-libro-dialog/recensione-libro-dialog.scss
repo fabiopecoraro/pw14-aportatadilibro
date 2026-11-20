@@ -1,0 +1,19 @@
+// Il dialog viene aperto senza una larghezza esplicita e si dimensionerebbe sul
+// contenuto, che qui e' poco: la larghezza minima evita una finestra stretta
+// quanto la riga di stelle. La colonna flex allarga il campo del commento a
+// tutta la larghezza e distanzia i figli con il solo `gap`.
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  // La larghezza minima cede sugli schermi stretti: a 375px un valore fisso
+  // sarebbe piu' largo del dialog e lo farebbe scorrere in orizzontale.
+  min-width: min(320px, 100%);
+  padding-top: 8px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--apl-muted-2);
+}

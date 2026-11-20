@@ -1,0 +1,126 @@
+<div class="libreria-testa">
+  <div>
+    <h1>La mia libreria</h1>
+    @if (copie().length > 0) {
+      <p class="libreria-conteggio apl-ui-s apl-text-muted">
+        {{ copie().length }} {{ copie().length === 1 ? 'titolo' : 'titoli' }} ·
+        {{ disponibili() }} {{ disponibili() === 1 ? 'disponibile' : 'disponibili' }} ·
+        {{ inPrestito() }} in prestito
+      </p>
+    }
+  </div>
+
+  <button mat-flat-button (click)="aggiungiLibro()">
+    <mat-icon>add</mat-icon>
+    Aggiungi un libro
+  </button>
+</div>
+
+@if (copie().length > 0) {
+  <div class="apl-chip-group" role="group" aria-label="Filtra la libreria">
+    <button type="button" class="apl-chip-toggle" [class.attiva]="filtro() === 'tutti'" [attr.aria-pressed]="filtro() === 'tutti'" (click)="filtro.set('tutti')">Tutti</button>
+    <button type="button" class="apl-chip-toggle" [class.attiva]="filtro() === 'disponibili'" [attr.aria-pressed]="filtro() === 'disponibili'" (click)="filtro.set('disponibili')">
+      Disponibili
+    </button>
+    <button type="button" class="apl-chip-toggle" [class.attiva]="filtro() === 'in-prestito'" [attr.aria-pressed]="filtro() === 'in-prestito'" (click)="filtro.set('in-prestito')">
+      In prestito
+    </button>
+    @for (categoria of categorieDisponibili(); track categoria) {
+      <button type="button" class="apl-chip-toggle" [class.attiva]="filtro() === categoria" [attr.aria-pressed]="filtro() === categoria" (click)="filtro.set(categoria)">
+        {{ categoria }}
+      </button>
+    }
+  </div>
+}
+
+@if (loading()) {
+  <div class="libreria-griglia">
+    <app-skeleton forma="card-griglia" [ripetizioni]="5" />
+  </div>
+} @else if (errore()) {
+  <app-empty-state
+    titolo="Non siamo riusciti a caricare la tua libreria"
+    descrizione="Controlla la connessione e riprova."
+    icona="cloud_off"
+  >
+    <button mat-stroked-button (click)="carica()">Riprova</button>
+  </app-empty-state>
+} @else if (copie().length === 0) {
+  <app-empty-state
+    titolo="La tua libreria è ancora vuota"
+    descrizione="Aggiungi il primo libro che sei disposto a prestare: chi ti sta vicino potrà trovarlo sulla mappa."
+  >
+    <button mat-flat-button (click)="aggiungiLibro()">Aggiungi un libro</button>
+  </app-empty-state>
+} @else if (copieFiltrate().length === 0) {
+  <app-empty-state
+    titolo="Nessun libro in questo filtro"
+    descrizione="Prova a scegliere un altro stato o un'altra categoria."
+    icona="filter_alt_off"
+    [compatto]="true"
+  />
+} @else {
+  <div class="libreria-griglia">
+    @for (copia of copieFiltrate(); track copia.id) {
+      <!--
+        Il pulsante degli Hub sta accanto al collegamento e non dentro: un
+        controllo annidato in un link non e' HTML valido, e da tastiera o con
+        un lettore di schermo non si capisce quale dei due si sta attivando.
+      -->
+      <div class="libreria-card">
+        <a class="libreria-card-link" [routerLink]="['/catalogo', copia.libroId]">
+          <app-book-card
+            [titolo]="copia.titolo"
+            [autore]="copia.autore"
+            [meta]="copia.anno?.toString() ?? null"
+            variante="griglia"
+            [stato]="copia.stato === 'Disponibile' ? 'disponibile' : 'in-prestito'"
+            [copertinaUrl]="resolveFileUrl(copia.percorsoCopertinaThumbnail)"
+          />
+        </a>
+        <button type="button" class="libreria-hub" (click)="gestisciDisponibilita(copia, $event)">
+          <mat-icon>place</mat-icon>
+          @if (copia.hubTotali === 0) {
+            Nessun Hub
+          } @else if (copia.hubDisponibili === copia.hubTotali) {
+            Tutti gli Hub ({{ copia.hubTotali }})
+          } @else {
+            {{ copia.hubDisponibili }} su {{ copia.hubTotali }} Hub
+          }
+        </button>
+      </div>
+    }
+  </div>
+}
+
+@if (proposte().length > 0) {
+  <h2 class="libreria-sottotitolo">Le mie proposte di nuovi libri</h2>
+
+  <div class="proposte-elenco">
+    @for (proposta of proposte(); track proposta.id) {
+      <div class="proposta-riga">
+        <div class="proposta-info">
+          <p class="proposta-titolo">{{ proposta.titolo }}</p>
+          <p class="proposta-meta">
+            {{ proposta.autore }} · {{ nomiCategorie(proposta.categorie) }}
+            @if (proposta.anno) {
+              · {{ proposta.anno }}
+            }
+          </p>
+        </div>
+
+        @switch (proposta.stato) {
+          @case (StatoProposta.InAttesa) {
+            <span class="apl-pill apl-pill-neutra">In attesa</span>
+          }
+          @case (StatoProposta.Approvata) {
+            <span class="apl-pill apl-pill-verde">Approvata</span>
+          }
+          @case (StatoProposta.Rifiutata) {
+            <span class="apl-pill apl-pill-danger">Rifiutata</span>
+          }
+        }
+      </div>
+    }
+  </div>
+}

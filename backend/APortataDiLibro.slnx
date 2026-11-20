@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="APortataDiLibro.API/APortataDiLibro.API.csproj" />
+  <Project Path="APortataDiLibro.Application/APortataDiLibro.Application.csproj" />
+  <Project Path="APortataDiLibro.Core/APortataDiLibro.Core.csproj" />
+  <Project Path="APortataDiLibro.Database/APortataDiLibro.Database.csproj" />
+  <Project Path="APortataDiLibro.Infrastructure/APortataDiLibro.Infrastructure.csproj" />
+  <Project Path="APortataDiLibro.Tests/APortataDiLibro.Tests.csproj" />
+</Solution>

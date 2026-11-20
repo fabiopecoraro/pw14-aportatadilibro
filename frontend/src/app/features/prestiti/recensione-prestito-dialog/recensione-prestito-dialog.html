@@ -1,0 +1,65 @@
+<!--
+  Due valutazioni distinte perche' rispondono a domande diverse: quanto e'
+  affidabile la persona e com'e' andato lo scambio. Un prestito puo' andare a
+  buon fine con una persona poco puntuale, e un voto unico lo nasconderebbe.
+  Ogni sezione e' facoltativa e indipendente: quella lasciata senza stelle non
+  viene inviata. La controparte e' indicata con il nickname, unica identita'
+  che l'applicazione mostra.
+-->
+<h2 mat-dialog-title>Recensisci il prestito</h2>
+
+<mat-dialog-content class="form">
+  <section>
+    <h3>Affidabilità di {{ data.controparteNickname }}</h3>
+    <!--
+      Le stelle interattive sono pulsanti con un nome ("3 stelle"), quindi si
+      usano anche da tastiera. `etichetta` da' un nome al gruppo: senza, uno
+      screen reader annuncerebbe due gruppi di stelle identici, senza dire
+      quale vota la persona e quale lo scambio.
+    -->
+    <app-star-rating etichetta="Affidabilità" [voto]="votoControparte()" [interattivo]="true" (votoChange)="votoControparte.set($event)" />
+
+    <mat-form-field appearance="outline">
+      <mat-label>Commento (opzionale)</mat-label>
+      <textarea
+        matInput
+        rows="2"
+        [ngModel]="commentoControparte()"
+        (ngModelChange)="commentoControparte.set($event)"
+      ></textarea>
+    </mat-form-field>
+  </section>
+
+  <section>
+    <h3>Esperienza di scambio</h3>
+    <app-star-rating etichetta="Esperienza di scambio" [voto]="votoEsperienza()" [interattivo]="true" (votoChange)="votoEsperienza.set($event)" />
+
+    <mat-form-field appearance="outline">
+      <mat-label>Commento (opzionale)</mat-label>
+      <textarea
+        matInput
+        rows="2"
+        [ngModel]="commentoEsperienza()"
+        (ngModelChange)="commentoEsperienza.set($event)"
+      ></textarea>
+    </mat-form-field>
+  </section>
+
+  <p class="hint">Puoi compilare una o entrambe le sezioni.</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="annulla()">Annulla</button>
+  <!--
+    Basta un voto in una delle due sezioni per inviare; con entrambe a 0 non
+    ci sarebbe nulla da registrare.
+  -->
+  <button
+    mat-flat-button
+    color="primary"
+    [disabled]="votoControparte() === 0 && votoEsperienza() === 0"
+    (click)="conferma()"
+  >
+    Invia recensione
+  </button>
+</mat-dialog-actions>

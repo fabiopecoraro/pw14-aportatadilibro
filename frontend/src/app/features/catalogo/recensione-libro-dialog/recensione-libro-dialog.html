@@ -1,0 +1,34 @@
+<!--
+  La recensione riguarda l'opera e non una copia o un prestito: per questo il
+  dialog non riceve dati e chiede soltanto un voto e un commento. Il voto parte
+  da 0, cioe' nessuna stella scelta, e con 0 non si invia; il commento resta
+  facoltativo, perche' obbligarlo scoraggerebbe chi vuole lasciare solo le stelle.
+-->
+<h2 mat-dialog-title>Recensisci il libro</h2>
+
+<mat-dialog-content class="form">
+  <app-star-rating [voto]="voto()" [interattivo]="true" (votoChange)="voto.set($event)" />
+
+  <!--
+    Il pulsante d'invio disabilitato da solo non spiega nulla: l'avviso dice
+    cosa manca e scompare al primo voto.
+  -->
+  @if (voto() === 0) {
+    <p class="hint">Seleziona un voto da 1 a 5 stelle.</p>
+  }
+
+  <mat-form-field appearance="outline">
+    <mat-label>Commento (opzionale)</mat-label>
+    <textarea
+      matInput
+      rows="3"
+      [ngModel]="commento()"
+      (ngModelChange)="commento.set($event)"
+    ></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="annulla()">Annulla</button>
+  <button mat-flat-button color="primary" [disabled]="voto() === 0" (click)="conferma()">Invia recensione</button>
+</mat-dialog-actions>

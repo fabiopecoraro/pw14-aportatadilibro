@@ -1,0 +1,19 @@
+@if (vuoto()) {
+  <p class="barre-vuoto">{{ testoVuoto() }}</p>
+} @else {
+  <ul class="barre-elenco">
+    @for (riga of righe(); track riga.etichetta) {
+      <li class="barre-riga">
+        <span class="barre-etichetta" [title]="riga.etichetta">{{ riga.etichetta }}</span>
+
+        <!-- La barra e' decorativa: il valore e' gia' testo nella colonna
+             accanto, quindi non serve duplicarlo in un aria-label. -->
+        <span class="barre-traccia" aria-hidden="true">
+          <span class="barre-riempimento" [style.width.%]="riga.percentuale"></span>
+        </span>
+
+        <span class="barre-valore">{{ riga.valore }}</span>
+      </li>
+    }
+  </ul>
+}

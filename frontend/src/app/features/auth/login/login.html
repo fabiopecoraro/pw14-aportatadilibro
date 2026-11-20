@@ -1,0 +1,91 @@
+<!--
+  Accesso. Le schermate di autenticazione non passano dalla cornice
+  dell'applicazione (header e navigazione), che è l'elemento a fornire il <main>
+  alle altre: per questo qui il <main> è dichiarato in proprio, con l'id e il
+  `tabindex="-1"` che lo rendono il bersaglio del collegamento «Salta al
+  contenuto».
+
+  Rispetto al design mancano di proposito «Password dimenticata?» e «Continua
+  con Google»: dietro non c'è nessuna funzione, e un collegamento che porta a
+  un flusso inesistente è peggio di un collegamento assente.
+-->
+<main id="contenuto-principale" tabindex="-1" class="auth-pagina">
+  <app-auth-panel
+    variante="ink"
+    titolo="Bentornato tra i lettori del quartiere."
+    sottotitolo="Riprendi da dove avevi lasciato: i tuoi prestiti, le richieste in arrivo e i libri appena comparsi vicino a te."
+  >
+    <!-- Ornamento senza contenuto: gli screen reader non devono soffermarsi qui. -->
+    <div class="auth-costole" aria-hidden="true">
+      <span></span>
+      <span></span>
+    </div>
+  </app-auth-panel>
+
+  <div class="auth-form-colonna">
+    <h1>Accedi</h1>
+    <p class="auth-sottotitolo">
+      Non hai un account? <a routerLink="/register">Registrati</a>
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!--
+        Il design chiama questo campo «Email», ma si accede con il nome utente:
+        sono due dati distinti e l'email non è mai un'identità esposta.
+        L'etichetta dice quello che il campo fa davvero. I valori di
+        `autocomplete` permettono al gestore di password del browser di
+        riconoscere i due campi. Gli errori compaiono solo dopo che il campo è
+        stato toccato, non all'apertura della pagina.
+      -->
+      <div class="apl-field" [class.apl-field-invalid]="form.controls.username.invalid && form.controls.username.touched">
+        <label for="login-username">Nome utente</label>
+        <input id="login-username" type="text" formControlName="username" autocomplete="username" />
+        @if (form.controls.username.hasError('required') && form.controls.username.touched) {
+          <span class="apl-field-error">Il nome utente è obbligatorio.</span>
+        }
+      </div>
+
+      <div class="apl-field" [class.apl-field-invalid]="form.controls.password.invalid && form.controls.password.touched">
+        <label for="login-password">Password</label>
+        <div class="auth-campo-password">
+          <input
+            id="login-password"
+            [type]="mostraPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+          <!--
+            `type="button"` è indispensabile: dentro un form un pulsante senza
+            tipo invia il form, e «mostra» tenterebbe l'accesso. L'aria-label
+            completa la parola visibile, che letta da sola («mostra») non dice
+            che cosa.
+          -->
+          <button
+            type="button"
+            class="auth-mostra"
+            (click)="mostraPassword.set(!mostraPassword())"
+            [attr.aria-label]="mostraPassword() ? 'Nascondi password' : 'Mostra password'"
+          >
+            {{ mostraPassword() ? 'nascondi' : 'mostra' }}
+          </button>
+        </div>
+        @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+          <span class="apl-field-error">La password è obbligatoria.</span>
+        }
+      </div>
+
+      <!--
+        Disabilitato durante la richiesta per non inviare due volte le
+        credenziali. Non c'è un messaggio d'errore in pagina: le credenziali
+        errate sono segnalate dall'avviso comune a tutte le chiamate fallite.
+      -->
+      <button mat-flat-button type="submit" class="auth-submit" [disabled]="loading()">
+        @if (loading()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          Accedi
+        }
+      </button>
+    </form>
+  </div>
+</main>

@@ -1,0 +1,26 @@
+<!--
+  Una sola resa per i tre tipi di recensione del dominio (sul libro, sulla
+  persona, sullo scambio): chi usa il componente li porta prima a una forma
+  comune, e qui non serve sapere di quale tipo si tratta.
+  Ogni recensione e' un <article> perche' ha senso anche letta da sola. Le
+  stelle qui non sono interattive: vengono rese come un'immagine con il voto
+  in parole ("4 su 5") come nome.
+-->
+@for (recensione of recensioni(); track recensione.id) {
+  <article class="recensione">
+    <header class="recensione-testa">
+      <span class="recensione-autore">{{ recensione.autore }}</span>
+      <app-star-rating [voto]="recensione.voto" />
+    </header>
+
+    <!--
+      Di una recensione e' obbligatorio solo il voto: senza commento il
+      paragrafo non si crea, invece di lasciare una riga vuota.
+    -->
+    @if (recensione.commento) {
+      <p class="recensione-commento">{{ recensione.commento }}</p>
+    }
+
+    <span class="recensione-data">{{ recensione.data | date: 'd MMMM y' }}</span>
+  </article>
+}

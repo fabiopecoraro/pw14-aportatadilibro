@@ -1,0 +1,6 @@
+@if (url(); as immagine) {
+  <img [src]="immagine" [alt]="'Copertina di ' + titolo()" class="copertina-immagine" />
+}
+
+<!-- Slot per il badge di stato sovrapposto (angolo alto a sinistra). -->
+<ng-content select="[cover-badge]" />

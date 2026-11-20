@@ -1,0 +1,130 @@
+<!--
+  Finche' il libro non e' caricato, o se il caricamento fallisce, il titolo
+  dell'opera non c'e': la schermata resterebbe senza intestazione principale.
+-->
+@if (loading() || errore()) {
+  <h1 class="apl-sr-only">Scheda del libro</h1>
+}
+
+@if (loading()) {
+  <div class="dettaglio-scheletro">
+    <app-skeleton forma="blocco" [altezza]="360" />
+    <div class="dettaglio-scheletro-testo">
+      <app-skeleton forma="riga" [ripetizioni]="3" />
+    </div>
+  </div>
+} @else if (errore()) {
+  <app-empty-state
+    titolo="Non siamo riusciti a caricare questo libro"
+    descrizione="Controlla la connessione e riprova."
+    icona="cloud_off"
+  >
+    <button mat-stroked-button (click)="carica()">Riprova</button>
+  </app-empty-state>
+} @else if (libro(); as libro) {
+  <div class="dettaglio">
+    <!-- Copertina -->
+    <div class="dettaglio-copertina">
+      <app-book-cover
+        [url]="resolveFileUrl(copiaDisponibile()?.percorsoCopertinaThumbnail ?? libro.copie[0]?.percorsoCopertinaThumbnail)"
+        [titolo]="libro.titolo"
+        dimensione="auto"
+      />
+
+      <div class="dettaglio-categorie">
+        <!-- Un pill per categoria: sono da una a cinque e vanno lette come
+             elenco, non concatenate in un'unica stringa. -->
+        @for (categoria of libro.categorie; track categoria.id) {
+          <span class="apl-pill">{{ categoria.nome }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Contenuto -->
+    <div class="dettaglio-contenuto">
+      @if (copiaDisponibile()) {
+        <span class="apl-pill apl-pill-verde">Disponibile ora</span>
+      } @else {
+        <span class="apl-pill apl-pill-neutra">Nessuna copia disponibile</span>
+      }
+
+      <h1 class="dettaglio-titolo">{{ libro.titolo }}</h1>
+
+      <p class="dettaglio-meta">
+        {{ libro.autore }}
+        @if (libro.anno) {
+          · {{ libro.anno }}
+        }
+        @if (libro.isbn) {
+          · ISBN {{ libro.isbn }}
+        }
+      </p>
+
+      @if (libro.numeroRecensioni > 0) {
+        <p class="dettaglio-rating">
+          <mat-icon>star</mat-icon>
+          {{ libro.mediaVotoRecensioni! | number: '1.1-1' : 'it' }} · {{ libro.numeroRecensioni }}
+          {{ libro.numeroRecensioni === 1 ? 'recensione' : 'recensioni' }}
+        </p>
+      }
+
+      <!-- Metrica d'uso richiesta dalla traccia. Il conteggio e' aggregato per
+           libro e per giorno: non identifica chi ha aperto la scheda. -->
+      <p class="dettaglio-visualizzazioni">
+        {{ libro.numeroVisualizzazioni }}
+        {{ libro.numeroVisualizzazioni === 1 ? 'visualizzazione' : 'visualizzazioni' }}
+      </p>
+
+      <div class="dettaglio-azioni-secondarie">
+        @if (authService.isAdmin()) {
+          <button mat-button (click)="modificaMetadati()">
+            <mat-icon>edit</mat-icon>
+            Modifica metadati
+          </button>
+        }
+        <button mat-button (click)="recensisciLibro()">
+          <mat-icon>rate_review</mat-icon>
+          Recensisci il libro
+        </button>
+      </div>
+
+      <h2 class="dettaglio-sottotitolo">Copie nel sistema</h2>
+
+      @if (libro.copie.length === 0) {
+        <p class="dettaglio-vuoto">Nessuna copia di questo titolo è ancora in circolazione.</p>
+      } @else {
+        <app-elenco-copie
+          [copie]="libro.copie"
+          [titolo]="libro.titolo"
+          [utenteId]="authService.currentUser()?.id ?? null"
+          [copiaInAttesa]="azioneInCorso()"
+          (chiediPrestito)="richiediPrestito($event.id)"
+          (cambiaCopertina)="apriSelezioneCopertina($event.id)"
+          (rimuovi)="rimuoviCopia($event.id)"
+        />
+      }
+
+      <input #fileInput type="file" accept="image/*" hidden (change)="onFileSelezionato($event)" />
+
+      <h2 class="dettaglio-sottotitolo">Cosa dicono i lettori del quartiere</h2>
+
+      @if (recensioniVista().length === 0) {
+        <p class="dettaglio-vuoto">Ancora nessuna recensione per questo libro.</p>
+      } @else {
+        <app-elenco-recensioni [recensioni]="recensioniVista()" />
+      }
+    </div>
+
+    <!-- Pannello prestito -->
+    <app-pannello-prestito
+      [copiaDisponibile]="copiaDisponibile()"
+      [copieDisponibili]="copieDisponibiliCount()"
+      [primoRientro]="primoRientro()"
+      [avvisoAttivo]="sottoscrizioneAttiva()"
+      [azioneInCorso]="azioneInCorso() === copiaDisponibile()?.id || azioneInCorso() === 'sottoscrizione'"
+      (chiediPrestito)="richiediPrestito($event.id)"
+      (avvisami)="sottoscrivi()"
+      (aggiungiCopia)="aggiungiCopia()"
+    />
+  </div>
+}

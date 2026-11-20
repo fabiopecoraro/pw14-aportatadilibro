@@ -1,0 +1,82 @@
+@use '../../../../styles/typography' as type;
+
+.stato-vuoto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 64px var(--apl-space-48);
+
+  &.compatto {
+    padding: var(--apl-space-40) var(--apl-space-26);
+  }
+}
+
+// --- Illustrazione ----------------------------------------------------------
+
+.stato-illustrazione {
+  display: flex;
+  gap: var(--apl-space-10);
+  margin-bottom: var(--apl-space-26);
+}
+
+.copertina-vuota {
+  width: 64px;
+  height: 92px;
+  border: 1.5px dashed var(--apl-border);
+  border-radius: 4px;
+}
+
+.ruotata-sinistra {
+  transform: rotate(-6deg);
+}
+
+.ruotata-destra {
+  transform: rotate(6deg);
+}
+
+.stato-icona {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: var(--apl-sage-400);
+  margin-bottom: var(--apl-space-20);
+}
+
+// --- Testo ------------------------------------------------------------------
+
+.stato-titolo {
+  @include type.h2;
+  margin: 0 0 var(--apl-space-10);
+}
+
+.stato-descrizione {
+  font-family: var(--apl-font-body);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--apl-muted);
+  max-width: 430px;
+  margin: 0 0 var(--apl-space-22);
+}
+
+.compatto {
+  .stato-titolo {
+    @include type.h3;
+  }
+
+  .stato-descrizione {
+    font-size: var(--apl-fs-body);
+  }
+}
+
+.stato-azioni {
+  display: flex;
+  gap: var(--apl-space-12);
+  flex-wrap: wrap;
+  justify-content: center;
+
+  &:empty {
+    display: none;
+  }
+}

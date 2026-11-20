@@ -1,0 +1,133 @@
+@use '../../../../styles/typography' as type;
+
+:host {
+  display: block;
+  background: var(--apl-paper-2);
+  padding-bottom: 64px;
+}
+
+.pv-intro {
+  padding-top: 56px;
+  padding-bottom: 32px;
+
+  h1 {
+    @include type.display-l;
+    font-size: 42px;
+    margin: 0 0 var(--apl-space-16);
+  }
+
+  p {
+    @include type.body-l;
+    font-size: 18px;
+    color: var(--apl-ink-soft);
+    margin: 0;
+  }
+}
+
+.pv-sezione {
+  padding: var(--apl-space-26) 0;
+  border-top: 1px solid var(--apl-border-soft);
+
+  h2 {
+    @include type.h3;
+    margin: 0 0 var(--apl-space-16);
+  }
+
+  h3 {
+    @include type.ui-l;
+    font-size: 15px;
+    color: var(--apl-muted);
+    margin: var(--apl-space-22) 0 var(--apl-space-12);
+  }
+
+  p {
+    @include type.body;
+    color: var(--apl-ink-soft);
+    line-height: 1.65;
+    margin: 0;
+  }
+}
+
+// Il blocco "cosa non facciamo mai" e' il cuore dell'informativa per questo
+// progetto: gli si da' il fondo scuro che il design riserva alle affermazioni
+// che devono restare impresse, invece di lasciarlo indistinguibile dal resto.
+.pv-sezione-rilievo {
+  background: var(--apl-ink);
+  color: var(--apl-paper-2);
+  border-top: none;
+  border-radius: var(--apl-radius-xl);
+  padding: var(--apl-space-26);
+  margin: var(--apl-space-16) 0;
+
+  h2 {
+    color: var(--apl-paper-2);
+  }
+
+  .pv-elenco {
+    color: var(--apl-sage-300);
+
+    li::before {
+      color: var(--apl-green-soft);
+    }
+
+    strong {
+      color: var(--apl-paper-2);
+    }
+  }
+}
+
+.pv-elenco {
+  @include type.body;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: var(--apl-ink-soft);
+
+  li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: var(--apl-space-12);
+    line-height: 1.65;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    // Pallino disegnato a mano invece del marker di lista: il marker nativo
+    // non si allinea alla prima riga quando la voce va a capo.
+    &::before {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 0.72em;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--apl-green);
+    }
+  }
+
+  strong {
+    color: var(--apl-ink);
+    font-weight: 600;
+  }
+}
+
+.pv-nota {
+  @include type.ui-s;
+  color: var(--apl-muted-2);
+  line-height: 1.6;
+  margin: var(--apl-space-26) 0 0;
+  padding-top: var(--apl-space-16);
+  border-top: 1px solid var(--apl-border-soft);
+}
+
+@media (max-width: 899px) {
+  .pv-intro {
+    padding-top: 36px;
+
+    h1 {
+      font-size: 30px;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<!--
+  Intestazione delle pagine visitabili senza accesso. Le voci sono solo quelle
+  che portano a una pagina esistente: una voce verso la mappa non c'e' perche'
+  nessun dato dell'applicazione e' consultabile prima del login.
+-->
+<a class="pubblico-wordmark" routerLink="/">a portata di libro</a>
+
+<nav class="pubblico-nav" aria-label="Navigazione">
+  <a routerLink="/come-funziona" [class.attiva]="paginaAttiva() === 'come-funziona'">Come funziona</a>
+  <a routerLink="/privacy" [class.attiva]="paginaAttiva() === 'privacy'">Privacy</a>
+  <!--
+    "Accedi" resta dentro il nav anche se ha l'aspetto di un pulsante: e' un
+    link di navigazione come gli altri, ed e' l'unico che sotto i 640px non
+    viene nascosto, perche' senza accesso l'applicazione non mostra nulla.
+  -->
+  <a routerLink="/login" class="pubblico-accedi">Accedi</a>
+</nav>

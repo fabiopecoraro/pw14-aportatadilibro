@@ -1,0 +1,120 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apl-space-26);
+  height: var(--apl-header-height);
+  padding-inline: 28px;
+  background: var(--apl-paper);
+  border-bottom: 1px solid var(--apl-border-soft);
+}
+
+.header-sinistra {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-34);
+  min-width: 0;
+}
+
+.header-wordmark {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--apl-ink);
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--apl-ink);
+    text-decoration: none;
+  }
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-26);
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  a {
+    font-family: var(--apl-font-ui);
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--apl-muted);
+    white-space: nowrap;
+    padding-bottom: 3px;
+    // Il bordo trasparente riserva lo spazio della sottolineatura attiva, cosi'
+    // la voce non si sposta di 2px quando diventa corrente.
+    border-bottom: 2px solid transparent;
+    transition: color var(--apl-duration-fast) var(--apl-ease);
+
+    &:hover {
+      color: var(--apl-ink);
+      text-decoration: none;
+    }
+
+    &.attivo {
+      color: var(--apl-ink);
+      border-bottom-color: var(--apl-green);
+    }
+  }
+}
+
+.header-azioni {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-12);
+  flex: none;
+}
+
+.header-campanella {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--apl-touch-target);
+  height: var(--apl-touch-target);
+  border-radius: var(--apl-radius-full);
+  color: var(--apl-muted);
+  transition: background-color var(--apl-duration-fast) var(--apl-ease);
+
+  &:hover {
+    background: var(--apl-paper-3);
+    color: var(--apl-ink);
+    text-decoration: none;
+  }
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.header-badge {
+  top: 4px;
+  right: 4px;
+}
+
+.header-utente {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-10);
+  padding: 4px 4px 4px var(--apl-space-10);
+  background: transparent;
+  border: 0;
+  border-radius: var(--apl-radius-pill);
+  cursor: pointer;
+  transition: background-color var(--apl-duration-fast) var(--apl-ease);
+
+  &:hover {
+    background: var(--apl-paper-3);
+  }
+}
+
+.header-nickname {
+  font-family: var(--apl-font-ui);
+  font-size: 14px;
+  color: var(--apl-muted);
+}

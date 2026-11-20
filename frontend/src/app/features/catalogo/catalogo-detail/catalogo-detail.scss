@@ -1,0 +1,111 @@
+@use '../../../../styles/typography' as type;
+
+// Tre colonne: copertina | contenuto | pannello prestito.
+// Il design non prevede un layout intermedio dedicato fra desktop e mobile:
+// sotto i 640px si passa direttamente a
+// colonna singola, senza una tappa a due colonne.
+
+.dettaglio {
+  display: grid;
+  grid-template-columns: 240px 1fr 300px;
+  gap: var(--apl-space-40);
+  align-items: start;
+
+  // Gli elementi di una griglia hanno `min-width: auto`, cioe' non scendono
+  // sotto la larghezza minima del proprio contenuto: su schermi stretti la
+  // riga di metadati e la fila di bottoni allargavano la colonna oltre il
+  // viewport, facendo scorrere la pagina in orizzontale.
+  > * {
+    min-width: 0;
+  }
+}
+
+.dettaglio-copertina {
+  position: sticky;
+  top: var(--apl-space-26);
+}
+
+.dettaglio-categorie {
+  display: flex;
+  gap: var(--apl-space-7);
+  flex-wrap: wrap;
+  margin-top: var(--apl-space-14);
+}
+
+.dettaglio-titolo {
+  @include type.display-m;
+  margin: var(--apl-space-14) 0 6px;
+}
+
+.dettaglio-meta {
+  @include type.body-l;
+  color: var(--apl-muted);
+  margin: 0 0 var(--apl-space-16);
+}
+
+// Metrica d'uso, non un dato editoriale del libro: sta nella scala minore
+// dei metadati secondari, per non competere con autore, anno e valutazione.
+.dettaglio-visualizzazioni {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  color: var(--apl-muted-2);
+  margin: 0 0 var(--apl-space-16);
+}
+
+.dettaglio-rating {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-5);
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui);
+  font-weight: 600;
+  color: var(--apl-ink);
+  margin: 0 0 var(--apl-space-16);
+
+  mat-icon {
+    color: var(--apl-terracotta);
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+  }
+}
+
+.dettaglio-azioni-secondarie {
+  display: flex;
+  gap: var(--apl-space-10);
+  margin-bottom: var(--apl-space-26);
+}
+
+.dettaglio-sottotitolo {
+  @include type.h4;
+  margin: var(--apl-space-30) 0 var(--apl-space-12);
+}
+
+.dettaglio-vuoto {
+  @include type.body;
+  color: var(--apl-muted);
+  margin: 0;
+}
+
+.dettaglio-scheletro {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--apl-space-40);
+}
+
+.dettaglio-scheletro-testo {
+  padding-top: var(--apl-space-16);
+}
+
+@media (max-width: 639px) {
+  .dettaglio,
+  .dettaglio-scheletro {
+    grid-template-columns: 1fr;
+  }
+
+  .dettaglio-copertina {
+    position: static;
+    max-width: 200px;
+    margin-inline: auto;
+  }
+}

@@ -1,0 +1,96 @@
+<!--
+  Dove si puo' ritirare una certa copia. La regola e' al contrario di come
+  sembra a schermo: una copia e' disponibile in tutti gli Hub del proprietario,
+  e cio' che si salva sono le eccezioni, cioe' gli Hub esclusi. Il dialog mostra
+  pero' interruttori accesi per «disponibile», perche' e' cosi' che l'utente
+  ragiona; per questo ogni interruttore e' legato al negato di `escluso`.
+
+  Non c'e' un pulsante «Salva»: ogni interruttore scrive subito sul server, e
+  quello che si vede e' sempre quello che e' registrato.
+-->
+<h2 mat-dialog-title>Disponibilità negli Hub</h2>
+
+<mat-dialog-content class="content">
+  <p class="sottotitolo">{{ data.titolo }}</p>
+
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="32" />
+    </div>
+  } @else if (errore()) {
+    <p>Non siamo riusciti a caricare i tuoi hub. Controlla la connessione e riprova.</p>
+    <button mat-stroked-button type="button" (click)="carica()">Riprova</button>
+  } @else if (hub().length === 0) {
+    <!--
+      Senza Hub non c'e' nulla da configurare, e soprattutto la copia non e'
+      trovabile: invece di un elenco vuoto si spiega la conseguenza e si porta
+      l'utente a registrarne uno. `mat-dialog-close` sul collegamento chiude il
+      dialog mentre si naviga, altrimenti resterebbe aperto sopra la nuova
+      pagina.
+    -->
+    <p>
+      Non hai ancora registrato nessun hub di scambio: senza hub la tua copia
+      non compare nelle ricerche sulla mappa.
+    </p>
+    <a mat-stroked-button color="primary" routerLink="/hub" mat-dialog-close>
+      <mat-icon>add_location_alt</mat-icon>
+      Registra il tuo primo hub
+    </a>
+  } @else {
+    <p class="hint">
+      Di default la copia è disponibile in tutti i tuoi Hub. Disattiva quelli
+      presso cui non vuoi scambiare questo libro.
+    </p>
+
+    <div class="hub-list">
+      @for (h of hub(); track h.hubId) {
+        <div class="hub-riga" [class.escluso]="h.escluso">
+          <div class="info">
+            <strong>{{ h.nome }}</strong>
+            <span>{{ h.indirizzo }}</span>
+          </div>
+
+          <!--
+            Mentre la chiamata e' in volo lo spinner prende il posto
+            dell'interruttore di quella sola riga: non lo si puo' azionare due
+            volte di seguito, e gli altri Hub restano modificabili.
+            L'interruttore non ha un testo accanto che sia suo, quindi il nome
+            dell'Hub entra nell'aria-label: altrimenti uno screen reader
+            leggerebbe una serie di interruttori tutti uguali.
+          -->
+          @if (isInAggiornamento(h.hubId)) {
+            <mat-spinner diameter="20" />
+          } @else {
+            <mat-slide-toggle
+              [checked]="!h.escluso"
+              (change)="cambiaDisponibilita(h, $event.checked)"
+              [aria-label]="'Disponibile presso ' + h.nome"
+            />
+          }
+        </div>
+      }
+    </div>
+
+    <!--
+      Escludere tutti gli Hub e' permesso, ma equivale a ritirare la copia dalle
+      ricerche sulla mappa: l'avviso lo dice nel momento in cui succede.
+    -->
+    <p class="riepilogo">
+      Disponibile in {{ disponibileIn() }} hub su {{ hub().length }}.
+      @if (disponibileIn() === 0) {
+        <span class="avviso">
+          Con tutti gli hub disattivati la copia non compare nelle ricerche.
+        </span>
+      }
+    </p>
+  }
+</mat-dialog-content>
+
+<!--
+  La chiusura passa da un metodo e non da `mat-dialog-close`: deve restituire a
+  chi ha aperto il dialog se qualcosa e' cambiato, cosi' la libreria si
+  ricarica solo quando serve.
+-->
+<mat-dialog-actions align="end">
+  <button mat-button (click)="chiudi()">Chiudi</button>
+</mat-dialog-actions>

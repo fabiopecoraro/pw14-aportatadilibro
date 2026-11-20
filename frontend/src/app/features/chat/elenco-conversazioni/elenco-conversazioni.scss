@@ -1,0 +1,78 @@
+.conversazioni-elenco {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.conversazione-riga {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-12);
+  width: 100%;
+  padding: var(--apl-space-14) var(--apl-space-16);
+  border: 0;
+  border-bottom: 1px solid var(--apl-border-soft);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--apl-duration-fast) var(--apl-ease);
+
+  &:hover {
+    background: var(--apl-paper-3);
+  }
+
+  // Selezione: fondo pieno, coerente con l'evidenza usata per la card libro
+  // selezionata sulla mappa, qui applicata a una riga invece che a un
+  // bordo perche' la riga occupa gia' tutta la larghezza del pannello.
+  &.selezionata {
+    background: var(--apl-sage-100);
+  }
+}
+
+.conversazione-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.conversazione-nome {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: var(--apl-fs-ui-l);
+  color: var(--apl-ink);
+}
+
+.conversazione-libro {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-ui-s);
+  color: var(--apl-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversazione-stato {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  color: var(--apl-muted);
+
+  &.stato-richiesto,
+  &.stato-accettato {
+    color: var(--apl-green);
+  }
+
+  &.stato-rifiutato,
+  &.stato-annullato {
+    color: var(--apl-danger);
+  }
+}
+
+.conversazione-tempo {
+  flex: none;
+  align-self: flex-start;
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  color: var(--apl-muted-2);
+}

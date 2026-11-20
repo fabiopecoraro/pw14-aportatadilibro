@@ -1,0 +1,70 @@
+<!--
+  Correzione dei metadati di un'opera. La scheda del libro offre questo dialog
+  solo all'Admin: titolo, autore e categorie sono condivisi da tutte le copie,
+  e la modifica fatta da un proprietario cambierebbe la scheda anche agli altri.
+-->
+<h2 mat-dialog-title>Modifica metadati libro</h2>
+
+<form [formGroup]="form" (ngSubmit)="salva()">
+  <mat-dialog-content class="form">
+    <mat-form-field appearance="outline">
+      <mat-label>Titolo</mat-label>
+      <input matInput formControlName="titolo" />
+      @if (form.controls.titolo.hasError('required') && form.controls.titolo.touched) {
+        <mat-error>Il titolo è obbligatorio.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Autore</mat-label>
+      <input matInput formControlName="autore" />
+      @if (form.controls.autore.hasError('required') && form.controls.autore.touched) {
+        <mat-error>L'autore è obbligatorio.</mat-error>
+      }
+    </mat-form-field>
+
+    <!--
+      Le categorie non sono un campo di testo: si scelgono dal vocabolario
+      chiuso, e da qui non se ne crea una nuova nemmeno da Admin, per non
+      riempirlo di sinonimi mentre si corregge un libro. Il selettore è un
+      controllo custom fuori da mat-form-field, quindi etichetta ed errore
+      vanno scritti a mano. L'errore compare solo dopo un tentativo di
+      salvataggio e sparisce appena si sceglie una voce, senza dover riprovare.
+    -->
+    <div class="edit-categorie">
+      <span class="edit-categorie-label" id="edit-categorie-label">Categorie</span>
+      <app-selettore-categorie
+        [categorie]="categorie()"
+        [(selezione)]="categorieScelte"
+        aria-labelledby="edit-categorie-label"
+      />
+      @if (categorieMancanti() && categorieScelte().length === 0) {
+        <span class="edit-categorie-errore">Scegli almeno una categoria.</span>
+      }
+    </div>
+
+    <!--
+      Anno e ISBN restano facoltativi: di un'edizione vecchia o di un libro
+      senza codice non sempre si conoscono, e un valore inventato pur di
+      riempire il campo sporcherebbe la scheda di tutte le copie.
+    -->
+    <mat-form-field appearance="outline">
+      <mat-label>Anno di pubblicazione (opzionale)</mat-label>
+      <input matInput type="number" inputmode="numeric" formControlName="anno" [min]="annoMinimo" [max]="annoMassimo" />
+      <mat-hint>Lascia vuoto se l'anno non è noto.</mat-hint>
+      @if (form.controls.anno.invalid && form.controls.anno.touched) {
+        <mat-error>Inserisci un anno fra {{ annoMinimo }} e {{ annoMassimo }}.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>ISBN (opzionale)</mat-label>
+      <input matInput formControlName="isbn" />
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="annulla()">Annulla</button>
+    <button mat-flat-button color="primary" type="submit">Salva</button>
+  </mat-dialog-actions>
+</form>

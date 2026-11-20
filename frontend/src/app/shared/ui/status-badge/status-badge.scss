@@ -1,0 +1,60 @@
+// Badge di stato.
+//
+// Nota sulla fedelta': le specifiche del design descrivono il badge in
+// maiuscolo con letter-spacing .1em, mentre il prototipo HTML lo disegna in
+// caso normale (10-11px, Archivo 600). Si segue il prototipo HTML, che e' il
+// riferimento per i dettagli.
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  border-radius: var(--apl-radius-pill);
+  white-space: nowrap;
+}
+
+// --- Overlay: sovrapposto alla copertina ------------------------------------
+
+:host(.variante-overlay) {
+  font-size: 10.5px;
+  padding: 3px 8px;
+  color: #ffffff;
+}
+
+:host(.variante-overlay.stato-disponibile) {
+  background: var(--apl-green);
+}
+
+:host(.variante-overlay.stato-in-prestito) {
+  background: var(--apl-ink);
+}
+
+:host(.variante-overlay.stato-richiesto) {
+  background: var(--apl-muted);
+}
+
+// --- Inline: nel flusso, su fondo paper -------------------------------------
+
+:host(.variante-inline) {
+  font-size: 11px;
+  padding: 4px 10px;
+}
+
+:host(.variante-inline.stato-disponibile) {
+  background: #e4efe8;
+  color: var(--apl-green);
+}
+
+// Il terracotta d'accento su fondo terracotta tenue rende 2,8:1: qui serve la
+// variante scura pensata per il testo (vedi nota contrasto in _tokens.scss).
+:host(.variante-inline.stato-in-prestito) {
+  background: var(--apl-terracotta-soft);
+  color: var(--apl-terracotta-text);
+}
+
+:host(.variante-inline.stato-richiesto) {
+  background: var(--apl-paper-3);
+  color: var(--apl-muted);
+}

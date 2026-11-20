@@ -1,0 +1,82 @@
+:host {
+  display: block;
+  background: var(--apl-paper);
+  border: 1px solid var(--apl-border-soft);
+  border-radius: var(--apl-radius-xl);
+  padding: var(--apl-space-16) var(--apl-space-20);
+}
+
+// Bordo verde pieno per le richieste ancora da evadere: e' il segnale che
+// distingue "c'e' qualcosa da fare" da tutto il resto, come nel design.
+:host(.in-attesa) {
+  border-color: var(--apl-green);
+}
+
+.richiesta-testa {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-12);
+  margin-bottom: var(--apl-space-14);
+}
+
+.richiesta-persona {
+  flex: 1;
+  min-width: 0;
+}
+
+.richiesta-nome {
+  display: block;
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: var(--apl-fs-ui-l);
+  color: var(--apl-ink);
+  margin: 0;
+
+  &:hover {
+    color: var(--apl-ink);
+    text-decoration: underline;
+  }
+}
+
+.richiesta-tempo {
+  flex: none;
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  color: var(--apl-muted-2);
+}
+
+.richiesta-libro {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-12);
+  padding: 10px 12px;
+  border-radius: var(--apl-radius-lg);
+  background: var(--apl-paper-3);
+  margin-bottom: var(--apl-space-14);
+
+  mat-icon {
+    flex: none;
+    color: var(--apl-muted);
+  }
+}
+
+.richiesta-libro-titolo {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--apl-ink);
+  margin: 0;
+}
+
+.richiesta-libro-meta {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  color: var(--apl-muted);
+  margin: 3px 0 0;
+}
+
+.richiesta-azioni {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-10);
+}

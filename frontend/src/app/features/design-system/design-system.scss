@@ -1,0 +1,133 @@
+@use '../../../styles/typography' as type;
+
+// Vetrina del design system: questi stili impaginano solo la pagina di
+// verifica. Dove possibile si riusano le utility globali (.apl-content,
+// .apl-surface, .apl-inset) invece di ridefinirle.
+
+.ds-pagina {
+  padding-block: var(--apl-space-48) 96px;
+}
+
+.ds-intestazione {
+  margin-bottom: var(--apl-space-48);
+
+  p {
+    @include type.body-l;
+    color: var(--apl-muted);
+    max-width: 560px;
+  }
+}
+
+.ds-wordmark {
+  display: block;
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: var(--apl-space-16);
+}
+
+.ds-sezione {
+  padding-top: var(--apl-space-34);
+  margin-top: var(--apl-space-34);
+  border-top: 1px solid var(--apl-border-soft);
+
+  > h2 {
+    margin-bottom: var(--apl-space-22);
+  }
+}
+
+.ds-etichetta {
+  @include type.overline;
+  color: var(--apl-muted);
+  margin: var(--apl-space-26) 0 var(--apl-space-12);
+}
+
+// --- Colore -----------------------------------------------------------------
+
+.ds-colori {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--apl-space-16);
+}
+
+.ds-colore {
+  display: flex;
+  flex-direction: column;
+  gap: var(--apl-space-5);
+}
+
+.ds-campione {
+  height: 56px;
+  border-radius: var(--apl-radius-md);
+  border: 1px solid var(--apl-border-soft);
+}
+
+// --- Contenitori ------------------------------------------------------------
+
+.ds-scala,
+.ds-colonna,
+.ds-colonna-stretta,
+.ds-coda {
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-scala {
+  gap: var(--apl-space-16);
+}
+
+.ds-colonna {
+  gap: var(--apl-space-12);
+}
+
+.ds-colonna-stretta {
+  gap: 11px;
+  max-width: 380px;
+}
+
+.ds-coda {
+  align-items: flex-end;
+  gap: var(--apl-space-9);
+}
+
+.ds-riga {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--apl-space-14);
+  margin-bottom: var(--apl-space-16);
+}
+
+.ds-griglia-due {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--apl-space-26);
+  align-items: start;
+}
+
+.ds-griglia-libri {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--apl-space-16);
+}
+
+.ds-distanza {
+  font-family: var(--apl-font-ui);
+  font-size: var(--apl-fs-meta);
+  font-weight: 600;
+  color: var(--apl-green);
+  white-space: nowrap;
+}
+
+// I pin qui stanno nel flusso invece che su una mappa: l'anello pulsante ha
+// comunque bisogno di un contenitore posizionato.
+.ds-mappa-finta {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-40);
+  padding: var(--apl-space-40);
+
+  .apl-pin {
+    position: relative;
+  }
+}

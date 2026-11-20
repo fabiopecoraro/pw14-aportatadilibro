@@ -1,0 +1,90 @@
+<app-public-header paginaAttiva="home" />
+
+<main id="contenuto-principale" tabindex="-1">
+
+<section class="hero">
+  <div class="hero-testo">
+    <p class="hero-overline apl-overline">Prestito tra vicini</p>
+    <h1>I libri che cerchi sono già nel tuo quartiere.</h1>
+    <p class="hero-sottotitolo">
+      Presta i tuoi, scopri quelli di chi ti sta accanto. Una biblioteca diffusa fatta di
+      persone, non di scaffali.
+    </p>
+
+    <div class="hero-azioni">
+      <a routerLink="/register" class="hero-cta-primaria">Crea il tuo profilo</a>
+      <a routerLink="/login" class="hero-cta-secondaria">Accedi ed esplora la mappa</a>
+    </div>
+  </div>
+
+  <!--
+    Illustrazione, non una ricerca reale: due copertine placeholder e
+    un'etichetta di distanza di esempio, con un'etichetta "Esempio" esplicita
+    perché non sia scambiata per un risultato vero.
+  -->
+  <div class="hero-illustrazione" aria-hidden="true">
+    <span class="hero-illustrazione-badge">Esempio</span>
+    <div class="hero-copertina hero-copertina-1"></div>
+    <div class="hero-copertina hero-copertina-2"></div>
+    <div class="hero-chip-distanza">
+      <span class="hero-chip-pallino"></span>
+      a 350 m da te
+    </div>
+  </div>
+</section>
+
+<section class="pubblico-sezione passi">
+  <h2 class="pubblico-titolo-sezione">Tre gesti, una comunità</h2>
+
+  <div class="passi-griglia">
+    <article class="pubblico-passo">
+      <div class="pubblico-numero">01</div>
+      <h3>Aggiungi la tua libreria</h3>
+      <p>Segna i libri che sei disposto a prestare. Bastano pochi minuti.</p>
+    </article>
+    <article class="pubblico-passo">
+      <div class="pubblico-numero">02</div>
+      <h3>Trova ciò che è vicino</h3>
+      <p>Cerca sulla mappa e scopri i titoli a portata di passeggiata.</p>
+    </article>
+    <article class="pubblico-passo">
+      <div class="pubblico-numero">03</div>
+      <h3>Accordati e restituisci</h3>
+      <p>Scrivi al proprietario, prendi il libro e riportalo quando hai finito.</p>
+    </article>
+  </div>
+</section>
+
+<section class="pubblico-sezione funzioni">
+  <h2 class="pubblico-titolo-sezione">Tutto ciò che serve per fidarsi</h2>
+
+  <div class="funzioni-griglia">
+    <article>
+      <div class="funzioni-icona">★</div>
+      <h3>Recensioni</h3>
+      <p>Fidati dei giudizi di chi ha già letto.</p>
+    </article>
+    <article>
+      <div class="funzioni-icona">✉</div>
+      <h3>Chat diretta</h3>
+      <p>Accordati sul prestito in due messaggi.</p>
+    </article>
+    <article>
+      <div class="funzioni-icona">♡</div>
+      <h3>Lista desideri</h3>
+      <p>Ti avvisiamo quando un titolo torna disponibile.</p>
+    </article>
+    <article>
+      <div class="funzioni-icona">↻</div>
+      <h3>Storico prestiti</h3>
+      <p>Sai sempre dove sono i tuoi libri.</p>
+    </article>
+  </div>
+</section>
+
+</main>
+
+<footer class="pubblico-footer">
+  <span class="pubblico-footer-wordmark">a portata di libro</span>
+  <span>Fatto per i lettori di quartiere · 2026</span>
+</footer>

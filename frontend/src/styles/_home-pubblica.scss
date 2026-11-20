@@ -1,0 +1,250 @@
+// =============================================================================
+// Home pubblica
+// -----------------------------------------------------------------------------
+// Non condiviso con nessun'altra pagina: vive fuori dal componente solo per
+// restare sotto il budget di stile per componente di Angular CLI (4kB), che
+// e' tarato su una schermata applicativa media, non su una landing page con
+// hero, tre sezioni e un footer. Spostare qui non e' un caso di riuso: e' la
+// stessa CSS che altrimenti starebbe in home-pubblica.scss, semplicemente
+// fuori dal conteggio per-componente. Tutto e' annidato sotto il selettore
+// dell'host per non rischiare collisioni con classi generiche altrove.
+// =============================================================================
+
+@use './typography' as type;
+
+app-home-pubblica {
+  display: block;
+  background: var(--apl-paper-2);
+
+  // --- Hero -------------------------------------------------------------------
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--apl-space-48);
+    padding: 64px 44px 60px;
+    align-items: center;
+    max-width: var(--apl-content-max);
+    margin-inline: auto;
+  }
+
+  .hero-overline {
+    color: var(--apl-green);
+    margin-bottom: var(--apl-space-20);
+  }
+
+  .hero-testo h1 {
+    @include type.display-xl;
+    font-size: 52px;
+    margin: 0 0 var(--apl-space-22);
+  }
+
+  .hero-sottotitolo {
+    @include type.body-l;
+    font-size: 19px;
+    color: var(--apl-ink-soft);
+    max-width: 460px;
+    margin: 0 0 var(--apl-space-34);
+  }
+
+  .hero-azioni {
+    display: flex;
+    gap: var(--apl-space-14);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .hero-cta-primaria {
+    padding: 14px 30px;
+    background: var(--apl-ink);
+    color: var(--apl-paper-2);
+    border-radius: var(--apl-radius-md);
+    font-family: var(--apl-font-ui);
+    font-weight: 600;
+    font-size: 15px;
+
+    &:hover {
+      background: var(--apl-ink-hover);
+      color: var(--apl-paper-2);
+      text-decoration: none;
+    }
+  }
+
+  .hero-cta-secondaria {
+    padding: 14px 26px;
+    border: 1.5px solid var(--apl-border);
+    border-radius: var(--apl-radius-md);
+    color: var(--apl-ink);
+    font-family: var(--apl-font-ui);
+    font-weight: 500;
+    font-size: 15px;
+
+    &:hover {
+      border-color: var(--apl-border-strong);
+      text-decoration: none;
+    }
+  }
+
+  // --- Illustrazione dell'hero -------------------------------------------------
+
+  .hero-illustrazione {
+    position: relative;
+    height: 420px;
+  }
+
+  // Etichetta esplicita: senza questa, le due copertine placeholder e la
+  // distanza finta potrebbero leggersi come un vero risultato di ricerca a un
+  // visitatore non autenticato — esattamente cio' che il principio "nessun
+  // dato senza login" vuole evitare.
+  .hero-illustrazione-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    padding: 5px 12px;
+    border-radius: var(--apl-radius-pill);
+    background: var(--apl-paper);
+    border: 1px solid var(--apl-border);
+    font-family: var(--apl-font-ui);
+    font-size: var(--apl-fs-meta);
+    font-weight: 600;
+    color: var(--apl-muted);
+  }
+
+  .hero-copertina {
+    position: absolute;
+    width: 210px;
+    height: 314px;
+    border-radius: var(--apl-radius-sm);
+    background: var(--apl-cover-placeholder);
+  }
+
+  .hero-copertina-1 {
+    top: 20px;
+    left: 40px;
+    transform: rotate(-6deg);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+  }
+
+  .hero-copertina-2 {
+    top: 56px;
+    left: 150px;
+    transform: rotate(5deg);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+  }
+
+  .hero-chip-distanza {
+    position: absolute;
+    bottom: 6px;
+    left: 96px;
+    display: flex;
+    align-items: center;
+    gap: var(--apl-space-10);
+    padding: 12px 16px;
+    background: var(--apl-paper);
+    border: 1px solid var(--apl-border-soft);
+    border-radius: var(--apl-radius-md);
+    box-shadow: var(--apl-shadow-raised);
+    font-family: var(--apl-font-ui);
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .hero-chip-pallino {
+    width: 9px;
+    height: 9px;
+    border-radius: var(--apl-radius-full);
+    background: var(--apl-green);
+  }
+
+  // --- Passi e funzioni ---------------------------------------------------------
+
+  .passi {
+    background: var(--apl-paper-3);
+    border-top: 1px solid var(--apl-border-soft);
+  }
+
+  .passi-griglia,
+  .funzioni-griglia {
+    display: grid;
+    gap: var(--apl-space-30);
+    max-width: var(--apl-content-max);
+    margin-inline: auto;
+  }
+
+  .passi-griglia {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .funzioni {
+    background: var(--apl-paper);
+    border-top: 1px solid var(--apl-border-soft);
+  }
+
+  .funzioni-griglia {
+    grid-template-columns: repeat(4, 1fr);
+
+    h3 {
+      @include type.ui-l;
+      font-size: 15.5px;
+      margin: 0 0 5px;
+    }
+
+    p {
+      @include type.ui-s;
+      color: var(--apl-muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+
+  .funzioni-icona {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--apl-radius-lg);
+    background: #e4efe8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--apl-green);
+    font-family: var(--apl-font-ui);
+    margin-bottom: var(--apl-space-12);
+  }
+
+  // --- Responsive ---------------------------------------------------------------
+
+  @media (max-width: 899px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 36px 20px 32px;
+    }
+
+    .hero-testo h1 {
+      font-size: 38px;
+    }
+
+    .hero-illustrazione {
+      height: 250px;
+      margin-top: var(--apl-space-30);
+    }
+
+    .hero-copertina {
+      width: 135px;
+      height: 202px;
+    }
+
+    .hero-copertina-2 {
+      left: 95px;
+    }
+
+    .hero-chip-distanza {
+      left: 30px;
+    }
+
+    .passi-griglia,
+    .funzioni-griglia {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,0 +1,72 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 44px;
+  border-bottom: 1px solid var(--apl-border-soft);
+  background: var(--apl-paper-2);
+}
+
+.pubblico-wordmark {
+  font-family: var(--apl-font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--apl-ink);
+
+  &:hover {
+    color: var(--apl-ink);
+    text-decoration: none;
+  }
+}
+
+.pubblico-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--apl-space-30);
+  font-family: var(--apl-font-ui);
+  font-size: 14px;
+  font-weight: 500;
+
+  a {
+    color: var(--apl-muted);
+
+    &:hover {
+      color: var(--apl-ink);
+      text-decoration: none;
+    }
+
+    &.attiva {
+      color: var(--apl-ink);
+      border-bottom: 2px solid var(--apl-green);
+      padding-bottom: 3px;
+    }
+  }
+
+  // Il bottone verde vive dentro .pubblico-nav e non fuori: la regola
+  // `.pubblico-nav a` ha specificita' 0,2,0 e vincerebbe altrimenti sul
+  // `color` di una regola di classe singola, lasciando testo grigio scuro su
+  // fondo verde (rapporto di contrasto 1.5:1, ben sotto il minimo 4.5:1).
+  .pubblico-accedi {
+    padding: 9px 20px;
+    background: var(--apl-green-dark);
+    color: #ffffff;
+    border-radius: var(--apl-radius-md);
+
+    &:hover,
+    &:hover:not(.attiva) {
+      background: var(--apl-ink);
+      color: #ffffff;
+    }
+  }
+}
+
+@media (max-width: 639px) {
+  :host {
+    padding: 16px 20px;
+  }
+
+  .pubblico-nav a:not(.pubblico-accedi) {
+    display: none;
+  }
+}

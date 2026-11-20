@@ -1,0 +1,30 @@
+@if (interattivo()) {
+  <!--
+    Ogni stella e' un pulsante vero: un'icona con un gestore di clic si usa
+    solo con il mouse, e chi naviga da tastiera non potrebbe lasciare una
+    recensione. Il nome di ciascun pulsante dice quante stelle assegna.
+  -->
+  <span class="star-rating interattivo" role="group" [attr.aria-label]="etichetta()">
+    @for (stella of stelle; track stella) {
+      <button
+        type="button"
+        class="stella"
+        [attr.aria-label]="stella === 1 ? '1 stella' : stella + ' stelle'"
+        [attr.aria-pressed]="stella === voto()"
+        (click)="seleziona(stella)"
+      >
+        <mat-icon>{{ stella <= voto() ? 'star' : 'star_border' }}</mat-icon>
+      </button>
+    }
+  </span>
+} @else {
+  <!--
+    In sola lettura le cinque icone valgono come un'immagine sola: senza un
+    testo alternativo un lettore di schermo non annuncerebbe nessun voto.
+  -->
+  <span class="star-rating" role="img" [attr.aria-label]="etichetta() + ': ' + voto() + ' su 5'">
+    @for (stella of stelle; track stella) {
+      <mat-icon>{{ stella <= voto() ? 'star' : 'star_border' }}</mat-icon>
+    }
+  </span>
+}

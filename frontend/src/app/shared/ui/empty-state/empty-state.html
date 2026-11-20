@@ -1,0 +1,22 @@
+<div class="stato-vuoto" [class.compatto]="compatto()">
+  @if (icona(); as nomeIcona) {
+    <mat-icon class="stato-icona" aria-hidden="true">{{ nomeIcona }}</mat-icon>
+  } @else {
+    <!-- Tre copertine tratteggiate leggermente ruotate, come nel prototipo. -->
+    <div class="stato-illustrazione" aria-hidden="true">
+      <span class="copertina-vuota ruotata-sinistra"></span>
+      <span class="copertina-vuota"></span>
+      <span class="copertina-vuota ruotata-destra"></span>
+    </div>
+  }
+
+  <h2 class="stato-titolo">{{ titolo() }}</h2>
+
+  @if (descrizione()) {
+    <p class="stato-descrizione">{{ descrizione() }}</p>
+  }
+
+  <div class="stato-azioni">
+    <ng-content />
+  </div>
+</div>

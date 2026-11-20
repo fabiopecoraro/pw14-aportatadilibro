@@ -1,0 +1,81 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--apl-paper-2);
+}
+
+// Le schermate a piena altezza hanno bisogno di un'altezza *esatta*, non
+// minima. Con il solo min-height la shell cresce insieme al contenuto: l'elenco
+// dei risultati non scorre mai al proprio interno, la pagina si allunga quanto
+// l'elenco e la mappa con lei, finendo con gli Hub fuori dallo schermo.
+// Fissando l'altezza al viewport, lo spazio da dividere e' definito e ogni
+// pannello scorre per conto proprio.
+:host:has(.shell-pagina.piena) {
+  height: 100dvh;
+}
+
+// Le due barre sono entrambe nel DOM e vengono alternate dalla media query, non
+// da una condizione in TypeScript: cosi' il passaggio fra le due forme non
+// ricrea il router-outlet e la schermata corrente non perde il proprio stato.
+app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex: none;
+}
+
+app-tabbar {
+  display: none;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  flex: none;
+}
+
+.shell-contenuto {
+  flex: 1;
+  min-height: 0;
+  // Le schermate a piena altezza (mappa, chat) hanno bisogno di un contenitore
+  // che non introduca uno scroll proprio.
+  display: flex;
+  flex-direction: column;
+}
+
+.shell-pagina {
+  width: 100%;
+  max-width: var(--apl-content-max);
+  margin-inline: auto;
+  padding: var(--apl-space-30) 28px var(--apl-space-48);
+}
+
+// Schermate a piena larghezza e piena altezza (mappa, chat): non
+// hanno la colonna centrata ne' il padding, e gestiscono lo scroll al proprio
+// interno. La rotta lo dichiara con `data.pienaLarghezza`, cosi' la regola sta
+// nella definizione della schermata e non in un elenco di percorsi dentro la
+// shell.
+.shell-pagina.piena {
+  max-width: none;
+  padding: 0;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+// 640px e' il punto in cui il design passa alla colonna singola con tab bar.
+// Sotto quella soglia l'header globale sparisce: ogni schermata mobile porta il
+// proprio titolo, quindi un header in piu' toglierebbe altezza senza aggiungere
+// informazione.
+@media (max-width: 639px) {
+  app-header {
+    display: none;
+  }
+
+  app-tabbar {
+    display: grid;
+  }
+
+  .shell-pagina {
+    padding: var(--apl-space-20) var(--apl-space-16) var(--apl-space-26);
+  }
+}

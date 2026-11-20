@@ -1,0 +1,39 @@
+// Il diametro arriva dal componente come proprieta' CSS personalizzata: un solo
+// valore governa larghezza e altezza, che cosi' non possono divergere.
+// `flex: none` perche' l'avatar sta quasi sempre in una riga flex accanto a un
+// testo lungo: se potesse restringersi diventerebbe un ovale. `overflow: hidden`
+// ritaglia a cerchio anche un'eventuale foto, senza chiederle un suo bordo.
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--avatar-size, 40px);
+  height: var(--avatar-size, 40px);
+  border-radius: var(--apl-radius-full);
+  overflow: hidden;
+  user-select: none;
+}
+
+:host(.variante-sage) {
+  background: var(--apl-sage-200);
+  color: var(--apl-ink);
+}
+
+:host(.variante-green) {
+  background: var(--apl-green);
+  color: #ffffff;
+}
+
+.avatar-iniziali {
+  font-family: var(--apl-font-ui);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.avatar-immagine {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
